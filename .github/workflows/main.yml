@@ -1,0 +1,25 @@
+name: Ec2 Automated Deploy
+
+on:
+  workflow_dispatch:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - 'nginx/**'
+      - 'docker-compose.yml'
+      - 'deploy.sh'
+      - '.github/workflows/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Executar comando SSH remoto
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: "ec2-user"
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          chmod +x /home/ec2-user/Cantina_Vidal/deploy.sh
+          /home/ec2-user/Cantina_Vidal/deploy.sh
