@@ -3,23 +3,20 @@ package org.senai.cantina_vidal.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "products")
 public class Product extends UserDateAudit {
     @Id
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -41,14 +38,16 @@ public class Product extends UserDateAudit {
     private String imageUrl;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("true")
     @Column(name = "active", nullable = false)
-    private Boolean active = false;
+    private Boolean active = true;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_stock", nullable = false)
-    private Integer quantityStock;
+    private Integer quantityStock = 0;
 
     @NotNull
     @ColumnDefault("0")
