@@ -5,26 +5,56 @@ import lombok.NonNull;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<StandardError> handleValidationErrors(MethodArgumentNotValidException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Erro desconhecido",
+                        (msg1, msg2) -> msg1 + "; " + msg2
+                ));
+
+
+        StandardError err = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error("Erro de Validação")
+                .message("Verifique os campos obrigatórios")
+                .validationErrors(errors)
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(status).body(err);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         String error = "Recurso não encontrado";
-        StandardError err = new StandardError(
-                LocalDateTime.now(),
-                status.value(),
-                error,
-                e.getMessage(),
-                request.getRequestURI()
-        );
+
+        StandardError err = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(error)
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
         return ResponseEntity.status(status).body(err);
     }
 }
