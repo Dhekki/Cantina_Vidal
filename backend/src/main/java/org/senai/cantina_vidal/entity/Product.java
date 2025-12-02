@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -59,8 +61,9 @@ public class Product extends UserDateAudit {
     @Column(name = "quantity_committed", nullable = false)
     private Integer quantityCommitted;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+    inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
 }
