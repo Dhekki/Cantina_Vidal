@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,14 +51,16 @@ public class Product extends UserDateAudit {
     private Integer quantityStock = 0;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_held", nullable = false)
-    private Integer quantityHeld;
+    private Integer quantityHeld = 0;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_committed", nullable = false)
-    private Integer quantityCommitted;
+    private Integer quantityCommitted = 0;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_categories",
