@@ -13,22 +13,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Projeto_v1">
-
+        <activity
+            android:name=".view.LoginClienteActivity"
+            android:exported="false" />
         <!-- Activity principal (launcher) -->
         <activity
             android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Outras activities do projeto -->
+        </activity> <!-- Outras activities do projeto -->
         <activity
-            android:name="com.example.projeto_v1.view.CadastroClienteActivity"
+            android:name=".view.CadastroClienteActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

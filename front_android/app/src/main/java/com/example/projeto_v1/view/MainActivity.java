@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.projeto_v1.R;
 
 public class MainActivity extends AppCompatActivity {
-    private static final long TEMPO_DE_ESPERA = 6000L;
+    private static final long TEMPO_DE_ESPERA = 5000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

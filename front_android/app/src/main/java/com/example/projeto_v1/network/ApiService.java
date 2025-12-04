@@ -14,25 +14,25 @@ import retrofit2.http.POST;
 public interface ApiService {
 
 
-//    @Headers({
-//            "Accept: application/json",
-//            "Prefer: return=representation"
-//    })
-//    @GET("produtos")
-//    Call<List<Produto>> listarProdutos(
-//            @Header("apikey") String apiKey,
-//            @Header("Authorization") String auth
-//    );
-//
-//
-//    @Headers({
-//            "Content-Type: application/json",
-//            "Prefer: return=representation"
-//    })
-//    @POST("produtos")
-//    Call<Void> inserirProduto(
-//            @Header("apikey") String apiKey,
-//            @Header("Authorization") String auth,
-//            @Body Produto produto
-//    );
+    @Headers({
+            "Accept: application/json",
+            "Prefer: return=representation"
+    })
+    @GET("clientes")
+    Call<List<Cliente>> listarClientes(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String auth
+    );
+
+
+    @Headers({
+            "Content-Type: application/json",
+            "Prefer: return=representation"
+    })
+    @POST("clientes")
+    Call<Void> inserirCliente(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String auth,
+            @Body Cliente cliente
+    );
 }

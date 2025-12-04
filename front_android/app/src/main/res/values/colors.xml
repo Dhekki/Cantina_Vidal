@@ -8,4 +8,5 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="laranja">#D84A2A</color>
+    <color name="cinza">#555555</color>
 </resources>
