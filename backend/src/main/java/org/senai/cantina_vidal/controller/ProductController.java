@@ -26,6 +26,7 @@ public class ProductController {
         List<ProductResponseDTO> dtos = entities.stream()
                 .map(ProductResponseDTO::new)
                 .toList();
+
         return ResponseEntity.ok(dtos);
     }
 

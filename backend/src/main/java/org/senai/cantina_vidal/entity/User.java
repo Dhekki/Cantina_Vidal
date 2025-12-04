@@ -47,9 +47,10 @@ public class User extends UserDateAudit {
     private String imageUrl;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("true")
     @Column(name = "active", nullable = false)
-    private Boolean active = false;
+    private Boolean active = true;
 
     @NotNull
     @ColumnDefault("false")

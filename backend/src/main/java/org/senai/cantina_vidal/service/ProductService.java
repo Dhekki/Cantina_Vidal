@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductRepository repository;
     private final CategoryRepository categoryRepository;
