@@ -2,8 +2,8 @@ package org.senai.cantina_vidal.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.CategoryRequestDTO;
-import org.senai.cantina_vidal.dto.CategoryResponseDTO;
+import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
+import org.senai.cantina_vidal.dto.category.CategoryResponseDTO;
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.service.CategoryService;
 import org.springframework.http.ResponseEntity;

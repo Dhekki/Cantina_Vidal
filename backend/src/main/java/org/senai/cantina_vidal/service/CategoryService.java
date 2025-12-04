@@ -1,7 +1,7 @@
 package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.CategoryRequestDTO;
+import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.repository.CategoryRepository;

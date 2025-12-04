@@ -2,32 +2,32 @@ package org.senai.cantina_vidal.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.ProductRequestDTO;
-import org.senai.cantina_vidal.dto.ProductResponseDTO;
+import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
+import org.senai.cantina_vidal.dto.product.ProductResponseDTO;
 import org.senai.cantina_vidal.entity.Product;
 import org.senai.cantina_vidal.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> findAll() {
-        List<Product> entities = service.findAll();
+    public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+        Page<Product> productPage = service.findAll(pageable);
 
-        List<ProductResponseDTO> dtos = entities.stream()
-                .map(ProductResponseDTO::new)
-                .toList();
+        Page<ProductResponseDTO> dtoPage = productPage.map(ProductResponseDTO::new);
 
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(dtoPage);
     }
 
     @GetMapping("/{id}")
