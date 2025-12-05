@@ -1,8 +1,8 @@
-import * as React from "react";
-import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
+import * as ToastPrimitives from "@radix-ui/react-toast";
+import * as React from "react";
 
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ToastProvider = ToastPrimitives.Provider;
@@ -92,20 +92,21 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
 ));
+
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
-
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export {
   type ToastProps,
   type ToastActionElement,
-  ToastProvider,
-  ToastViewport,
+
   Toast,
   ToastTitle,
-  ToastDescription,
   ToastClose,
   ToastAction,
+  ToastProvider,
+  ToastViewport,
+  ToastDescription,
 };

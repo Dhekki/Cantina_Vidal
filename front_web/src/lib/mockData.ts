@@ -124,11 +124,11 @@ export const mockOrders: Order[] = [
 
 export const categories = [
   'All',
-  'Sandwiches',
-  'Salads',
   'Pizza',
-  'Drinks',
-  'Desserts',
-  'Healthy',
+  'Salads',
   'Combos',
+  'Drinks',
+  'Healthy',
+  'Desserts',
+  'Sandwiches',
 ];

@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
+
 import { LogOut } from 'lucide-react';
+
+import { toast } from '@/hooks/use-toast';
+import { useNotifications } from '@/hooks/useNotifications';
+
 import { Button } from '@/components/ui/button';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { NotificationDropdown } from '@/components/NotificationDropdown';
-import { useNotifications } from '@/hooks/useNotifications';
-import { toast } from '@/hooks/use-toast';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const StaffLayout = () => {
   const navigate = useNavigate();
+  
   const {
     notifications,
     unreadCount,
@@ -22,16 +26,14 @@ const StaffLayout = () => {
 
   useEffect(() => {
     const isAuth = localStorage.getItem('staffAuth');
-    if (!isAuth) {
-      navigate('/staff/login');
-    }
+    if(!isAuth) navigate('/staff/login');
   }, [navigate]);
 
   // Simulate new order notifications - In real app, this would be from websocket/polling
   useEffect(() => {
     const interval = setInterval(() => {
       // Simulate random new orders for demo purposes
-      if (Math.random() > 0.95) {
+      if(Math.random() > 0.95) {
         const orderCode = `#${Math.floor(Math.random() * 9000) + 1000}`;
         addNotification(
           'new_order',
@@ -70,17 +72,15 @@ const StaffLayout = () => {
               </div>
               <div className="flex items-center gap-2">
                 <NotificationDropdown
-                  notifications={notifications}
+                  onClearAll={clearAll}
                   unreadCount={unreadCount}
                   onMarkAsRead={markAsRead}
-                  onMarkAllAsRead={markAllAsRead}
+                  notifications={notifications}
                   onDelete={deleteNotification}
-                  onClearAll={clearAll}
+                  onMarkAllAsRead={markAllAsRead}
                 />
                 <Button variant="outline" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sair
-                </Button>
+                  <LogOut className="h-4 w-4 mr-2" />Sair</Button>
               </div>
             </div>
           </header>

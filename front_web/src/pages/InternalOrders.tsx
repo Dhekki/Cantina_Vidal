@@ -1,19 +1,19 @@
 import { useState, useMemo } from 'react';
-import { Plus, Minus, ShoppingCart, Trash2, Receipt, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Minus, ShoppingCart, Trash2, Receipt, Search } from 'lucide-react';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
@@ -35,12 +35,12 @@ const InternalOrders = () => {
     let result = products;
     
     // Filter by category
-    if (selectedCategory !== 'All') {
+    if(selectedCategory !== 'All') {
       result = result.filter(p => p.category === selectedCategory);
     }
     
     // Filter by search query
-    if (searchQuery.trim()) {
+    if(searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(p =>
         p.name.toLowerCase().includes(query) ||
@@ -55,7 +55,7 @@ const InternalOrders = () => {
   const addToCart = (product: MenuItem) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
-      if (existing) {
+      if(existing) {
         return prev.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -70,7 +70,7 @@ const InternalOrders = () => {
     setCart(prev => {
       return prev
         .map(item => {
-          if (item.id === productId) {
+          if(item.id === productId) {
             const newQuantity = item.quantity + delta;
             return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
           }
@@ -92,7 +92,7 @@ const InternalOrders = () => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleFinishOrder = () => {
-    if (cart.length === 0) {
+    if(cart.length === 0) {
       toast.error('Adicione itens ao pedido');
       return;
     }

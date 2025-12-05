@@ -1,8 +1,8 @@
 import * as React from "react";
+
+import { cn }   from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 
 const Breadcrumb = React.forwardRef<
   HTMLElement,
@@ -28,7 +28,11 @@ BreadcrumbList.displayName = "BreadcrumbList";
 
 const BreadcrumbItem = React.forwardRef<HTMLLIElement, React.ComponentPropsWithoutRef<"li">>(
   ({ className, ...props }, ref) => (
-    <li ref={ref} className={cn("inline-flex items-center gap-1.5", className)} {...props} />
+    <li 
+      ref={ref} 
+      className={cn("inline-flex items-center gap-1.5", className)} 
+      {...props} 
+    />
   ),
 );
 BreadcrumbItem.displayName = "BreadcrumbItem";
@@ -50,8 +54,8 @@ const BreadcrumbPage = React.forwardRef<HTMLSpanElement, React.ComponentPropsWit
     <span
       ref={ref}
       role="link"
-      aria-disabled="true"
       aria-current="page"
+      aria-disabled="true"
       className={cn("font-normal text-foreground", className)}
       {...props}
     />
@@ -68,8 +72,8 @@ BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
 
 const BreadcrumbEllipsis = ({ className, ...props }: React.ComponentProps<"span">) => (
   <span
-    role="presentation"
     aria-hidden="true"
+    role="presentation"
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
@@ -81,10 +85,10 @@ BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
 
 export {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbPage,
+  BreadcrumbList,
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 };

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { OrderCard } from '@/components/staff/OrderCard';
 import { mockOrders } from '@/lib/mockData';
 import { Order, OrderStatus } from '@/types/order';
+import { OrderCard } from '@/components/staff/OrderCard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
-  DialogContent,
-  DialogHeader,
   DialogTitle,
+  DialogHeader,
+  DialogContent,
 } from '@/components/ui/dialog';
 
 const StaffDashboard = () => {

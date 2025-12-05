@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const StaffLogin = () => {
   const navigate = useNavigate();
@@ -42,16 +41,16 @@ const StaffLogin = () => {
             <Input
               id="admin-username"
               type="text"
-              placeholder="Nome de usuário"
               value={username}
+              placeholder="Nome de usuário"
               onChange={(e) => setUsername(e.target.value)}
               required
             />
             <Input
               id="admin-password"
               type="password"
-              placeholder="Senha"
               value={password}
+              placeholder="Senha"
               onChange={(e) => setPassword(e.target.value)}
               maxLength={8}
               required

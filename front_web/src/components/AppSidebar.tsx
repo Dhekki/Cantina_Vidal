@@ -2,20 +2,20 @@ import { LayoutDashboard, Package, ShoppingBag } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   useSidebar,
+  SidebarMenu,
+  SidebarGroup,
+  SidebarContent,
+  SidebarMenuItem,
+  SidebarGroupLabel,
+  SidebarMenuButton,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { CalculatorDialog } from "@/components/CalculatorDialog";
 
 const menuItems = [
-  { title: "Dashboard", url: "/staff/dashboard", icon: LayoutDashboard },
-  { title: "Produtos", url: "/staff/products", icon: Package },
+  { title: "Dashboard",      url: "/staff/dashboard",  icon: LayoutDashboard },
+  { title: "Produtos",       url: "/staff/products",   icon: Package },
   { title: "Pedido Interno", url: "/staff/orders/new", icon: ShoppingBag },
 ];
 

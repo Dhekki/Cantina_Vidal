@@ -1,19 +1,14 @@
-import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { Check, ChevronRight, Circle } from "lucide-react";
 
-const ContextMenu = ContextMenuPrimitive.Root;
-
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
-
-const ContextMenuGroup = ContextMenuPrimitive.Group;
-
-const ContextMenuPortal = ContextMenuPrimitive.Portal;
-
-const ContextMenuSub = ContextMenuPrimitive.Sub;
-
+const ContextMenuSub        = ContextMenuPrimitive.Sub;
+const ContextMenu           = ContextMenuPrimitive.Root;
+const ContextMenuGroup      = ContextMenuPrimitive.Group;
+const ContextMenuPortal     = ContextMenuPrimitive.Portal;
+const ContextMenuTrigger    = ContextMenuPrimitive.Trigger;
 const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 
 const ContextMenuSubTrigger = React.forwardRef<
@@ -150,7 +145,11 @@ const ContextMenuSeparator = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.Separator ref={ref} className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />
+  <ContextMenuPrimitive.Separator 
+    ref={ref} 
+    className={cn("-mx-1 my-1 h-px bg-border", className)} 
+    {...props} 
+  />
 ));
 ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
 
@@ -161,18 +160,18 @@ ContextMenuShortcut.displayName = "ContextMenuShortcut";
 
 export {
   ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuCheckboxItem,
-  ContextMenuRadioItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuGroup,
-  ContextMenuPortal,
   ContextMenuSub,
+  ContextMenuItem,
+  ContextMenuGroup,
+  ContextMenuLabel,
+  ContextMenuPortal,
+  ContextMenuContent,
+  ContextMenuTrigger,
+  ContextMenuShortcut,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuRadioGroup,
+  ContextMenuCheckboxItem,
 };

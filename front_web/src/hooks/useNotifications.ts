@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
 import { Notification, NotificationType } from '@/types/notification';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -23,9 +23,7 @@ export const useNotifications = () => {
     setNotifications(prev => [newNotification, ...prev]);
 
     // Play notification sound
-    if (type === 'new_order') {
-      playNotificationSound();
-    }
+    if(type === 'new_order') playNotificationSound();
 
     return newNotification;
   }, []);
@@ -55,13 +53,13 @@ export const useNotifications = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return {
+    clearAll,
+    markAsRead,
+    unreadCount,
+    markAllAsRead,
     notifications,
     addNotification,
-    markAsRead,
-    markAllAsRead,
     deleteNotification,
-    clearAll,
-    unreadCount,
   };
 };
 
@@ -82,7 +80,7 @@ const playNotificationSound = () => {
 
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.3);
-  } catch (error) {
+  } catch(error) {
     console.log('Audio notification not supported');
   }
 };

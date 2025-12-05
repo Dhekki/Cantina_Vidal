@@ -8,14 +8,18 @@ import { formatDistanceToNow } from 'date-fns';
 interface OrderCardProps {
   order: Order;
   onStatusChange: (orderId: string, newStatus: Order['status']) => void;
-  onViewDetails: (order: Order) => void;
+  onViewDetails:  (order: Order) => void;
 }
 
 export const OrderCard = ({ order, onStatusChange, onViewDetails }: OrderCardProps) => {
   const getNextStatus = (currentStatus: Order['status']): Order['status'] | null => {
+
     const statusFlow: Order['status'][] = ['received', 'preparing', 'ready', 'delivered'];
     const currentIndex = statusFlow.indexOf(currentStatus);
-    return currentIndex < statusFlow.length - 1 ? statusFlow[currentIndex + 1] : null;
+
+    return currentIndex < statusFlow.length - 1 
+           ? statusFlow[currentIndex + 1] 
+           : null;
   };
 
   const nextStatus = getNextStatus(order.status);
@@ -41,9 +45,12 @@ export const OrderCard = ({ order, onStatusChange, onViewDetails }: OrderCardPro
             <User className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">{order.student.name}</span>
           </div>
+
           <div className="flex items-center gap-2 text-sm">
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Class {order.student.studentClass}</span>
+            <span className="text-muted-foreground">
+              Class {order.student.studentClass}
+            </span>
           </div>
         </div>
 
@@ -51,6 +58,7 @@ export const OrderCard = ({ order, onStatusChange, onViewDetails }: OrderCardPro
           <div className="text-sm text-muted-foreground mb-2">
             {order.items.length} item(s) • ${order.total.toFixed(2)}
           </div>
+          
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -60,6 +68,7 @@ export const OrderCard = ({ order, onStatusChange, onViewDetails }: OrderCardPro
             >
               View Details
             </Button>
+
             {nextStatus && (
               <Button
                 size="sm"

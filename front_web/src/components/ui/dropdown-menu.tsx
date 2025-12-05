@@ -1,19 +1,14 @@
-import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
+import * as React from "react";
 
+import { Check, ChevronRight, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const DropdownMenu = DropdownMenuPrimitive.Root;
-
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
-
-const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
-
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
-
+const DropdownMenuSub        = DropdownMenuPrimitive.Sub;
+const DropdownMenu           = DropdownMenuPrimitive.Root;
+const DropdownMenuGroup      = DropdownMenuPrimitive.Group;
+const DropdownMenuPortal     = DropdownMenuPrimitive.Portal;
+const DropdownMenuTrigger    = DropdownMenuPrimitive.Trigger;
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
 const DropdownMenuSubTrigger = React.forwardRef<
@@ -55,7 +50,11 @@ DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayNam
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
+>(({ 
+    className, 
+    sideOffset = 4, 
+    ...props 
+  }, ref) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
       ref={ref}
@@ -151,7 +150,11 @@ const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <DropdownMenuPrimitive.Separator ref={ref} className={cn("-mx-1 my-1 h-px bg-muted", className)} {...props} />
+  <DropdownMenuPrimitive.Separator 
+    ref={ref} 
+    className={cn("-mx-1 my-1 h-px bg-muted", className)} 
+    {...props} 
+  />
 ));
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
@@ -162,18 +165,18 @@ DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
 export {
   DropdownMenu,
+  DropdownMenuSub,
+  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuCheckboxItem,
-  DropdownMenuRadioItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuGroup,
-  DropdownMenuPortal,
-  DropdownMenuSub,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
+  DropdownMenuSubTrigger,
+  DropdownMenuCheckboxItem,
 };

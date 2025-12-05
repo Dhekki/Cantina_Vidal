@@ -1,42 +1,42 @@
 import { useState, useMemo } from 'react';
-import { Plus, Pencil, Trash2, Eye, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { Plus, Pencil, Trash2, Eye, Search } from 'lucide-react';
 import {
   Table,
+  TableRow,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from '@/components/ui/table';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
+  AlertDialogTitle,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogContent,
+  AlertDialogDescription,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
@@ -53,12 +53,12 @@ const ProductsManagement = () => {
     let result = products;
     
     // Filter by category
-    if (selectedCategory !== 'All') {
+    if(selectedCategory !== 'All') {
       result = result.filter(p => p.category === selectedCategory);
     }
     
     // Filter by search query
-    if (searchQuery.trim()) {
+    if(searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(p =>
         p.name.toLowerCase().includes(query) ||
@@ -69,6 +69,7 @@ const ProductsManagement = () => {
     
     return result;
   }, [products, selectedCategory, searchQuery]);
+  
   const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
   const [isUnsavedChangesDialogOpen, setIsUnsavedChangesDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);

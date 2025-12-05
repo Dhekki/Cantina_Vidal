@@ -1,14 +1,15 @@
-import { useState } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
+  DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,14 +29,15 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
   const editableCategories = categories.filter(c => c !== 'All');
 
   const handleAddCategory = () => {
-    if (!newCategory.trim()) {
+    if(!newCategory.trim()) {
       toast.error('Digite o nome da categoria');
       return;
     }
-    if (categories.includes(newCategory.trim())) {
+    if(categories.includes(newCategory.trim())) {
       toast.error('Categoria já existe');
       return;
     }
+
     onCategoriesChange([...categories, newCategory.trim()]);
     setNewCategory('');
     toast.success('Categoria adicionada');
@@ -43,11 +45,14 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
 
   const handleEditCategory = (index: number) => {
     const actualIndex = categories.indexOf(editableCategories[index]);
-    if (editingCategory && editingCategory.value.trim()) {
+
+    if(editingCategory && editingCategory.value.trim()) {
       const updated = [...categories];
+
       updated[actualIndex] = editingCategory.value.trim();
       onCategoriesChange(updated);
       setEditingCategory(null);
+      
       toast.success('Categoria atualizada');
     }
   };

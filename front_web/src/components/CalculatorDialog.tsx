@@ -1,13 +1,14 @@
-import { useState } from 'react';
 import { Calculator } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+
 import {
   Dialog,
-  DialogContent,
-  DialogHeader,
   DialogTitle,
+  DialogHeader,
   DialogTrigger,
+  DialogContent,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 export const CalculatorDialog = () => {
   const [display, setDisplay] = useState('0');
@@ -16,7 +17,7 @@ export const CalculatorDialog = () => {
   const [waitingForOperand, setWaitingForOperand] = useState(false);
 
   const inputDigit = (digit: string) => {
-    if (waitingForOperand) {
+    if(waitingForOperand) {
       setDisplay(digit);
       setWaitingForOperand(false);
     } else {
@@ -25,12 +26,12 @@ export const CalculatorDialog = () => {
   };
 
   const inputDecimal = () => {
-    if (waitingForOperand) {
+    if(waitingForOperand) {
       setDisplay('0.');
       setWaitingForOperand(false);
       return;
     }
-    if (!display.includes('.')) {
+    if(!display.includes('.')) {
       setDisplay(display + '.');
     }
   };
@@ -45,9 +46,9 @@ export const CalculatorDialog = () => {
   const performOperation = (nextOperator: string) => {
     const inputValue = parseFloat(display);
 
-    if (previousValue === null) {
+    if(previousValue === null) {
       setPreviousValue(inputValue);
-    } else if (operator) {
+    } else if(operator) {
       const result = calculate(previousValue, inputValue, operator);
       setDisplay(String(result));
       setPreviousValue(result);
@@ -63,17 +64,19 @@ export const CalculatorDialog = () => {
       case '-': return a - b;
       case '×': return a * b;
       case '÷': return b !== 0 ? a / b : 0;
-      default: return b;
+      default : return b;
     }
   };
 
   const handleEquals = () => {
-    if (operator && previousValue !== null) {
+    if(operator && previousValue !== null) {
       const inputValue = parseFloat(display);
       const result = calculate(previousValue, inputValue, operator);
+
       setDisplay(String(result));
-      setPreviousValue(null);
+
       setOperator(null);
+      setPreviousValue(null);
       setWaitingForOperand(true);
     }
   };
@@ -88,7 +91,7 @@ export const CalculatorDialog = () => {
     setDisplay(String(value * -1));
   };
 
-  const buttonClass = "h-14 text-lg font-medium";
+  const buttonClass   = "h-14 text-lg font-medium";
   const operatorClass = "bg-primary text-primary-foreground hover:bg-primary/90";
   const functionClass = "bg-muted hover:bg-muted/80";
 

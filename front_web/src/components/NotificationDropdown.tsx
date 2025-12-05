@@ -1,15 +1,17 @@
 import { Bell, Check, Trash2, Package, AlertCircle, Info } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Notification } from '@/types/notification';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -24,7 +26,7 @@ interface NotificationDropdownProps {
 }
 
 const getNotificationIcon = (type: Notification['type']) => {
-  switch (type) {
+  switch(type) {
     case 'new_order':
       return <Package className="h-4 w-4 text-primary" />;
     case 'order_ready':
