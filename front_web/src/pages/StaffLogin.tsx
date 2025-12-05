@@ -8,13 +8,15 @@ import { toast } from 'sonner';
 
 const StaffLogin = () => {
   const navigate = useNavigate();
-  const [pin, setPin] = useState('');
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple PIN check for demo (in production, use proper auth)
-    if (pin === '1234') {
+    // Simple credential validation for testing
+    if(password === '1234') {
       localStorage.setItem('staffAuth', 'true');
       navigate('/staff/dashboard');
     } else {
@@ -24,34 +26,43 @@ const StaffLogin = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-6">
+      <div className="max-w-sm w-full space-y-10 p-12 shadow-lg rounded-lg">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-            <Lock className="h-8 w-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-4">
+            <img src="/imgs/logo-restaurante-vidal-circle.png" alt="Logo Restaurante Vidal" />
           </div>
-          <h1 className="text-3xl font-bold">Staff Login</h1>
-          <p className="text-muted-foreground mt-2">
-            Enter your PIN to access the operational panel
+          <h1 className="text-3xl font-semibold text-neutral-600">Gestão Vidal</h1>
+          <p className="text-muted-foreground mt-2 text-neutral-500">
+            Acesse sua conta para entrar no painel administrativo.
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="pin">PIN Code</Label>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-6">
             <Input
-              id="pin"
-              type="password"
-              placeholder="Enter PIN"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              maxLength={4}
+              id="admin-username"
+              type="text"
+              placeholder="Nome de usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
-            <p className="text-xs text-muted-foreground">Demo PIN: 1234</p>
+            <Input
+              id="admin-password"
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              maxLength={8}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Para testes: 1234
+            </p>
           </div>
 
           <Button type="submit" size="lg" className="w-full">
-            Login
+            Acessar Painel
           </Button>
         </form>
       </div>
