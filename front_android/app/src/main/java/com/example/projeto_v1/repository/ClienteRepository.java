@@ -49,21 +49,29 @@ public class ClienteRepository {
     public MutableLiveData<Boolean> inserirCliente(Cliente cliente) {
         MutableLiveData<Boolean> sucesso = new MutableLiveData<>();
 
+        // Conferir no LogCat se o cliente realmente foi cadastrado.
+        Log.d("CADASTRO_MOCK", "Cliente simulado: " + cliente.getNome() +
+                " | Email: " + cliente.getEmail() + " | Senha: " + cliente.getSenha());
 
-        apiService.inserirCliente(API_KEY, AUTH, cliente).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                sucesso.setValue(response.isSuccessful());
-            }
-
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                sucesso.setValue(false);
-            }
-        });
-
-
+        // Remover essa parte do código quando tiver a API_KEY.
+        sucesso.setValue(true);
         return sucesso;
+
+        // Descomentar essa parte do código quando tiver a API_KEY.
+//        apiService.inserirCliente(API_KEY, AUTH, cliente).enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//                sucesso.setValue(response.isSuccessful());
+//            }
+//
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//                sucesso.setValue(false);
+//            }
+//        });
+//
+//
+//        return sucesso;
     }
 }

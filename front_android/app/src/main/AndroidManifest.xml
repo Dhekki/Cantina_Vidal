@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,10 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Projeto_v1">
-        <activity
-            android:name=".view.LoginClienteActivity"
-            android:exported="false" />
-        <!-- Activity principal (launcher) -->
         <activity
             android:name=".view.MainActivity"
             android:exported="true">
@@ -28,6 +25,9 @@
         </activity> <!-- Outras activities do projeto -->
         <activity
             android:name=".view.CadastroClienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.LoginClienteActivity"
             android:exported="false" />
     </application>
 

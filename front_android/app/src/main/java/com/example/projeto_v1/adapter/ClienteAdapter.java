@@ -42,8 +42,9 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Cliente c = lista.get(position);
-        holder.nome.setText(c.getNome());
-        holder.email.setText(c.getEmail());
+//        holder.txtNome.setText(c.getNome());
+//        holder.txtEmail.setText(c.getEmail());
+//        holder.txtSenha.setText(c.getSenha());
     }
 
 
@@ -56,13 +57,14 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
 
 
-        TextView nome, email;
+//        TextView txtNome, txtEmail, txtSenha;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nome = itemView.findViewById(R.id.nome);
-            email = itemView.findViewById(R.id.email);
+//            txtNome = itemView.findViewById(R.id.txtNome);
+//            txtEmail = itemView.findViewById(R.id.txtEmail);
+//            txtSenha = itemView.findViewById(R.id.txtSenha);
         }
     }
 }

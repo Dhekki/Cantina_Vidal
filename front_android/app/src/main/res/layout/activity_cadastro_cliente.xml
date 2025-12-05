@@ -55,10 +55,10 @@
                     android:layout_marginEnd="10dp"/>
 
                 <EditText
-                    android:id="@+id/nome"
+                    android:id="@+id/edtNome"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Seu nome"
+                    android:hint=" Seu nome"
                     android:textColorHint="@color/cinza"
                     android:textColor="@color/black"
                     android:background="@android:color/transparent"
@@ -82,10 +82,10 @@
                     android:layout_marginEnd="10dp"/>
 
                 <EditText
-                    android:id="@+id/email"
+                    android:id="@+id/edtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Seu email"
+                    android:hint=" Seu email"
                     android:textColorHint="@color/cinza"
                     android:textColor="@color/black"
                     android:background="@android:color/transparent"
@@ -104,7 +104,7 @@
                 app:boxBackgroundMode="none" >
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/senha"
+                    android:id="@+id/edtSenha"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:background="@drawable/shape_linha"
@@ -130,7 +130,7 @@
                 app:boxBackgroundMode="none" >
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/senha2"
+                    android:id="@+id/edtConfirmSenha"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:background="@drawable/shape_linha"
@@ -173,6 +173,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
+                    android:onClick="goTelaLogin"
                     android:text="Fazer login"
                     android:textColor="@color/laranja" />
             </LinearLayout>
