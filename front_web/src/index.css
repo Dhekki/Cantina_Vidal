@@ -14,10 +14,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47% 11%;
 
-    --primary: 25 95% 53%;
+    --primary: 40 74% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 25 95% 53%;
+    --secondary: 40 74% 52%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 25 95% 53%;
+    --ring: 40 74% 52%;
 
     --radius: 0.5rem;
 
@@ -39,10 +39,10 @@
     --info: 199 89% 48%;
 
     /* Status colors */
-    --status-received: 45 93% 58%;
-    --status-preparing: 217 91% 60%;
-    --status-ready: 142 76% 36%;
-    --status-delivered: 215 16% 47%;
+    --status-received:   0 139 210;
+    --status-preparing:  226 169 59;
+    --status-ready:      62 166 90;
+    --status-delivered:  82 174 50;
 
     /* Additional design tokens */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -63,7 +63,7 @@
     --primary: 142 76% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 25 95% 53%;
+    --secondary: 40 74% 52%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;

@@ -61,8 +61,8 @@ export const OrderCard = ({ order, onStatusChange, onViewDetails }: OrderCardPro
           
           <div className="flex gap-2">
             <Button
-              variant="outline"
               size="sm"
+              variant="outline"
               onClick={() => onViewDetails(order)}
               className="flex-1"
             >

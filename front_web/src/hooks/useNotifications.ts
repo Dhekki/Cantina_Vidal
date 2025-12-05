@@ -1,4 +1,4 @@
-import { Notification, NotificationType } from '@/types/notification';
+import { Notification, NotificationType }   from '@/types/notification';
 import { useState, useEffect, useCallback } from 'react';
 
 export const useNotifications = () => {

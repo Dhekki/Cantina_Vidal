@@ -27,10 +27,10 @@ const StaffDashboard = () => {
   };
 
   const statusTabs = [
-    { value: 'all', label: 'All Orders', count: orders.length },
-    { value: 'received', label: 'Received', count: getOrdersByStatus('received').length },
-    { value: 'preparing', label: 'Preparing', count: getOrdersByStatus('preparing').length },
-    { value: 'ready', label: 'Ready', count: getOrdersByStatus('ready').length },
+    { value: 'all',       label: 'All Orders', count: orders.length },
+    { value: 'received',  label: 'Received',   count: getOrdersByStatus('received').length },
+    { value: 'preparing', label: 'Preparing',  count: getOrdersByStatus('preparing').length },
+    { value: 'ready',     label: 'Ready',      count: getOrdersByStatus('ready').length },
   ];
 
   return (

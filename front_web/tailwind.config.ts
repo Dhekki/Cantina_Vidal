@@ -48,10 +48,22 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         status: {
-          received: "hsl(var(--status-received))",
-          preparing: "hsl(var(--status-preparing))",
-          ready: "hsl(var(--status-ready))",
-          delivered: "hsl(var(--status-delivered))",
+          received: {
+            primary:   "rgb(var(--status-received))",
+            secondary: "rgba(var(--status-received) / 0.14)",
+          },
+          preparing: {
+            primary:   "rgb(var(--status-preparing))",
+            secondary: "rgba(var(--status-preparing) / 0.14)",
+          },
+          ready: {
+            primary:   "rgb(var(--status-ready))",
+            secondary: "rgba(var(--status-ready) / 0.14)",
+          },
+          delivered: {
+            primary:   "rgb(var(--status-delivered))",
+            secondary: "rgba(var(--status-delivered) / 0.14)",
+          },
         },
         success: "hsl(var(--success))",
         info: "hsl(var(--info))",
@@ -85,5 +97,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [],
 } satisfies Config;
