@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogContent,
 } from '@/components/ui/dialog';
+import { FileX } from 'lucide-react';
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
@@ -49,14 +50,46 @@ const StaffDashboard = () => {
             {statusTabs.map((tab) => (
               <StatusTabsTrigger key={tab.value} value={tab.value} status={tab.value} className="relative">
                 {tab.label}
-                  <span className={`ml-2 bg-status-${tab.value}-secondary text-status-${tab.value}-primary border border-status-${tab.value}-primary w-6 h-6 flex justify-center items-center rounded-full text-xs font-bold text-center`}>
-                    {tab.count}
-                  </span>
+                <span className={`ml-2 bg-status-${tab.value}-secondary text-status-${tab.value}-primary border border-status-${tab.value}-primary w-6 h-6 flex justify-center items-center rounded-full text-xs font-bold text-center`}>
+                  {tab.count}
+                </span>
               </StatusTabsTrigger>
             ))}
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
+            <div
+              className="
+                grid
+                gap-4
+                w-full
+                grid-cols-[repeat(auto-fit,minmax(0,400px))]
+                justify-items-start
+                justify-start
+                items-stretch
+              "
+            >
+              {orders.map((order) => (
+                <div key={order.id} className="w-full max-w-[400px]">
+                  <OrderCard
+                    order={order}
+                    onViewDetails={setSelectedOrder}
+                    onStatusChange={handleStatusChange}
+                  />
+                </div>
+              ))}
+            </div>
+            {orders.length === 0 && (
+              <div className="text-center w-full flex flex-col items-center justify-center max-w-6xl  border border-slate-100 bg-black">
+                <p className="text-slate-600 text-3xl">
+                  Nenhum pedido encontrado
+                </p>
+              </div>
+            )}
+          </TabsContent>
+
+          {(['received', 'preparing', 'ready', 'delivered', 'canceled'] as OrderStatus[]).map((status) => (
+            <TabsContent key={status} value={status} className="space-y-4">
               <div
                 className="
                   grid
@@ -68,31 +101,6 @@ const StaffDashboard = () => {
                   items-stretch
                 "
               >
-              {orders.map((order) => (
-                <div key={order.id} className="w-full max-w-[400px]">
-                  <OrderCard
-                    order={order}
-                    onViewDetails={setSelectedOrder}
-                    onStatusChange={handleStatusChange}
-                  />
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-
-          {(['received', 'preparing', 'ready'] as OrderStatus[]).map((status) => (
-            <TabsContent key={status} value={status} className="space-y-4">
-                <div
-                  className="
-                    grid
-                    gap-4
-                    w-full
-                    grid-cols-[repeat(auto-fit,minmax(0,400px))]
-                    justify-items-start
-                    justify-start
-                    items-stretch
-                  "
-                >
                 {getOrdersByStatus(status).map((order) => (
                   <div key={order.id} className="w-full max-w-[400px]">
                     <OrderCard
@@ -104,8 +112,15 @@ const StaffDashboard = () => {
                 ))}
               </div>
               {getOrdersByStatus(status).length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No {status} orders</p>
+                <div className="text-center w-full flex flex-col items-center justify-center border border-slate-100 max-w-6xl p-16 rounded-md space-y-3 shadow-sm">
+                  <FileX className="text-gray-400 h-9 w-9" />
+
+                  <p className="text-gray-500 text-3xl">
+                    Nenhum pedido {status === 'received'  ? 'recebido'   : 
+                                   status === 'preparing' ? 'em preparo' : 
+                                   status === 'ready'     ? 'pronto'     : 
+                                   status === 'delivered' ? 'entregue'   : 'cancelado'}
+                  </p>
                 </div>
               )}
             </TabsContent>
@@ -116,7 +131,9 @@ const StaffDashboard = () => {
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Detalhes do Pedido - {selectedOrder?.orderCode}</DialogTitle>
+            <DialogTitle>
+              Detalhes do Pedido - {selectedOrder?.orderCode}
+            </DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">

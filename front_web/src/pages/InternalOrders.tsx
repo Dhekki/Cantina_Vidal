@@ -167,7 +167,7 @@ const InternalOrders = () => {
                       <span className="text-primary font-bold">
                         R$ {product.price.toFixed(2)}
                       </span>
-                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
+                      <Button size="sm" variant="outline" className="h-7 w-7 p-0">
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
@@ -243,8 +243,8 @@ const InternalOrders = () => {
                             <Plus className="h-3 w-3" />
                           </Button>
                           <Button
-                            variant="ghost"
                             size="icon"
+                            variant="outline"
                             className="h-7 w-7 text-destructive"
                             onClick={() => removeFromCart(item.id)}
                           >
