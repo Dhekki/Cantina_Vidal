@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { mockOrders } from '@/lib/mockData';
 import { Order, OrderStatus } from '@/types/order';
 import { OrderCard } from '@/components/staff/OrderCard';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
+import { StatusTabsTrigger } from '@/components/ui/status-tabs-trigger';
 import {
   Dialog,
   DialogTitle,
@@ -27,25 +28,31 @@ const StaffDashboard = () => {
   };
 
   const statusTabs = [
-    { value: 'all',       label: 'All Orders', count: orders.length },
-    { value: 'received',  label: 'Received',   count: getOrdersByStatus('received').length },
-    { value: 'preparing', label: 'Preparing',  count: getOrdersByStatus('preparing').length },
-    { value: 'ready',     label: 'Ready',      count: getOrdersByStatus('ready').length },
+    { value: 'all' as const,       label: 'Todos os Pedidos', count: orders.length },
+    { value: 'received' as const,  label: 'Recebidos',   count: getOrdersByStatus('received').length },
+    { value: 'preparing' as const, label: 'Em Preparo',  count: getOrdersByStatus('preparing').length },
+    { value: 'ready' as const,     label: 'Feitos',      count: getOrdersByStatus('ready').length },
   ];
 
   return (
     <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-semibold text-neutral-700">Pedidos</h1>
+          <p className="text-sm text-muted-foreground">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elitsed consectetur.
+          </p>
+        </div>
         <Tabs defaultValue="all" className="space-y-6">
           <TabsList className="grid w-full max-w-2xl grid-cols-4">
             {statusTabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value} className="relative">
+              <StatusTabsTrigger key={tab.value} value={tab.value} status={tab.value} className="relative">
                 {tab.label}
                 {tab.count > 0 && (
                   <span className="ml-2 bg-primary/20 text-primary px-2 py-0.5 rounded-full text-xs font-bold">
                     {tab.count}
                   </span>
                 )}
-              </TabsTrigger>
+              </StatusTabsTrigger>
             ))}
           </TabsList>
 

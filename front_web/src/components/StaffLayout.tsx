@@ -65,10 +65,6 @@ const StaffLayout = () => {
             <div className="flex items-center justify-between px-4 py-4">
               <div className="flex items-center gap-2">
                 <SidebarTrigger />
-                <div>
-                  <h1 className="text-2xl font-bold">Canteen Operations</h1>
-                  <p className="text-sm text-muted-foreground">Sistema de gestão</p>
-                </div>
               </div>
               <div className="flex items-center gap-2">
                 <NotificationDropdown
