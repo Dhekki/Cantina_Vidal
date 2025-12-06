@@ -1,4 +1,4 @@
-export type OrderStatus = 'received' | 'preparing' | 'ready' | 'delivered';
+export type OrderStatus = 'received' | 'preparing' | 'ready' | 'delivered' | 'canceled';
 
 export interface MenuItem {
   id: string;

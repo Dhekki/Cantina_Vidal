@@ -28,6 +28,10 @@ const statusColorMap = {
     active: "data-[state=active]:bg-status-delivered-secondary data-[state=active]:text-status-delivered-primary data-[state=active]:border-status-delivered-primary",
     inactive: "border-input"
   },
+  canceled: {
+    active: "data-[state=active]:bg-status-canceled-secondary data-[state=active]:text-status-canceled-primary data-[state=active]:border-status-canceled-primary",
+    inactive: "border-input"
+  },
 };
 
 export const StatusTabsTrigger = React.forwardRef<

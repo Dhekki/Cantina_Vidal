@@ -101,7 +101,6 @@ export const mockOrders: Order[] = [
     ],
     student: {
       name: 'Liam Smith',
-      // studentClass: '9B',
     },
     status: 'preparing',
     createdAt: new Date(Date.now() - 1000 * 60 * 10),
@@ -116,7 +115,6 @@ export const mockOrders: Order[] = [
     ],
     student: {
       name: 'Sophia Williams',
-      // studentClass: '11C',
     },
     status: 'ready',
     createdAt: new Date(Date.now() - 1000 * 60 * 15),

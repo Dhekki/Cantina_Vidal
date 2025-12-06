@@ -28,6 +28,11 @@ const statusConfig = {
     color: "bg-status-delivered-secondary text-status-delivered-primary border border-status-delivered-primary whitespace-nowrap",
     icon:  Package,
   },
+  canceled: {
+    label: 'Cancelado',
+    color: "bg-status-canceled-secondary text-status-canceled-primary border border-status-canceled-primary whitespace-nowrap",
+    icon:  Package,
+  },
 };
 
 export const OrderStatusBadge = ({ status, className }: OrderStatusBadgeProps) => {

@@ -66,8 +66,8 @@ export const NotificationDropdown = ({
           <span>Notificações</span>
           {notifications.length > 0 && (
             <Button
-              variant="ghost"
               size="sm"
+              variant="outline"
               onClick={onMarkAllAsRead}
               className="h-6 text-xs"
             >
@@ -110,8 +110,8 @@ export const NotificationDropdown = ({
                   <div className="flex gap-1">
                     {!notification.read && (
                       <Button
-                        variant="ghost"
                         size="icon"
+                        variant="outline"
                         className="h-6 w-6"
                         onClick={() => onMarkAsRead(notification.id)}
                       >
@@ -119,8 +119,8 @@ export const NotificationDropdown = ({
                       </Button>
                     )}
                     <Button
-                      variant="ghost"
                       size="icon"
+                      variant="outline"
                       className="h-6 w-6"
                       onClick={() => onDelete(notification.id)}
                     >

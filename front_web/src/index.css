@@ -43,6 +43,7 @@
     --status-preparing:  226 169 59;
     --status-ready:      62 166 90;
     --status-delivered:  82 174 50;
+    --status-canceled:   216 74 42;
 
     /* Additional design tokens */
     --menu-item: 83 83 83;

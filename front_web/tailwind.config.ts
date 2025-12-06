@@ -67,6 +67,10 @@ export default {
             primary:   "rgb(var(--status-delivered))",
             secondary: "rgba(var(--status-delivered) / 0.14)",
           },
+          canceled: {
+            primary:   "rgb(var(--status-canceled))",
+            secondary: "rgba(var(--status-canceled) / 0.14)",
+          },
         },
         success: "hsl(var(--success))",
         info: "hsl(var(--info))",

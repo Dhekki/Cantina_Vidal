@@ -17,6 +17,7 @@ const statusMessages: Record<Order["status"], string> = {
   preparing: "Em preparo",
   ready:     "Feito",
   delivered: "Entregue",
+  canceled:  "Cancelado",
 };
 
 export const OrderCard: React.FC<OrderCardProps> = ({
@@ -25,7 +26,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   onViewDetails,
 }) => {
   const getNextStatus = (currentStatus: Order["status"]): Order["status"] | null => {
-    const statusFlow: Order["status"][] = ["received", "preparing", "ready", "delivered"];
+    const statusFlow: Order["status"][] = ["received", "preparing", "ready", "delivered", "canceled"];
     const currentIndex = statusFlow.indexOf(currentStatus);
 
     return currentIndex < 0 || currentIndex >= statusFlow.length - 1

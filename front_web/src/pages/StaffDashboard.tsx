@@ -28,10 +28,12 @@ const StaffDashboard = () => {
   };
 
   const statusTabs = [
-    { value: 'all' as const,       label: 'Todos os Pedidos', count: orders.length },
-    { value: 'received' as const,  label: 'Recebidos',   count: getOrdersByStatus('received').length },
-    { value: 'preparing' as const, label: 'Em Preparo',  count: getOrdersByStatus('preparing').length },
-    { value: 'ready' as const,     label: 'Feitos',      count: getOrdersByStatus('ready').length },
+    { value: 'all'       as const, label: 'Todos os Pedidos', count: orders.length },
+    { value: 'received'  as const, label: 'Recebidos',        count: getOrdersByStatus('received').length },
+    { value: 'preparing' as const, label: 'Em Preparo',       count: getOrdersByStatus('preparing').length },
+    { value: 'ready'     as const, label: 'Feitos',           count: getOrdersByStatus('ready').length },
+    { value: 'delivered' as const, label: 'Entregues',        count: getOrdersByStatus('delivered').length},
+    { value: 'canceled'  as const, label: 'Cancelados',       count: getOrdersByStatus('canceled').length},
   ];
 
   return (
@@ -43,15 +45,13 @@ const StaffDashboard = () => {
           </p>
         </div>
         <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full max-w-3xl grid-cols-4">
+          <TabsList className="grid w-full max-w-6xl h-fit grid-cols-6">
             {statusTabs.map((tab) => (
               <StatusTabsTrigger key={tab.value} value={tab.value} status={tab.value} className="relative">
                 {tab.label}
-                {tab.count > 0 && (
                   <span className={`ml-2 bg-status-${tab.value}-secondary text-status-${tab.value}-primary border border-status-${tab.value}-primary w-6 h-6 flex justify-center items-center rounded-full text-xs font-bold text-center`}>
-                    <p>{tab.count}</p>
+                    {tab.count}
                   </span>
-                )}
               </StatusTabsTrigger>
             ))}
           </TabsList>
