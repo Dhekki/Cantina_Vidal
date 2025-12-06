@@ -79,13 +79,13 @@ export const mockOrders: Order[] = [
   {
     id: '1',
     orderCode: 'A123',
+    pickUpTime: '12:45',
     items: [
       { ...mockMenuItems[0], quantity: 1 },
       { ...mockMenuItems[3], quantity: 1 },
     ],
     student: {
-      name: 'Emma Johnson',
-      studentClass: '10A',
+      name: 'Emma Johnson'
     },
     status: 'received',
     createdAt: new Date(Date.now() - 1000 * 60 * 5),
@@ -94,13 +94,14 @@ export const mockOrders: Order[] = [
   {
     id: '2',
     orderCode: 'B456',
+    pickUpTime: '10:25',
     items: [
       { ...mockMenuItems[2], quantity: 2 },
       { ...mockMenuItems[4], quantity: 1 },
     ],
     student: {
       name: 'Liam Smith',
-      studentClass: '9B',
+      // studentClass: '9B',
     },
     status: 'preparing',
     createdAt: new Date(Date.now() - 1000 * 60 * 10),
@@ -109,12 +110,13 @@ export const mockOrders: Order[] = [
   {
     id: '3',
     orderCode: 'C789',
+    pickUpTime: '11:00',
     items: [
       { ...mockMenuItems[7], quantity: 1 },
     ],
     student: {
       name: 'Sophia Williams',
-      studentClass: '11C',
+      // studentClass: '11C',
     },
     status: 'ready',
     createdAt: new Date(Date.now() - 1000 * 60 * 15),

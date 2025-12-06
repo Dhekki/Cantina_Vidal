@@ -16,13 +16,13 @@ export interface CartItem extends MenuItem {
 
 export interface StudentInfo {
   name: string;
-  studentClass: string;
   studentId?: string;
 }
 
 export interface Order {
   id: string;
   orderCode: string;
+  pickUpTime: string;
   items: CartItem[];
   student: StudentInfo;
   status: OrderStatus;
