@@ -26,7 +26,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Canteen Operations</SidebarGroupLabel>
+          <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -35,10 +35,12 @@ export function AppSidebar() {
                     <NavLink 
                       to={item.url} 
                       end 
-                      className="hover:bg-accent"
-                      activeClassName="bg-accent text-accent-foreground font-medium"
+                      className="hover:bg-accent py-6 px-4 text-lg font-medium text-menu-color gap-4 items-center border border-transparent"
+                      activeClassName="bg-accent text-accent-foreground border border-accent-foreground"
                     >
-                      <item.icon className="h-4 w-4" />
+                      <span className="icon w-5">
+                        <item.icon />
+                      </span>
                       {open && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
