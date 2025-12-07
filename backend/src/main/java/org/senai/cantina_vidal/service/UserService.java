@@ -16,10 +16,6 @@ import java.util.List;
 public class UserService {
     private final UserRepository repository;
 
-    public List<User> findAllByRole(Role role) {
-        return repository.findAllByRole(role);
-    }
-
     public User findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o id: " + id));
