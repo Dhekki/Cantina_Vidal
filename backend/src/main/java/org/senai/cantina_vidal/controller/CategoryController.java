@@ -6,6 +6,9 @@ import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
 import org.senai.cantina_vidal.dto.category.CategoryResponseDTO;
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.service.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,14 +23,12 @@ public class CategoryController {
     private final CategoryService service;
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> findAll() {
-        List<Category> entities = service.findAll();
+    public ResponseEntity<Page<CategoryResponseDTO>> findAll(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+        Page<Category> entitiesPage = service.findAll(pageable);
 
-        List<CategoryResponseDTO> dtos = entities.stream()
-                .map(CategoryResponseDTO::new)
-                .toList();
+        Page<CategoryResponseDTO> dtoPage = entitiesPage.map(CategoryResponseDTO::new);
 
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(dtoPage);
     }
 
     @GetMapping("/{id}")
