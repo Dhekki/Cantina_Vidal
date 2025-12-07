@@ -5,6 +5,8 @@ export interface MenuItem {
   name: string;
   description: string;
   price: number;
+  inStock: number;
+  availableToPickUp: number;
   category: string;
   image: string;
   available: boolean;

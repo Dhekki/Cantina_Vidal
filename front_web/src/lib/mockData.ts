@@ -4,6 +4,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '1',
     name: 'Chicken Sandwich',
+    inStock: 12,
+    availableToPickUp: 5,
     description: 'Grilled chicken with lettuce, tomato, and mayo',
     price: 4.50,
     category: 'Sandwiches',
@@ -13,6 +15,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '2',
     name: 'Caesar Salad',
+    inStock: 16,
+    availableToPickUp: 13,
     description: 'Fresh romaine with parmesan and croutons',
     price: 5.00,
     category: 'Salads',
@@ -22,6 +26,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '3',
     name: 'Pepperoni Pizza Slice',
+    inStock: 23,
+    availableToPickUp: 22,
     description: 'Classic pepperoni on crispy crust',
     price: 3.00,
     category: 'Pizza',
@@ -31,6 +37,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '4',
     name: 'Orange Juice',
+    inStock: 42,
+    availableToPickUp: 41,
     description: 'Freshly squeezed orange juice',
     price: 2.50,
     category: 'Drinks',
@@ -40,6 +48,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '5',
     name: 'Chocolate Chip Cookie',
+    inStock: 67,
+    availableToPickUp: 58,
     description: 'Warm and chewy chocolate chip cookie',
     price: 1.50,
     category: 'Desserts',
@@ -49,6 +59,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '6',
     name: 'Turkey Wrap',
+    inStock: 9,
+    availableToPickUp: 5,
     description: 'Turkey, cheese, and veggies in a tortilla',
     price: 4.75,
     category: 'Sandwiches',
@@ -58,6 +70,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '7',
     name: 'Fruit Cup',
+    inStock: 2,
+    availableToPickUp: 0,
     description: 'Mixed seasonal fresh fruits',
     price: 3.50,
     category: 'Healthy',
@@ -67,6 +81,8 @@ export const mockMenuItems: MenuItem[] = [
   {
     id: '8',
     name: 'Combo Meal',
+    inStock: 56,
+    availableToPickUp: 35,
     description: 'Sandwich + Drink + Side',
     price: 8.50,
     category: 'Combos',

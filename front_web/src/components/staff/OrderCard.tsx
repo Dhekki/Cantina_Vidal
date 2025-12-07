@@ -92,7 +92,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               <Button
                 size="sm"
                 variant={nextStatus !== 'received' ? nextStatus : 'default'}
-                icon={<img src="../../imgs/chefs-hat-icon.svg" alt="" className="h-6 w-6 object-contain" />}
+                icon={<img src="../../imgs/button-icons/chefs-hat-icon.svg" alt="" className="h-6 w-6 object-contain" />}
                 onClick={() => onStatusChange(order.id, nextStatus)}
                 className="flex-1"
               >

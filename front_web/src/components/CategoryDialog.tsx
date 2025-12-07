@@ -67,7 +67,7 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
       <DialogTrigger asChild>
         <Button variant="outline">
           <Plus className="h-4 w-4 mr-2" />
-          Categorias
+          Nova Categoria
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
@@ -114,7 +114,7 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
                       <Button size="sm" onClick={() => handleEditCategory(index)}>
                         Salvar
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => setEditingCategory(null)}>
+                      <Button size="sm" variant="outline" onClick={() => setEditingCategory(null)}>
                         Cancelar
                       </Button>
                     </>
@@ -122,7 +122,7 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
                     <>
                       <span className="flex-1 text-sm">{category}</span>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setEditingCategory({ index, value: category })}
@@ -130,7 +130,7 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
                         <Pencil className="h-3 w-3" />
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
                         className="h-8 w-8 text-destructive hover:text-destructive"
                         onClick={() => handleDeleteCategory(category)}

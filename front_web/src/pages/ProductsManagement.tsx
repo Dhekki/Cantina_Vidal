@@ -44,8 +44,8 @@ import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
 import { CategoryDialog } from '@/components/CategoryDialog';
 
 const ProductsManagement = () => {
-  const [products, setProducts] = useState<MenuItem[]>(mockMenuItems);
-  const [categories, setCategories] = useState<string[]>(defaultCategories);
+  const [products, setProducts]       = useState<MenuItem[]>(mockMenuItems);
+  const [categories, setCategories]   = useState<string[]>(defaultCategories);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -70,12 +70,14 @@ const ProductsManagement = () => {
     return result;
   }, [products, selectedCategory, searchQuery]);
   
-  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
-  const [isUnsavedChangesDialogOpen, setIsUnsavedChangesDialogOpen] = useState(false);
-  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   const [editMode, setEditMode] = useState(false);
+  const [isCategoriesActive, setIsCategoriesActive]   = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen]   = useState(false);
+  const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+
+  const [isUnsavedChangesDialogOpen, setIsUnsavedChangesDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   
   const emptyFormData = {
     name: '',
@@ -87,6 +89,14 @@ const ProductsManagement = () => {
 
   const [formData, setFormData] = useState(emptyFormData);
   const [initialFormData, setInitialFormData] = useState(emptyFormData);
+
+  const showCategoryFilter = () => {
+    setIsCategoriesActive(true);
+  }
+
+  const hideCategoryFilter = () => {
+    setIsCategoriesActive(false);
+  }
 
   const hasUnsavedChanges = () => {
     return (
@@ -176,7 +186,7 @@ const ProductsManagement = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editMode && selectedProduct) {
+    if(editMode && selectedProduct) {
       setProducts(products.map(p => 
         p.id === selectedProduct.id 
           ? {
@@ -194,6 +204,10 @@ const ProductsManagement = () => {
       const newProduct: MenuItem = {
         id: `product-${Date.now()}`,
         name: formData.name,
+        // Default values for tests
+        availableToPickUp: 0,
+        inStock: 0,
+
         description: formData.description,
         price: parseFloat(formData.price),
         category: formData.category,
@@ -212,36 +226,20 @@ const ProductsManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Produtos</h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie o cardápio do cantina
-          </p>
+      <div>
+        <div className="flex items-end gap-3 mb-4">
+          <img src="../../imgs/header-menu-icon.svg" alt="Icon" className="h-9" />
+          <h1 className="text-4xl font-semibold text-neutral-700">
+            Produtos Cadastrados
+          </h1>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={handleAdd}>
-            <Plus className="h-4 w-4 mr-2" />
-            Adicionar Produto
-          </Button>
-          <CategoryDialog
-            categories={categories}
-            onCategoriesChange={setCategories}
-          />
-        </div>
+        <p className="text-base text-muted-foreground">
+          Gerencie seus produtos e pratos de forma eficiente.
+        </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por nome, código ou categoria..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+      <div className={`flex flex-col sm:flex-row gap-4 ${isCategoriesActive ? '' : 'hidden'}`}>
         <div className="flex gap-2 flex-wrap">
           {categories.map(category => (
             <Button
@@ -256,23 +254,80 @@ const ProductsManagement = () => {
         </div>
       </div>
 
+      <div className="flex justify-between">
+        <div className="flex gap-3 max-w-[600px] w-full">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-full text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome ou código..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Button
+            onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
+            variant="outline"
+            className="flex items-center px-7"
+          >
+            <img src="../../imgs/button-icons/tag-icon.svg"
+                 alt="Tag icon" className="me-1 h-5"
+            />
+            Por Categoria
+
+            {isCategoriesActive ? (
+              <img
+                src="../../imgs/button-icons/x-icon.svg"
+                alt="Status icon"
+                className="ms-2 h-4"
+              />
+            ) : ''}
+          </Button>
+        </div>        
+
+        <div className="flex gap-2">
+          <Button onClick={handleAdd}>
+            <Plus className="h-4 w-4 mr-2" />
+            Adicionar Produto
+          </Button>
+          
+          <CategoryDialog
+            categories={categories}
+            onCategoriesChange={setCategories}
+          />
+        </div>
+      </div>
+
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Imagem</TableHead>
               <TableHead>Nome</TableHead>
+              <TableHead>Descrição</TableHead>
               <TableHead>Categoria</TableHead>
               <TableHead>Preço</TableHead>
+              <TableHead>Em Estoque</TableHead>
+              <TableHead>Disponíveis</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead className="text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredProducts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  Nenhum produto encontrado
+                <TableCell
+                  colSpan={7}
+                  className="py-8 text-muted-foreground "
+                >
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <img
+                      src="/imgs/products-empty-list-icon.png"
+                      alt="Empty list icon"
+                      className="mb-3"
+                    />
+                    Nenhum produto encontrado
+                  </div>
                 </TableCell>
               </TableRow>
             ) : null}
@@ -286,8 +341,12 @@ const ProductsManagement = () => {
                   />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell>{product.description}</TableCell>
                 <TableCell>{product.category}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                
+                <TableCell className='text-end'>${product.price.toFixed(2)}</TableCell>
+                <TableCell className='text-end'>{product.inStock}</TableCell>
+                <TableCell className='text-end'>{product.availableToPickUp}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Switch
@@ -299,24 +358,27 @@ const ProductsManagement = () => {
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                
+                <TableCell>
+                  <div className="flex justify-center gap-2">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
                       onClick={() => handleViewDetails(product)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
+
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
                       onClick={() => handleEdit(product)}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
+
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
                       onClick={() => handleDeleteClick(product)}
                     >
@@ -343,6 +405,7 @@ const ProductsManagement = () => {
                 : 'Preencha os dados do novo produto'}
             </DialogDescription>
           </DialogHeader>
+          
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
