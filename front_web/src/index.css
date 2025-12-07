@@ -5,14 +5,14 @@
 /* Global styles for standarlization */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47% 11%;
+    --background: 210 100% 100%;
+    --foreground: 222 46% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 47% 11%;
+    --card-foreground: 222 46% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47% 11%;
+    --popover-foreground: 222 46% 11%;
 
     --primary: 40 74% 52%;
     --primary-foreground: 0 0% 100%;
@@ -53,14 +53,14 @@
   }
 
   .dark {
-    --background: 222.2 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 210 100% 100%;
+    --foreground: 222 46% 11%;
 
     --card: 222.2 47% 14%;
-    --card-foreground: 210 40% 98%;
+    --card-foreground: 222 46% 11%;
 
     --popover: 222.2 47% 14%;
-    --popover-foreground: 210 40% 98%;
+    --popover-foreground: 222 46% 11%;
 
     --primary: 142 76% 36%;
     --primary-foreground: 0 0% 100%;
@@ -75,7 +75,7 @@
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 222 46% 11%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;

@@ -40,7 +40,7 @@ export const OrderStatusBadge = ({ status, className }: OrderStatusBadgeProps) =
   const Icon = config.icon;
 
   return (
-    <div className={cn('inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-medium', config.color, className)}>
+    <div className={cn('inline-flex items-center gap-2 px-3 py-1 rounded-full font-medium', config.color, className)}>
       <Icon className="h-4 w-4" />
       {config.label}
     </div>

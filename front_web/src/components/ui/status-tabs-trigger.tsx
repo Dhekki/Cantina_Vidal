@@ -9,28 +9,28 @@ interface StatusTabsTriggerProps extends React.ComponentPropsWithoutRef<typeof T
 
 const statusColorMap = {
   all: {
-    active: "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:border-input",
-    inactive: "border-input"
+    active: "data-[state=active]:bg-gray-100 data-[state=active]:text-foreground/90 data-[state=active]:border-foreground/20",
+    inactive: "border border-input bg-background hover:bg-gray-100 hover:text-foreground"
   },
   received: {
     active: "data-[state=active]:bg-status-received-secondary data-[state=active]:text-status-received-primary data-[state=active]:border-status-received-primary",
-    inactive: "border-input"
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-received-primary hover:text-status-received-primary hover:bg-status-received-secondary"
   },
   preparing: {
     active: "data-[state=active]:bg-status-preparing-secondary data-[state=active]:text-status-preparing-primary data-[state=active]:border-status-preparing-primary",
-    inactive: "border-input"
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-preparing-primary hover:text-status-preparing-primary hover:bg-status-preparing-secondary"
   },
   ready: {
     active: "data-[state=active]:bg-status-ready-secondary data-[state=active]:text-status-ready-primary data-[state=active]:border-status-ready-primary",
-    inactive: "border-input"
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-ready-primary hover:text-status-ready-primary hover:bg-status-ready-secondary"
   },
   delivered: {
     active: "data-[state=active]:bg-status-delivered-secondary data-[state=active]:text-status-delivered-primary data-[state=active]:border-status-delivered-primary",
-    inactive: "border-input"
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-delivered-primary hover:text-status-delivered-primary hover:bg-status-delivered-secondary"
   },
   canceled: {
     active: "data-[state=active]:bg-status-canceled-secondary data-[state=active]:text-status-canceled-primary data-[state=active]:border-status-canceled-primary",
-    inactive: "border-input"
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-canceled-primary hover:text-status-canceled-primary hover:bg-status-canceled-secondary"
   },
 };
 

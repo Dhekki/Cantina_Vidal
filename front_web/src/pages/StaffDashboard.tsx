@@ -37,20 +37,53 @@ const StaffDashboard = () => {
     { value: 'canceled'  as const, label: 'Cancelados',       count: getOrdersByStatus('canceled').length},
   ];
 
+  const statusLabels = {
+    received:  { singular: "recebido",   plural: "recebidos"   },
+    preparing: { singular: "em preparo", plural: "em preparo"  },
+    ready:     { singular: "pronto",     plural: "prontos"     },
+    delivered: { singular: "entregue",   plural: "entregues"   },
+    canceled:  { singular: "cancelado",  plural: "cancelados"  },
+  };
+
   return (
     <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-semibold text-neutral-700 mb-2">Pedidos</h1>
-          <p className="text-sm text-muted-foreground">
+          <div className="flex items-end gap-3 mb-4">
+            <img src="../../imgs/header-bell-icon.svg" alt="Icon" className="h-9" />
+            <h1 className="text-4xl font-semibold text-neutral-700">
+              Pedidos
+            </h1>
+          </div>
+          <p className="text-base text-muted-foreground">
             Lorem ipsum dolor sit amet, consectetur adipiscing elitsed consectetur.
           </p>
         </div>
-        <Tabs defaultValue="all" className="space-y-6">
+
+        {/* Tabs area */}
+        <Tabs defaultValue="all" className="space-y-7">
           <TabsList className="grid w-full max-w-6xl h-fit grid-cols-6">
             {statusTabs.map((tab) => (
-              <StatusTabsTrigger key={tab.value} value={tab.value} status={tab.value} className="relative">
+              <StatusTabsTrigger
+                key={tab.value}
+                value={tab.value}
+                status={tab.value}
+                className="relative"
+              >
                 {tab.label}
-                <span className={`ml-2 bg-status-${tab.value}-secondary text-status-${tab.value}-primary border border-status-${tab.value}-primary w-6 h-6 flex justify-center items-center rounded-full text-xs font-bold text-center`}>
+                <span
+                  className={`
+                    ml-2 border
+                    ${
+                      tab.value === "all"
+                        ? "border-foreground/40"
+                        : `border-status-${tab.value}-primary bg-status-${tab.value}-secondary text-status-${tab.value}-primary`
+                    }
+                    w-6 h-6
+                    rounded-full
+                    flex justify-center items-center
+                    text-xs font-bold text-center
+                  `}
+                >
                   {tab.count}
                 </span>
               </StatusTabsTrigger>
@@ -113,14 +146,16 @@ const StaffDashboard = () => {
               </div>
               {getOrdersByStatus(status).length === 0 && (
                 <div className="text-center w-full flex flex-col items-center justify-center border border-slate-100 max-w-6xl p-16 rounded-md space-y-3 shadow-sm">
-                  <FileX className="text-gray-400 h-9 w-9" />
+                  <img src="../../imgs/empty-list-icon.png" alt="Empty status icon" className='h-36' />
 
-                  <p className="text-gray-500 text-3xl">
-                    Nenhum pedido {status === 'received'  ? 'recebido'   : 
-                                   status === 'preparing' ? 'em preparo' : 
-                                   status === 'ready'     ? 'pronto'     : 
-                                   status === 'delivered' ? 'entregue'   : 'cancelado'}
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-gray-600 text-2xl">
+                      Nenhum pedido {statusLabels[status].singular}
+                    </p>
+                    <p className="text-base text-gray-500">
+                      Você ainda não possui pedidos {statusLabels[status].plural}.
+                    </p>
+                  </div>
                 </div>
               )}
             </TabsContent>

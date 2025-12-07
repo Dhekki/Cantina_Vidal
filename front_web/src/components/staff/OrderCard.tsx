@@ -88,9 +88,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               Ver Detalhes
             </Button>
 
-            {nextStatus && (
+            {nextStatus && nextStatus !== 'canceled' && (
               <Button
                 size="sm"
+                variant={nextStatus !== 'received' ? nextStatus : 'default'}
                 icon={<img src="../../imgs/chefs-hat-icon.svg" alt="" className="h-6 w-6 object-contain" />}
                 onClick={() => onStatusChange(order.id, nextStatus)}
                 className="flex-1"

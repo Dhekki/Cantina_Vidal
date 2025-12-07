@@ -1,8 +1,8 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-import userIcon from "/imgs/user_icon.svg";
-import lockIcon from "/imgs/lock_icon.svg";
+import userIcon from "/imgs/input-icons/user_icon.svg";
+import lockIcon from "/imgs/input-icons/lock_icon.svg";
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
