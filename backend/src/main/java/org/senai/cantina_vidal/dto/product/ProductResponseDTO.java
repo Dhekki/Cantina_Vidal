@@ -4,7 +4,7 @@ import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.entity.Product;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,8 +14,8 @@ public record ProductResponseDTO(
         String description,
         BigDecimal price,
         String imageUrl,
-        Set<String> categoriesNames,
-        Boolean active
+        Boolean active,
+        Set<String> categoriesNames
 ) {
     public ProductResponseDTO(Product entity) {
         this(entity.getId(),
@@ -23,12 +23,12 @@ public record ProductResponseDTO(
                 entity.getDescription(),
                 entity.getCurrentPrice(),
                 entity.getImageUrl(),
+                entity.getActive(),
                 (entity.getCategories() != null)
-                ? entity.getCategories().stream()
-                        .map(Category::getName)
-                        .collect(Collectors.toSet())
-                : new HashSet<>(),
-                entity.getActive()
+                        ? entity.getCategories().stream()
+                            .map(Category::getName)
+                            .collect(Collectors.toSet())
+                        : Collections.emptySet()
         );
     }
 }
