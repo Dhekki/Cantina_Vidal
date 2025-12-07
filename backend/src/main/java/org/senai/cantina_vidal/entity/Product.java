@@ -31,8 +31,10 @@ public class Product extends UserDateAudit {
     private String description;
 
     @NotNull
+    @Builder.Default
+    @ColumnDefault("0.0")
     @Column(name = "current_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal currentPrice;
+    private BigDecimal currentPrice = BigDecimal.valueOf(0.0);
 
     @Size(max = 500)
     @Column(name = "image_url", length = 500)
@@ -62,6 +64,7 @@ public class Product extends UserDateAudit {
     @Column(name = "quantity_committed", nullable = false)
     private Integer quantityCommitted = 0;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_categories",
             joinColumns = @JoinColumn(name = "product_id"),

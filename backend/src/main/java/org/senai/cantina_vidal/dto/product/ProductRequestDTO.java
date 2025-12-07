@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 public record ProductRequestDTO(
-        @NotBlank(message = "Nome obrigatório")
+        @NotBlank(message = "Nome é obrigatório")
         String name,
 
         String description,
