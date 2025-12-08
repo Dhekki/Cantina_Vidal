@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fffcf9"
+    tools:context=".view.HomeClienteActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_circulo"
+                    android:backgroundTint="@color/laranja"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="4dp"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/opcao1"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="none"
+                        android:backgroundTint="@color/laranja"
+                        android:src="@drawable/icon___bebidas" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Bebidas"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/shape_circulo"
+                    android:backgroundTint="@color/laranja"
+                    android:layout_marginHorizontal="4dp"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/opcao2"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="none"
+                        android:backgroundTint="@color/laranja"
+                        android:src="@drawable/icon___bebidas" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Bebidas"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:background="@drawable/shape_circulo"
+                    android:backgroundTint="@color/laranja"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/opcao3"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="none"
+                        android:backgroundTint="@color/laranja"
+                        android:src="@drawable/icon___bebidas" />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Bebidas"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:background="@drawable/shape_circulo"
+                    android:backgroundTint="@color/laranja"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/opcao4"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="none"
+                        android:backgroundTint="@color/laranja"
+                        android:src="@drawable/icon___bebidas" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="Bebidas"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>
