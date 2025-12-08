@@ -19,8 +19,8 @@ import com.example.projeto_v1.viewmodel.ClienteViewModel;
 
 public class CadastroClienteActivity extends AppCompatActivity {
 
-    private EditText edtNome, edtEmail, edtSenha, edtConfirmSenha;
     private ClienteViewModel viewModel;
+    private EditText edtNome, edtEmail, edtSenha, edtConfirmSenha;
     private Button btnCriarConta;
 
     public void goTelaLogin (View view) {
@@ -64,7 +64,7 @@ public class CadastroClienteActivity extends AppCompatActivity {
                 return;
             }
 
-            viewModel.salvarCliente(nome, email, senha).observe(this, sucesso -> {
+            viewModel.cadastrarCliente(nome, email, senha).observe(this, sucesso -> {
                 if (sucesso != null && sucesso) {
                     Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
                     goTelaLogin(null);

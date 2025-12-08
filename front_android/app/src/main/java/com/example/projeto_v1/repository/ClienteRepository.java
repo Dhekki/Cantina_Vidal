@@ -17,7 +17,10 @@ import retrofit2.Response;
 public class ClienteRepository {
     private ApiService apiService = (ApiService)RetrofitClient.getRetrofitInstance().create(ApiService.class);
     private final String API_KEY = "";
-    private final String AUTH = "Bearer ";
+    private final String AUTH = "";
+
+    // Adicionar quando o banco de dados estiver pronto.
+    // private final String AUTH = "Bearer ";
 
     public void listarClientes(MutableLiveData<List<Cliente>> clientesLiveData) {
 
@@ -46,7 +49,7 @@ public class ClienteRepository {
         });
     }
 
-    public MutableLiveData<Boolean> inserirCliente(Cliente cliente) {
+    public MutableLiveData<Boolean> cadastrarCliente(Cliente cliente) {
         MutableLiveData<Boolean> sucesso = new MutableLiveData<>();
 
         // Conferir no LogCat se o cliente realmente foi cadastrado.
@@ -58,7 +61,7 @@ public class ClienteRepository {
         return sucesso;
 
         // Descomentar essa parte do código quando tiver a API_KEY.
-//        apiService.inserirCliente(API_KEY, AUTH, cliente).enqueue(new Callback<Void>() {
+//        apiService.cadastrarCliente(API_KEY, AUTH, cliente).enqueue(new Callback<Void>() {
 //            @Override
 //            public void onResponse(Call<Void> call, Response<Void> response) {
 //                sucesso.setValue(response.isSuccessful());
@@ -73,5 +76,17 @@ public class ClienteRepository {
 //
 //
 //        return sucesso;
+    }
+
+    public MutableLiveData<Boolean> realizarLogin(Cliente cliente) {
+        MutableLiveData<Boolean> sucesso = new MutableLiveData<>();
+
+        Log.d("LOGIN_MOCK", "Dados informados: " +
+                " Email: " + cliente.getEmail() + " | Senha: " + cliente.getSenha());
+
+        sucesso.setValue(true);
+        return sucesso;
+
+
     }
 }

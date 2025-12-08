@@ -13,9 +13,10 @@ public class RetrofitClient {
 
     private static Retrofit retrofit;
 
-    // /rest/v1/
     private static final String BASE_URL = "http://10.0.2.2:8080/";
 
+    // Adicionar quando o banco de dados estiver pronto.
+    // private static final String BASE_URL = "https://xxx.supabase.co/rest/v1/";
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
