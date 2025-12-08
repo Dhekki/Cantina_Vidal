@@ -11,6 +11,7 @@ const buttonVariants = cva(
         default: "border border-primary bg-primary text-primary-foreground hover:bg-primary/90",
         categorySelected: "border border-primary bg-primary/5 text-primary",
         outline: "border border-input bg-background text-foreground/70 hover:bg-gray-100 hover:text-foreground/80",
+        addProduct: "rounded border border-input bg-background text-primary hover:bg-status-canceled-primary/20 hover:border-status-canceled-primary/50 shadow-md",
         // ...
         preparing: "bg-status-preparing-primary text-white hover:bg-status-preparing-primary/90",
         ready: "bg-status-ready-primary text-white hover:bg-status-ready-primary/90",
@@ -22,6 +23,7 @@ const buttonVariants = cva(
         default: "h-10 px-4 py-2",
         sm: "h-10 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
+        addProductSize: "h-11 rounded-full px-8",
         categorySize: "w-full h-fit flex items-center justify-start rounded-md py-4 px-5 gap-2",
       },
     },

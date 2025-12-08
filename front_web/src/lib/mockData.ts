@@ -9,7 +9,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Grilled chicken with lettuce, tomato, and mayo',
     price: 4.50,
     category: 'Sandwiches',
-    image: '/placeholder.svg',
+    specifications: '200g',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -20,7 +21,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Fresh romaine with parmesan and croutons',
     price: 5.00,
     category: 'Salads',
-    image: '/placeholder.svg',
+    specifications: '100g',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -31,7 +33,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Classic pepperoni on crispy crust',
     price: 3.00,
     category: 'Pizza',
-    image: '/placeholder.svg',
+    specifications: '4 fatias',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -42,7 +45,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Freshly squeezed orange juice',
     price: 2.50,
     category: 'Drinks',
-    image: '/placeholder.svg',
+    specifications: '400ml',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -53,7 +57,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Warm and chewy chocolate chip cookie',
     price: 1.50,
     category: 'Desserts',
-    image: '/placeholder.svg',
+    specifications: 'Pacote 4 unidades',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -64,7 +69,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Turkey, cheese, and veggies in a tortilla',
     price: 4.75,
     category: 'Sandwiches',
-    image: '/placeholder.svg',
+    specifications: '120g',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -75,7 +81,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Mixed seasonal fresh fruits',
     price: 3.50,
     category: 'Healthy',
-    image: '/placeholder.svg',
+    specifications: 'Copo 250ml',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
   {
@@ -86,7 +93,8 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Sandwich + Drink + Side',
     price: 8.50,
     category: 'Combos',
-    image: '/placeholder.svg',
+    specifications: 'faltou criatividade',
+    image: '../../public/imgs/refri-image-exemple.png',
     available: true,
   },
 ];

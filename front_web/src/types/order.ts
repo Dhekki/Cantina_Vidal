@@ -7,6 +7,7 @@ export interface MenuItem {
   price: number;
   inStock: number;
   availableToPickUp: number;
+  specifications: string;
   category: string;
   image: string;
   available: boolean;

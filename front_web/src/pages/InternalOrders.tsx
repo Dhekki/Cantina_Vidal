@@ -119,9 +119,14 @@ const InternalOrders = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Pedido Interno</h1>
-        <p className="text-muted-foreground mt-1">
-          Registre pedidos feitos presencialmente no restaurante
+        <div className="flex items-end gap-3 mb-4">
+          <img src="../../imgs/header-menu-icon.svg" alt="Icon" className="h-9" />
+          <h1 className="text-4xl font-semibold text-neutral-700">
+            Novo Pedido Interno
+          </h1>
+        </div>
+        <p className="text-base text-muted-foreground">
+          Cadastre pedidos realizados diretamente no restaurante.
         </p>
       </div>
 
@@ -174,21 +179,7 @@ const InternalOrders = () => {
                 />
               ) : ''}
             </Button>
-          </div>        
-
-          {/* Category Filter */}
-          {/* <div className="flex gap-2 flex-wrap">
-            {categories.map(category => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </Button>
-            ))}
-          </div> */}
+          </div>
 
           {/* Products Grid */}
           {filteredProducts.length === 0 ? (
@@ -196,7 +187,7 @@ const InternalOrders = () => {
               Nenhum produto encontrado
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {filteredProducts.map(product => (
                 <Card
                   key={product.id}
@@ -204,19 +195,27 @@ const InternalOrders = () => {
                   onClick={() => addToCart(product)}
                 >
                   <CardContent className="p-3">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-24 object-cover rounded mb-2"
-                    />
-                    <h3 className="font-medium text-sm truncate">{product.name}</h3>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-primary font-bold">
-                        R$ {product.price.toFixed(2)}
-                      </span>
-                      <Button size="sm" variant="outline" className="h-7 w-7 p-0">
-                        <Plus className="h-4 w-4" />
+                    <div className="relative">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-36 object-cover rounded mb-2"
+                      />
+
+                      <Button size="addProductSize" variant="addProduct" className="h-10 w-10 p-0 absolute bottom-1 right-0">
+                        <Plus className="h-6 w-6" />
                       </Button>
+                    </div>
+                    
+                    <h3 className="font-medium text-md truncate">{product.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-primary font-bold">
+                        R$ {product.price.toFixed(2).replace('.', ',')}
+                      </span>
+
+                      <p className='text-[8px] text-foreground/40 font-medium'>●</p>
+
+                      <span className='text-foreground/40'>{product.specifications}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -230,11 +229,12 @@ const InternalOrders = () => {
           <Card className="sticky top-24">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-5 w-5 me-2" />
                 Carrinho
                 {cart.length > 0 && (
                   <Badge variant="secondary" className="ml-auto">
-                    {cart.reduce((sum, item) => sum + item.quantity, 0)} itens
+                    {cart.reduce((sum, item) => sum + item.quantity, 0)} 
+                    {cart.reduce((sum, item) => sum + item.quantity, 0) > 1 ? (' itens') : (' item')}
                   </Badge>
                 )}
               </CardTitle>
@@ -245,7 +245,7 @@ const InternalOrders = () => {
                 <Label htmlFor="customer">Nome do Cliente (opcional)</Label>
                 <Input
                   id="customer"
-                  placeholder="Ex: Mesa 5, João..."
+                  placeholder="Ex: Lucas, Marcos..."
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                 />
@@ -266,7 +266,7 @@ const InternalOrders = () => {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{item.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            R$ {item.price.toFixed(2)} cada
+                            R$ {item.price.toFixed(2)}/ unidade
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
@@ -327,7 +327,7 @@ const InternalOrders = () => {
                   onClick={handleFinishOrder}
                   disabled={cart.length === 0}
                 >
-                  <Receipt className="h-4 w-4 mr-2" />
+                  <img src="../../public/imgs/button-icons/chefs-hat-icon.svg" alt="Icon" className="h-6 w-6 object-contain" />
                   Finalizar
                 </Button>
               </div>

@@ -208,6 +208,7 @@ const ProductsManagement = () => {
         name: formData.name,
         // Default values for tests
         availableToPickUp: 0,
+        specifications: 'New product test',
         inStock: 0,
 
         description: formData.description,
