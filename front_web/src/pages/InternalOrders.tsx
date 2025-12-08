@@ -30,6 +30,7 @@ const InternalOrders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isCategoriesActive, setIsCategoriesActive]   = useState(false)
 
   const filteredProducts = useMemo(() => {
     let result = products;
@@ -51,6 +52,15 @@ const InternalOrders = () => {
     
     return result;
   }, [products, selectedCategory, searchQuery]);
+
+  const showCategoryFilter = () => {
+    setIsCategoriesActive(true);
+  }
+
+  const hideCategoryFilter = () => {
+    setSelectedCategory('All');
+    setIsCategoriesActive(false);
+  }
 
   const addToCart = (product: MenuItem) => {
     setCart(prev => {
@@ -115,22 +125,59 @@ const InternalOrders = () => {
         </p>
       </div>
 
+      {/* Filters */}
+      <div className={`grid grid-cols-7 auto-rows-min gap-4 items-start justify-items-start ${isCategoriesActive ? '' : 'hidden'}`}>
+          {categories.map(category => (
+              <Button
+                key={category}
+                size='categorySize'
+                variant={selectedCategory === category ? 'categorySelected' : 'outline'}
+                onClick={() => setSelectedCategory(category)}
+              >
+                <img src="../../public/imgs/category-image-exemple.png" 
+                    alt={`${category} icon`} className="w-8 h-8 object-contain" />
+                {category}
+              </Button>
+          ))}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Products Section */}
         <div className="lg:col-span-2 space-y-4">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome, código ou categoria..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
+          <div className="flex gap-3 max-w-[600px] w-full">
+            {/* Search */}
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome ou código."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            <Button
+              onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
+              variant={isCategoriesActive ? 'categorySelected' : 'outline'}
+              className="flex items-center px-7"
+            >
+              <img src="../../imgs/button-icons/tag-icon.svg"
+                  alt="Tag icon" className="me-1 h-5"
+              />
+              Por Categoria
+
+              {isCategoriesActive ? (
+                <img
+                  src="../../imgs/button-icons/x-icon.svg"
+                  alt="Status icon"
+                  className="ms-2 h-4"
+                />
+              ) : ''}
+            </Button>
+          </div>        
 
           {/* Category Filter */}
-          <div className="flex gap-2 flex-wrap">
+          {/* <div className="flex gap-2 flex-wrap">
             {categories.map(category => (
               <Button
                 key={category}
@@ -141,7 +188,7 @@ const InternalOrders = () => {
                 {category}
               </Button>
             ))}
-          </div>
+          </div> */}
 
           {/* Products Grid */}
           {filteredProducts.length === 0 ? (
