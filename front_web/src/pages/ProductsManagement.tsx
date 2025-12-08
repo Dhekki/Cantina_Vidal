@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Pencil, Trash2, Eye, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, Search, Tag } from 'lucide-react';
 import {
   Table,
   TableRow,
@@ -60,9 +60,10 @@ const ProductsManagement = () => {
     // Filter by search query
     if(searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
+
       result = result.filter(p =>
         p.name.toLowerCase().includes(query) ||
-        p.id.toLowerCase().includes(query) ||
+        p.id.toLowerCase().includes(query)   ||
         p.category.toLowerCase().includes(query)
       );
     }
@@ -71,7 +72,7 @@ const ProductsManagement = () => {
   }, [products, selectedCategory, searchQuery]);
   
   const [editMode, setEditMode] = useState(false);
-  const [isCategoriesActive, setIsCategoriesActive]   = useState(false)
+  const [isCategoriesActive, setIsCategoriesActive]   = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen]   = useState(false);
   const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -95,16 +96,17 @@ const ProductsManagement = () => {
   }
 
   const hideCategoryFilter = () => {
+    setSelectedCategory('All');
     setIsCategoriesActive(false);
   }
 
   const hasUnsavedChanges = () => {
     return (
-      formData.name !== initialFormData.name ||
+      formData.name        !== initialFormData.name        ||
       formData.description !== initialFormData.description ||
-      formData.price !== initialFormData.price ||
-      formData.category !== initialFormData.category ||
-      formData.image !== initialFormData.image
+      formData.price       !== initialFormData.price       ||
+      formData.category    !== initialFormData.category    ||
+      formData.image       !== initialFormData.image
     );
   };
 
@@ -239,19 +241,19 @@ const ProductsManagement = () => {
       </div>
 
       {/* Filters */}
-      <div className={`flex flex-col sm:flex-row gap-4 ${isCategoriesActive ? '' : 'hidden'}`}>
-        <div className="flex gap-2 flex-wrap">
+      <div className={`grid grid-cols-7 auto-rows-min gap-4 items-start justify-items-start ${isCategoriesActive ? '' : 'hidden'}`}>
           {categories.map(category => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </Button>
+              <Button
+                key={category}
+                size='categorySize'
+                variant={selectedCategory === category ? 'categorySelected' : 'outline'}
+                onClick={() => setSelectedCategory(category)}
+              >
+                <img src="../../public/imgs/category-image-exemple.png" 
+                     alt={`${category} icon`} className="w-8 h-8 object-contain" />
+                {category}
+              </Button>
           ))}
-        </div>
       </div>
 
       <div className="flex justify-between">
@@ -267,7 +269,7 @@ const ProductsManagement = () => {
           </div>
           <Button
             onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
-            variant="outline"
+            variant={isCategoriesActive ? 'categorySelected' : 'outline'}
             className="flex items-center px-7"
           >
             <img src="../../imgs/button-icons/tag-icon.svg"
@@ -337,7 +339,7 @@ const ProductsManagement = () => {
                   <img 
                     src={product.image} 
                     alt={product.name}
-                    className="w-12 h-12 object-cover rounded"
+                    className="w-fit h-12 object-cover rounded"
                   />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
@@ -348,7 +350,7 @@ const ProductsManagement = () => {
                 <TableCell className='text-end'>{product.inStock}</TableCell>
                 <TableCell className='text-end'>{product.availableToPickUp}</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-[120px]">
                     <Switch
                       checked={product.available}
                       onCheckedChange={() => handleToggleAvailable(product.id)}
