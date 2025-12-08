@@ -22,8 +22,12 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<Page<ProductResponseDTO>> findAll(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
-        Page<Product> productPage = service.findAll(pageable);
+    public ResponseEntity<Page<ProductResponseDTO>> findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long categoryId,
+            @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable
+    ) {
+        Page<Product> productPage = service.findAll(pageable, name, categoryId);
 
         Page<ProductResponseDTO> dtoPage = productPage.map(ProductResponseDTO::new);
 
