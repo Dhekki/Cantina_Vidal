@@ -1,22 +1,11 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-import userIcon from "/imgs/input-icons/user_icon.svg";
-import lockIcon from "/imgs/input-icons/lock_icon.svg";
-
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type = "text", ...props }, ref) => {
     return (
-      <div className="relative w-full">
-        <img
-          src={type === "text" ? userIcon : lockIcon}
-          alt=""
-          aria-hidden="true"
-          className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-        />
-
         <input
           type={type}
           className={cn(
@@ -26,7 +15,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-      </div>
     );
   }
 );

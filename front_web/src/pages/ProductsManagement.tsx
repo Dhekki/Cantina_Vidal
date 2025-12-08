@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Pencil, Trash2, Eye, Search, Tag } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
 import {
   Table,
   TableRow,
@@ -35,13 +35,15 @@ import {
   Select,
   SelectItem,
   SelectValue,
-  SelectTrigger,
+  SelectTrigger, 
   SelectContent,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
 import { CategoryDialog } from '@/components/CategoryDialog';
+import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
+
 
 const ProductsManagement = () => {
   const [products, setProducts]       = useState<MenuItem[]>(mockMenuItems);
@@ -259,15 +261,22 @@ const ProductsManagement = () => {
 
       <div className="flex justify-between">
         <div className="flex gap-3 max-w-[600px] w-full">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-full text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome ou código..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
+            {/* Search */}
+            <div className="relative w-full">
+              <img
+                src={SearchIcon}
+                alt=""
+                aria-hidden="true"
+                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 bg-slate-600"
+              />
+
+              <Input
+                placeholder="Buscar por nome ou código."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
           <Button
             onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
             variant={isCategoriesActive ? 'categorySelected' : 'outline'}

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, ChevronLeft } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -12,6 +12,7 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { CalculatorDialog } from "@/components/CalculatorDialog";
+import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "Dashboard",      url: "/staff/dashboard",  icon: LayoutDashboard },
@@ -20,13 +21,26 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, toggleSidebar } = useSidebar();
 
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
+          <div className="flex items-center justify-between">
+            <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
+            {open && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className="h-8 w-8 mr-2"
+                title="Minimizar sidebar"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (

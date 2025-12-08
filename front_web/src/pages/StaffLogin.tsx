@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
+import userIcon from "/imgs/input-icons/user_icon.svg";
+import lockIcon from "/imgs/input-icons/lock_icon.svg";
+
 const StaffLogin = () => {
   const navigate = useNavigate();
 
@@ -38,23 +41,43 @@ const StaffLogin = () => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-6">
-            <Input
-              id="admin-username"
-              type="text"
-              value={username}
-              placeholder="Nome de usuário"
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <Input
-              id="admin-password"
-              type="password"
-              value={password}
-              placeholder="Senha"
-              onChange={(e) => setPassword(e.target.value)}
-              maxLength={8}
-              required
-            />
+
+            <div className="relative w-full">
+              <img
+                src={userIcon}
+                alt="User icon"
+                aria-hidden="true"
+                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+              />
+
+              <Input
+                id="admin-username"
+                type="text"
+                value={username}
+                placeholder="Nome de usuário"
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="relative w-full">
+              <img
+                src={lockIcon}
+                alt="Lock icon"
+                aria-hidden="true"
+                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+              />
+
+              <Input
+                id="admin-password"
+                type="password"
+                value={password}
+                placeholder="Senha"
+                onChange={(e) => setPassword(e.target.value)}
+                maxLength={8}
+                required
+              />
+            </div>
             <p className="text-xs text-muted-foreground">
               Para testes: 1234
             </p>

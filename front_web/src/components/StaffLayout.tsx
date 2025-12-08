@@ -58,9 +58,9 @@ const StaffLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full relative">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col w-full">
           <header className="border-b bg-card sticky top-0 z-10">
             <div className="flex items-center justify-between px-4 py-4">
               <div className="flex items-center gap-2">
