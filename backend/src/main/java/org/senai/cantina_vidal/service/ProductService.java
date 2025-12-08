@@ -22,7 +22,13 @@ public class ProductService {
     private final ProductRepository repository;
     private final CategoryRepository categoryRepository;
 
-    public Page<Product> findAll(Pageable pageable) {
+    public Page<Product> findAll(Pageable pageable, String name, Long categoryId) {
+        if (name != null && !name.isBlank())
+            return repository.findByNameContainingIgnoreCaseAndActiveTrue(name, pageable);
+
+        if (categoryId != null)
+            return repository.findByCategoriesIdAndActiveTrue(categoryId, pageable);
+
         return repository.findAll(pageable);
     }
 
@@ -39,6 +45,9 @@ public class ProductService {
                 .currentPrice(dto.price())
                 .description(dto.description())
                 .quantityStock(dto.quantityStock())
+                .minStockLevel(dto.minStockLevel())
+                .replenishmentDays(dto.replenishmentDays())
+                .expirationDate(dto.expirationDate())
                 .build();
 
         if (dto.categoryIds() != null && !dto.categoryIds().isEmpty()) {
