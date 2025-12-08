@@ -16,7 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
-const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH = "17.5rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 
@@ -142,8 +142,8 @@ SidebarProvider.displayName = "SidebarProvider";
 const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    side?: "left" | "right";
-    variant?: "sidebar" | "floating" | "inset";
+    side?:        "left" | "right";
+    variant?:     "sidebar" | "floating" | "inset";
     collapsible?: "offcanvas" | "icon" | "none";
   }
 >(({ 

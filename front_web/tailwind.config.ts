@@ -48,6 +48,7 @@ export default {
         },
         card: {
           DEFAULT: "hsl(var(--card))",
+          primary: "hsl(var(--primary-card))",
           foreground: "hsl(var(--card-foreground))",
         },
         status: {
