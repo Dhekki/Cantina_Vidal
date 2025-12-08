@@ -27,6 +27,10 @@ public class Category extends UserDateAudit {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    @Size(max = 7)
+    @Column(name = "color_hex", length = 7)
+    private String colorHex;
+
     @NotNull
     @Builder.Default
     @ColumnDefault("true")
