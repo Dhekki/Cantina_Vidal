@@ -31,10 +31,10 @@ export function AppSidebar() {
             <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
             {open && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 onClick={toggleSidebar}
-                className="h-8 w-8 mr-2"
+                className="h-8 w-8 mr-2 hover:bg-accent"
                 title="Minimizar sidebar"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -49,11 +49,11 @@ export function AppSidebar() {
                     <NavLink 
                       to={item.url} 
                       end 
-                      className="hover:bg-accent py-6 px-4 text-lg font-medium text-menu-color gap-4 items-center border border-transparent"
+                      className="hover:bg-accent py-6 px-4 text-lg font-medium text-menu-color gap-4 items-center border border-transparent flex justify-start group-data-[collapsible=icon]:justify-center"
                       activeClassName="bg-accent text-accent-foreground border border-accent-foreground"
                     >
-                      <span className="icon w-5">
-                        <item.icon />
+                      <span className="icon w-5 h-5 flex items-center justify-center shrink-0">
+                        <item.icon className="w-5 h-5" />
                       </span>
                       {open && <span>{item.title}</span>}
                     </NavLink>

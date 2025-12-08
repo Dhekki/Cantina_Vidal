@@ -200,7 +200,7 @@ const Sidebar = React.forwardRef<
       {/* This div now only reserves space for the collapsed icon width */}
       <div
         className={cn(
-          "relative h-svh bg-transparent transition-[width] duration-200 ease-linear",
+          "relative h-svh bg-transparent transition-[width] duration-200 ease-in-out-linear",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           // Always use icon width, sidebar will overlay when expanded
@@ -209,7 +209,7 @@ const Sidebar = React.forwardRef<
       />
       <div
         className={cn(
-          "fixed inset-y-0 hidden h-svh transition-[left,right,width] duration-200 ease-linear md:flex",
+          "fixed inset-y-0 hidden h-svh transition-[left,right,width] duration-200 ease-in-out-linear md:flex",
           // Width changes based on state
           state === "collapsed" ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
           // Z-index higher when expanded to overlay content
@@ -227,8 +227,8 @@ const Sidebar = React.forwardRef<
           data-sidebar="sidebar"
           className={cn(
             "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
-            // Add shadow when expanded for better overlay effect
-            state === "expanded" && "shadow-lg"
+            state === "expanded" && "shadow-lg bg-white",
+            "bg-opacity-100"
           )}
         >
           {children}
@@ -354,7 +354,7 @@ const SidebarContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"di
       ref={ref}
       data-sidebar="content"
       className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-visible",
         className,
       )}
       {...props}
