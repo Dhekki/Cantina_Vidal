@@ -19,7 +19,8 @@ public record RegisterRequestDTO(
         @NotBlank(message = "A senha é obrigatória")
         @Pattern(
                 regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@#\\-_]).{8,}$",
-                message = "Senha fraca. Mínimo 8 chars, contendo: Maiúscula, Minúscula, Número e Símbolo ($@#-_)"
+                message = "Senha fraca. Mínimo: 8 caracteres contendo: " +
+                        "1 letra Maiúscula, 1 letra Minúscula, 1 Número e 1 Símbolo ($@#-_)"
         )
         String password
 ) {

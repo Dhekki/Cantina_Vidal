@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,6 +64,15 @@ public class Product extends UserDateAudit {
     @ColumnDefault("0")
     @Column(name = "quantity_committed", nullable = false)
     private Integer quantityCommitted = 0;
+
+    @Column(name = "min_stock_level")
+    private Integer minStockLevel;
+
+    @Column(name = "replenishment_days")
+    private Integer replenishmentDays; // Intervalo em dias
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)

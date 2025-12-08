@@ -30,6 +30,7 @@ public class CategoryService {
         Category entity = Category.builder()
                 .name(dto.name())
                 .imageUrl(dto.imageUrl())
+                .colorHex(dto.colorHex())
                 .build();
 
         return repository.save(entity);
