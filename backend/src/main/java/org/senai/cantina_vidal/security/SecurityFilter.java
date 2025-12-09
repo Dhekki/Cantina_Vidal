@@ -31,14 +31,14 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        String login = tokenService.validateToken(token);
+        String email = tokenService.validateToken(token);
 
-        if (login.isEmpty()) {
+        if (email.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        UserDetails user = userRepository.findByEmail(login).orElse(null);
+        UserDetails user = userRepository.findByEmail(email).orElse(null);
 
         if (user != null) {
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
