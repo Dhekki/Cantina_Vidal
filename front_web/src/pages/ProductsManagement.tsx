@@ -88,6 +88,7 @@ const ProductsManagement = () => {
     price: '',
     category: '',
     image: '',
+    dataValidade: '',
   };
 
   const [formData, setFormData] = useState(emptyFormData);
@@ -108,6 +109,7 @@ const ProductsManagement = () => {
       formData.description !== initialFormData.description ||
       formData.price       !== initialFormData.price       ||
       formData.category    !== initialFormData.category    ||
+      formData.dataValidade    !== initialFormData.dataValidade    ||
       formData.image       !== initialFormData.image
     );
   };
@@ -137,8 +139,10 @@ const ProductsManagement = () => {
       name: '',
       description: '',
       price: '',
+      stock: '',
       category: '',
       image: '',
+      dataValidade: '',
     };
     setFormData(newFormData);
     setInitialFormData(newFormData);
@@ -153,6 +157,7 @@ const ProductsManagement = () => {
       description: product.description,
       price: product.price.toString(),
       category: product.category,
+      dataValidade: product.expirationData,
       image: product.image,
     };
     setFormData(editFormData);
@@ -212,6 +217,9 @@ const ProductsManagement = () => {
         availableToPickUp: 0,
         specifications: 'New product test',
         inStock: 0,
+        expirationData: '2026-01-12',
+        repositionInterval: 12,
+        minimumStock: 12,
 
         description: formData.description,
         price: parseFloat(formData.price),
@@ -420,14 +428,25 @@ const ProductsManagement = () => {
           
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
+              <div className="flex">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dataValidade">Data de Validade</Label>
+                  <Input
+                    id="dataValidade"
+                    value={formData.dataValidade}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição</Label>

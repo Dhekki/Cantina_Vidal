@@ -146,55 +146,56 @@ const InternalOrders = () => {
               </Button>
           ))}
       </div>
+      
+      {/* Products Section */}
+      <div className="lg:col-span-3 space-y-6">
+        <div className="flex gap-3 max-w-[600px] w-full">
+          {/* Search */}
+          <div className="relative w-full">
+            <img
+              src={SearchIcon}
+              alt=""
+              aria-hidden="true"
+              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 bg-slate-600"
+            />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Products Section */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex gap-3 max-w-[600px] w-full">
-            {/* Search */}
-            <div className="relative w-full">
-              <img
-                src={SearchIcon}
-                alt=""
-                aria-hidden="true"
-                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 bg-slate-600"
-              />
-
-              <Input
-                placeholder="Buscar por nome ou código."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-
-            <Button
-              onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
-              variant={isCategoriesActive ? 'categorySelected' : 'outline'}
-              className="flex items-center px-7"
-            >
-              <img src="../../imgs/button-icons/tag-icon.svg"
-                  alt="Tag icon" className="me-1 h-5"
-              />
-              Por Categoria
-
-              {isCategoriesActive ? (
-                <img
-                  src="../../imgs/button-icons/x-icon.svg"
-                  alt="Status icon"
-                  className="ms-2 h-4"
-                />
-              ) : ''}
-            </Button>
+            <Input
+              placeholder="Buscar por nome ou código."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
 
-          {/* Products Grid */}
+          <Button
+            onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
+            variant={isCategoriesActive ? 'categorySelected' : 'outline'}
+            className="flex items-center px-7"
+          >
+            <img src="../../imgs/button-icons/tag-icon.svg"
+                alt="Tag icon" className="me-1 h-5"
+            />
+            Por Categoria
+
+            {isCategoriesActive ? (
+              <img
+                src="../../imgs/button-icons/x-icon.svg"
+                alt="Status icon"
+                className="ms-2 h-4"
+              />
+            ) : ''}
+          </Button>
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.length === 0 ? (
             <div className="col-span-full text-center py-12 text-muted-foreground">
               Nenhum produto encontrado
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid [@media(max-width:768px)]:grid-cols-2 
+                            lg:col-span-2 [@media(max-width:1280px)]:grid-cols-3 lg:grid-cols-5 gap-4 h-fit">
               {filteredProducts.map(product => (
                 <Card
                   key={product.id}
@@ -216,130 +217,137 @@ const InternalOrders = () => {
                     
                     <h3 className="font-medium text-md truncate">{product.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-primary font-bold">
+                      <span className="text-primary font-bold whitespace-nowrap">
                         R$ {product.price.toFixed(2).replace('.', ',')}
                       </span>
 
                       <p className='text-[8px] text-foreground/40 font-medium'>●</p>
 
-                      <span className='text-foreground/40'>{product.specifications}</span>
+                      <span className='text-foreground/40 truncate'>{product.specifications}</span>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           )}
-        </div>
+          
+          {/* Cart Section */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-24">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="h-5 w-5 me-2" />
+                  Carrinho
+                  {cart.length > 0 && (
+                    <Badge variant="secondary" className="ml-auto">
+                      {cart.reduce((sum, item) => sum + item.quantity, 0)} 
+                      {cart.reduce((sum, item) => sum + item.quantity, 0) > 1 ? (' itens') : (' item')}
+                    </Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
 
-        {/* Cart Section */}
-        <div className="lg:col-span-1">
-          <Card className="sticky top-24">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5 me-2" />
-                Carrinho
-                {cart.length > 0 && (
-                  <Badge variant="secondary" className="ml-auto">
-                    {cart.reduce((sum, item) => sum + item.quantity, 0)} 
-                    {cart.reduce((sum, item) => sum + item.quantity, 0) > 1 ? (' itens') : (' item')}
-                  </Badge>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Customer Name */}
-              <div className="space-y-2">
-                <Label htmlFor="customer">Nome do Cliente (opcional)</Label>
-                <Input
-                  id="customer"
-                  placeholder="Ex: Lucas, Marcos..."
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                />
-              </div>
+              <CardContent className="space-y-6">
+                {/* Customer Name */}
+                <div className="space-y-3">
+                  <Label htmlFor="customer">Nome do Cliente (opcional)</Label>
+                  <Input
+                    id="customer"
+                    placeholder="Ex: Lucas, Marcos..."
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                  />
+                </div>
 
-              <Separator />
+                <Separator />
 
-              {/* Cart Items */}
-              {cart.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  Carrinho vazio
-                </p>
-              ) : (
-                <ScrollArea className="h-64">
-                  <div className="space-y-3 pr-4">
-                    {cart.map(item => (
-                      <div key={item.id} className="flex items-center gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            R$ {item.price.toFixed(2)}/ unidade
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, -1)}
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-8 text-center text-sm font-medium">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, 1)}
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            className="h-7 w-7 text-destructive"
-                            onClick={() => removeFromCart(item.id)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                {/* Cart Items */}
+                {cart.length === 0 ? (
+                  <div className="w-full flex flex-col justify-center items-center 
+                                 text-center text-foreground/70 space-y-1">
+                    <img src="../../public/imgs/empty-cart-icon.png" alt="Ícone carrinho vazio" />
+                    <p className='font-semibold text-xl'>
+                      Carrinho vazio
+                    </p>
+                    <p>Parece que não há itens no seu carrinho ainda.</p>
                   </div>
-                </ScrollArea>
-              )}
+                ) : (
+                  <ScrollArea className="h-64">
+                    <div className="space-y-3 pr-4">
+                      {cart.map(item => (
+                        <div key={item.id} className="flex items-center gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              R$ {item.price.toFixed(2)}/ unidade
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => updateQuantity(item.id, -1)}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-8 text-center text-sm font-medium">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => updateQuantity(item.id, 1)}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
 
-              <Separator />
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-7 w-7 text-destructive"
+                              onClick={() => removeFromCart(item.id)}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                )}
 
-              {/* Total */}
-              <div className="flex items-center justify-between text-lg font-bold">
-                <span>Total</span>
-                <span className="text-primary">R$ {total.toFixed(2)}</span>
-              </div>
+                <Separator />
 
-              {/* Actions */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={clearCart}
-                  disabled={cart.length === 0}
-                >
-                  Limpar
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handleFinishOrder}
-                  disabled={cart.length === 0}
-                >
-                  <img src="../../public/imgs/button-icons/chefs-hat-icon.svg" alt="Icon" className="h-6 w-6 object-contain" />
-                  Finalizar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                {/* Total */}
+                <div className="flex items-center justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span className="text-primary">R$ {total.toFixed(2)}</span>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={clearCart}
+                    disabled={cart.length === 0}
+                  >
+                    Limpar
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handleFinishOrder}
+                    disabled={cart.length === 0}
+                  >
+                    <img src="../../public/imgs/button-icons/chefs-hat-icon.svg" alt="Icon" className="h-6 w-6 object-contain" />
+                    Finalizar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 

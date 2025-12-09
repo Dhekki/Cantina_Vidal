@@ -62,10 +62,8 @@ const StaffLayout = () => {
         <AppSidebar />
         <div className="flex-1 flex flex-col w-full">
           <header className="border-b bg-card sticky top-0 z-10">
-            <div className="flex items-center justify-between px-4 py-4">
-              <div className="flex items-center gap-2">
-                <SidebarTrigger />
-              </div>
+            <div className="flex items-center justify-end px-4 py-4">
+              
               <div className="flex items-center gap-2">
                 <NotificationDropdown
                   onClearAll={clearAll}
