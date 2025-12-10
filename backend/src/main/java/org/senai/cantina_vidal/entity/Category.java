@@ -3,17 +3,20 @@ package org.senai.cantina_vidal.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Builder
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
 @Table(name = "categories")
 public class Category extends UserDateAudit {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -27,13 +30,8 @@ public class Category extends UserDateAudit {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Size(max = 7)
-    @Column(name = "color_hex", length = 7)
-    private String colorHex;
-
     @NotNull
-    @Builder.Default
     @ColumnDefault("true")
     @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    private Boolean active = false;
 }

@@ -3,7 +3,10 @@ package org.senai.cantina_vidal.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -11,14 +14,14 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Builder
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
 @Table(name = "orders")
 public class Order extends UserDateAudit {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
