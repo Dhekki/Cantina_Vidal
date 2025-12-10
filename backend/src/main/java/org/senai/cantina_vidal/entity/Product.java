@@ -3,23 +3,22 @@ package org.senai.cantina_vidal.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "products")
 public class Product extends UserDateAudit {
     @Id
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -33,35 +32,52 @@ public class Product extends UserDateAudit {
     private String description;
 
     @NotNull
+    @Builder.Default
+    @ColumnDefault("0.0")
     @Column(name = "current_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal currentPrice;
+    private BigDecimal currentPrice = BigDecimal.valueOf(0.0);
 
     @Size(max = 500)
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("true")
     @Column(name = "active", nullable = false)
-    private Boolean active = false;
+    private Boolean active = true;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_stock", nullable = false)
-    private Integer quantityStock;
+    private Integer quantityStock = 0;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_held", nullable = false)
-    private Integer quantityHeld;
+    private Integer quantityHeld = 0;
 
     @NotNull
+    @Builder.Default
     @ColumnDefault("0")
     @Column(name = "quantity_committed", nullable = false)
-    private Integer quantityCommitted;
+    private Integer quantityCommitted = 0;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @Column(name = "min_stock_level")
+    private Integer minStockLevel;
+
+    @Column(name = "replenishment_days")
+    private Integer replenishmentDays; // Intervalo em dias
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
+
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+    inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
 }
