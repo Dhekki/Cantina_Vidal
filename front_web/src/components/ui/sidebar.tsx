@@ -132,8 +132,8 @@ function useHoverIntentForSidebar(opts: {
   const ref    = React.useRef<HTMLDivElement | null>(null);
   const openT  = React.useRef<number | null>(null);
   const closeT = React.useRef<number | null>(null);
-  const OPEN   = 120;
-  const CLOSE  = 260;
+  const OPEN   = 80;
+  const CLOSE  = 200;
 
   const clear = React.useCallback(() => {
     if(openT.current) {
@@ -289,7 +289,7 @@ const Sidebar = React.forwardRef<
     >
       <div
         className={cn(
-          "relative h-svh bg-transparent transition-[width] duration-200 ease-in-out-linear",
+          "relative h-svh bg-transparent transition-[width] duration-200 ease-in-out",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           "w-[--sidebar-width-icon]",
@@ -297,9 +297,10 @@ const Sidebar = React.forwardRef<
       />
       <div
         className={cn(
-          "fixed inset-y-0 hidden h-svh transition-[left,right,width] duration-200 ease-in-out-linear md:flex",
+          "fixed inset-y-0 hidden h-svh transition-[left,right,width] duration-200 ease-in-out md:flex",
           state === "collapsed" ? "w-[--sidebar-width-icon]" : "w-[--sidebar-width]",
-          state === "collapsed" ? "z-10" : "z-50",
+          // Z-index sempre alto para evitar problemas de sobreposição
+          "z-50",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -311,7 +312,7 @@ const Sidebar = React.forwardRef<
         <div
           data-sidebar="sidebar"
           className={cn(
-            "flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
+            "flex h-full w-full flex-col bg-sidebar transition-[background-color,box-shadow] duration-200 ease-in-out group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
             state === "expanded" && "shadow-lg bg-white",
             "bg-opacity-100",
           )}
