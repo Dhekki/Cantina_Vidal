@@ -10,6 +10,7 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
   SidebarGroupContent,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { CalculatorDialog } from "@/components/CalculatorDialog";
 import { Button } from "@/components/ui/button";
@@ -24,12 +25,13 @@ export function AppSidebar() {
   const { open, toggleSidebar } = useSidebar();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar onMouseEnter={toggleSidebar} onMouseLeave={toggleSidebar} collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <div className="flex items-center justify-between">
-            <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
-            {open && (
+          {open && (
+            <div className="flex items-center justify-between border-1 border-b py-4">
+              <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
+
               <Button
                 variant="outline"
                 size="icon"
@@ -39,16 +41,29 @@ export function AppSidebar() {
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-            )}
-          </div>
+            </div>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
+              {!open && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={toggleSidebar}
+                  className="h-8 w-8 mr-2 mt-4 hover:bg-accent"
+                  title="Expandir sidebar"
+                >
+                <SidebarTrigger />
+                </Button>
+              )}
+
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
+                  <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url} 
                       end 
+                      aria-label={item.title}
                       className="hover:bg-accent py-6 px-4 text-lg font-medium text-menu-color gap-4 items-center border border-transparent flex justify-start group-data-[collapsible=icon]:justify-center"
                       activeClassName="bg-accent text-accent-foreground border border-accent-foreground"
                     >
@@ -62,7 +77,7 @@ export function AppSidebar() {
               ))}
               {/* Calculator */}
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Calculadora">
+                <SidebarMenuButton asChild>
                   <div className="flex items-center cursor-pointer">
                     <CalculatorDialog />
                     {open && <span className="ml-2">Calculadora</span>}
