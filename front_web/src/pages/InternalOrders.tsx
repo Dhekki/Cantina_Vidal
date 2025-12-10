@@ -176,8 +176,15 @@ const InternalOrders = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center py-12 text-muted-foreground">
-              Nenhum produto encontrado
+            <div className="col-span-2 flex flex-col justify-center items-center text-center text-muted-foreground border border-slate-100 gap-1 h-fit py-12 shadow-sm rounded-md hover:bg-muted/50">
+              <img
+                src="/imgs/products-empty-list-icon.png"
+                alt="Empty list icon"
+                className="h-36 mb-3"
+              />
+              <p className="text-gray-600 text-2xl">
+                Nenhum produto encontrado
+              </p>
             </div>
           ) : (
             <div className="grid [@media(max-width:768px)]:grid-cols-2 
@@ -225,7 +232,7 @@ const InternalOrders = () => {
                   <ShoppingCart className="h-5 w-5 me-2" />
                   Carrinho
                   {cart.length > 0 && (
-                    <Badge variant="secondary" className="ml-auto">
+                    <Badge variant="cartBadge" className="ml-auto">
                       {cart.reduce((sum, item) => sum + item.quantity, 0)} 
                       {cart.reduce((sum, item) => sum + item.quantity, 0) > 1 ? (' itens') : (' item')}
                     </Badge>
@@ -233,16 +240,24 @@ const InternalOrders = () => {
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-5">
                 {/* Customer Name */}
                 <div className="space-y-3">
-                  <Label htmlFor="customer">Nome do Cliente (opcional)</Label>
-                  <Input
-                    id="customer"
-                    placeholder="Ex: Lucas, Marcos..."
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                  />
+                  <Label htmlFor="customer">
+                    Nome do Cliente (opcional)
+                  </Label>
+
+                  <div className="relative h-fit">
+                    <img src="../../public/imgs/input-icons/user_icon.svg"
+                         alt="User icon" className='absolute left-3 top-1/2 -translate-y-1/2' />
+                    <Input
+                      id="customer"
+                      placeholder="Ex: Lucas, Marcos..."
+                      value={customerName}
+                      autoComplete='off'
+                      onChange={(e) => setCustomerName(e.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <Separator />
@@ -250,7 +265,7 @@ const InternalOrders = () => {
                 {/* Cart Items */}
                 {cart.length === 0 ? (
                   <div className="w-full flex flex-col justify-center items-center 
-                                 text-center text-foreground/70 space-y-1">
+                                 text-center text-foreground/70 space-y-1 py-3 rounded-md hover:bg-muted/30">
                     <img src="../../public/imgs/empty-cart-icon.png" alt="Ícone carrinho vazio" />
                     <p className='font-semibold text-xl'>
                       Carrinho vazio
@@ -259,11 +274,13 @@ const InternalOrders = () => {
                   </div>
                 ) : (
                   <ScrollArea className="h-64">
-                    <div className="space-y-3 pr-4">
+                    <div className="space-y-3">
                       {cart.map(item => (
-                        <div key={item.id} className="flex items-center gap-2">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{item.name}</p>
+                        <div key={item.id} className="flex items-center gap-2 rounded-md border border-input bg-background hover:bg-muted/50 px-4 py-2">
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <p className="text-sm font-medium truncate text-foreground/90">
+                              {item.name}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               R$ {item.price.toFixed(2)}/ unidade
                             </p>
@@ -273,16 +290,18 @@ const InternalOrders = () => {
                               variant="outline"
                               size="icon"
                               className="h-7 w-7"
-                              onClick={() => updateQuantity(item.id, -1)}
+                              onClick={() => {item.quantity > 1 ? updateQuantity(item.id, -1) : removeFromCart(item.id)}}
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-8 text-center text-sm font-medium">
+
+                            <span className="w-8 text-center text-sm font-medium text-foreground/80">
                               {item.quantity}
                             </span>
+
                             <Button
-                              variant="outline"
                               size="icon"
+                              variant="outline"
                               className="h-7 w-7"
                               onClick={() => updateQuantity(item.id, 1)}
                             >
@@ -308,8 +327,10 @@ const InternalOrders = () => {
 
                 {/* Total */}
                 <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-primary">R$ {total.toFixed(2)}</span>
+                  <span className='text-foreground/70'>Total</span>
+                  <span className="text-primary">
+                    R$ {total.toFixed(2)}
+                  </span>
                 </div>
 
                 {/* Actions */}

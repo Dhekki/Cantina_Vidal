@@ -326,7 +326,7 @@ const ProductsManagement = () => {
             {filteredProducts.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={9}
                   className="py-8 text-muted-foreground "
                 >
                   <div className="flex flex-col items-center justify-center text-center">
@@ -335,7 +335,9 @@ const ProductsManagement = () => {
                       alt="Empty list icon"
                       className="mb-3"
                     />
-                    Nenhum produto encontrado
+                    <p className="text-gray-600 text-2xl">
+                      Nenhum produto encontrado
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>

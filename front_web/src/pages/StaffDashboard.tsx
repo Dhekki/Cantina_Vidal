@@ -11,6 +11,7 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 import { FileX } from 'lucide-react';
+import { OrderStatusBadge } from '@/components/client/OrderStatusBadge';
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
@@ -36,6 +37,21 @@ const StaffDashboard = () => {
     { value: 'delivered' as const, label: 'Entregues',        count: getOrdersByStatus('delivered').length},
     { value: 'canceled'  as const, label: 'Cancelados',       count: getOrdersByStatus('canceled').length},
   ];
+
+  interface OrderCardProps {
+    order: Order;
+    onStatusChange: (orderId: string, newStatus: Order["status"]) => void;
+    onViewDetails:  (order: Order) => void;
+  }
+
+  const statusMessages: Record<Order["status"], string> = {
+    received:  "Recebido",
+    preparing: "Em preparo",
+    ready:     "Feito",
+    delivered: "Entregue",
+    canceled:  "Cancelado",
+  };
+
 
   const statusLabels = {
     received:  { singular: "recebido",   plural: "recebidos"   },
@@ -165,18 +181,27 @@ const StaffDashboard = () => {
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent>
+          <div className="w-fit">
+            <OrderStatusBadge status={selectedOrder?.status} />
+          </div>
           <DialogHeader>
-            <DialogTitle>
-              Detalhes do Pedido - {selectedOrder?.orderCode}
-            </DialogTitle>
+              <DialogTitle>
+                Detalhes do Pedido - {selectedOrder?.orderCode}
+              </DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold mb-2">Cliente</h4>
+                <h4 className="font-semibold mb-2">
+                  Cliente
+                </h4>
                 <div className="text-sm space-y-1">
-                  <p><span className="text-muted-foreground">Nome:</span> {selectedOrder.student.name}</p>
-                  <p><span className="text-muted-foreground">Retirada:</span> {selectedOrder.pickUpTime}</p>
+                  <p>
+                    <span className="text-muted-foreground">Nome:</span> {selectedOrder.student.name}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">Retirada:</span> {selectedOrder.pickUpTime}
+                  </p>
                 </div>
               </div>
               <div>

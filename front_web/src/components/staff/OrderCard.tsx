@@ -42,7 +42,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
       <div className="space-y-3 w-full">
         <div className="flex items-start justify-between border-b border-dotted">
           <div>
-            {/* <div className={`text-3xl font-bold text-status-${order.status}-primary mb-3`}>{order.orderCode}</div> */}
             <div className="text-3xl font-bold text-card-primary mb-3">{order.orderCode}</div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 whitespace-nowrap">
