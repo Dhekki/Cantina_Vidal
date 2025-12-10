@@ -271,7 +271,7 @@ const ProductsManagement = () => {
       <div className="flex justify-between">
         <div className="flex gap-3 max-w-[600px] w-full">
           {/* Search */}
-          <SearchInput />
+          <SearchInput searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
           {/* Search By Category Button */}
           <Button

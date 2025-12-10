@@ -151,7 +151,7 @@ const InternalOrders = () => {
       {/* Products Section */}
       <div className="lg:col-span-3 space-y-6">
         <div className="flex gap-3 max-w-[600px] w-full">
-          <SearchInput />
+          <SearchInput searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
           <Button
             onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
