@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+
             android:layout_marginTop="40dp"
             android:padding="20dp">
 
@@ -58,7 +59,8 @@
                     android:id="@+id/edtNome"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint=" Seu nome"
+                    android:hint="Seu nome"
+                    android:layout_marginHorizontal="3dp"
                     android:textColorHint="@color/cinza"
                     android:textColor="@color/black"
                     android:background="@android:color/transparent"
@@ -85,7 +87,8 @@
                     android:id="@+id/edtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint=" Seu email"
+                    android:hint="Seu email"
+                    android:layout_marginHorizontal="3dp"
                     android:textColorHint="@color/cinza"
                     android:textColor="@color/black"
                     android:background="@android:color/transparent"

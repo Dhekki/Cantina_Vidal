@@ -1,6 +1,7 @@
 package com.example.projeto_v1.view;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -52,16 +53,16 @@ public class LoginClienteActivity extends AppCompatActivity {
             String senha = edtSenha2.getText().toString();
 
             // Validação
-            if (email.isEmpty() || senha.isEmpty()) {
-                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
-                return;
-            }
+//            if (email.isEmpty() || senha.isEmpty()) {
+//                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
 
             // Realiza login
             viewModel.realizarLogin(email, senha).observe(this, sucesso -> {
                 //if (sucesso != null && sucesso) {
                     Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginClienteActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginClienteActivity.this, HomeClienteActivity.class);
                     startActivity(intent);
                     finish();
                 //} else {
@@ -70,9 +71,7 @@ public class LoginClienteActivity extends AppCompatActivity {
             });
         });
 
-        View rootView = findViewById(android.R.id.content);
-
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
