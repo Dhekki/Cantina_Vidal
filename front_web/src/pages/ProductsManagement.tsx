@@ -355,7 +355,7 @@ const ProductsManagement = () => {
                 <TableCell>{product.description}</TableCell>
                 <TableCell>{product.category}</TableCell>
                 
-                <TableCell className='text-end'>${product.price.toFixed(2)}</TableCell>
+                <TableCell className='text-end'>R${product.price.toFixed(2)}</TableCell>
                 <TableCell className='text-end'>{product.inStock}</TableCell>
                 <TableCell className='text-end'>{product.availableToPickUp}</TableCell>
                 <TableCell>
@@ -546,7 +546,7 @@ const ProductsManagement = () => {
                   <div>
                     <Label className="text-muted-foreground">Preço</Label>
                     <p className="text-lg font-bold text-primary">
-                      ${selectedProduct.price.toFixed(2)}
+                      R${selectedProduct.price.toFixed(2)}
                     </p>
                   </div>
                   <div>
