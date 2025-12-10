@@ -25,13 +25,12 @@ export function AppSidebar() {
   const { open, toggleSidebar } = useSidebar();
 
   return (
-    <Sidebar onMouseEnter={toggleSidebar} onMouseLeave={toggleSidebar} collapsible="icon">
+    <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          {open && (
-            <div className="flex items-center justify-between border-1 border-b py-4">
-              <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
-
+          <div className="flex items-center justify-between border-b py-4">
+            <SidebarGroupLabel>Opções do Admin</SidebarGroupLabel>
+            {open && (
               <Button
                 variant="outline"
                 size="icon"
@@ -41,25 +40,13 @@ export function AppSidebar() {
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-            </div>
-          )}
+            )}
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {!open && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={toggleSidebar}
-                  className="h-8 w-8 mr-2 mt-4 hover:bg-accent"
-                  title="Expandir sidebar"
-                >
-                <SidebarTrigger />
-                </Button>
-              )}
-
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
                       to={item.url} 
                       end 
@@ -77,7 +64,7 @@ export function AppSidebar() {
               ))}
               {/* Calculator */}
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Calculadora">
                   <div className="flex items-center cursor-pointer">
                     <CalculatorDialog />
                     {open && <span className="ml-2">Calculadora</span>}

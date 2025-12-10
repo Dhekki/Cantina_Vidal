@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories } from '@/lib/mockData';
 import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
+import SearchInput from '@/components/ui/search-input';
 
 interface CartItem extends MenuItem {
   quantity: number;
@@ -150,22 +151,7 @@ const InternalOrders = () => {
       {/* Products Section */}
       <div className="lg:col-span-3 space-y-6">
         <div className="flex gap-3 max-w-[600px] w-full">
-          {/* Search */}
-          <div className="relative w-full">
-            <img
-              src={SearchIcon}
-              alt=""
-              aria-hidden="true"
-              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 bg-slate-600"
-            />
-
-            <Input
-              placeholder="Buscar por nome ou código."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
+          <SearchInput />
 
           <Button
             onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}

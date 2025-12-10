@@ -43,6 +43,7 @@ import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
 import { CategoryDialog } from '@/components/CategoryDialog';
 import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
+import SearchInput from '@/components/ui/search-input';
 
 
 const ProductsManagement = () => {
@@ -269,22 +270,10 @@ const ProductsManagement = () => {
 
       <div className="flex justify-between">
         <div className="flex gap-3 max-w-[600px] w-full">
-            {/* Search */}
-            <div className="relative w-full">
-              <img
-                src={SearchIcon}
-                alt=""
-                aria-hidden="true"
-                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 bg-slate-600"
-              />
+          {/* Search */}
+          <SearchInput />
 
-              <Input
-                placeholder="Buscar por nome ou código."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
+          {/* Search By Category Button */}
           <Button
             onClick={isCategoriesActive ? hideCategoryFilter : showCategoryFilter}
             variant={isCategoriesActive ? 'categorySelected' : 'outline'}
