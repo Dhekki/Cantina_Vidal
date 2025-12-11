@@ -10,7 +10,7 @@ public record CategoryResponseDTO(
         Boolean active
 ) {
     public CategoryResponseDTO(Category entity) {
-        this(entity.getId(),
+        this(   entity.getId(),
                 entity.getName(),
                 entity.getImageUrl(),
                 entity.getColorHex(),

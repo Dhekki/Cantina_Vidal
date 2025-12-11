@@ -11,7 +11,7 @@ public record UserResponseDTO(
         Boolean active
 ) {
     public UserResponseDTO(User entity) {
-        this(entity.getId(),
+        this(   entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
                 entity.getRole().name(),

@@ -33,7 +33,7 @@ public record ProductResponseDTO(
                 entity.getReplenishmentDays(),
                 entity.getExpirationDate(),
                 entity.getActive(),
-                (entity.getCategories() != null)
+                entity.getCategories() != null
                         ? entity.getCategories().stream()
                             .map(Category::getName)
                             .collect(Collectors.toSet())

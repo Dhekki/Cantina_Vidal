@@ -23,7 +23,8 @@ public class CategoryController {
     private final CategoryService service;
 
     @GetMapping
-    public ResponseEntity<Page<CategoryResponseDTO>> findAll(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+    public ResponseEntity<Page<CategoryResponseDTO>> findAll(
+            @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
         Page<Category> entitiesPage = service.findAll(pageable);
 
         Page<CategoryResponseDTO> dtoPage = entitiesPage.map(CategoryResponseDTO::new);
