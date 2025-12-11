@@ -9,6 +9,7 @@ import org.senai.cantina_vidal.entity.RefreshToken;
 import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.enums.Role;
 import org.senai.cantina_vidal.exception.ConflictException;
+import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.repository.RefreshTokenRepository;
 import org.senai.cantina_vidal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,11 +86,11 @@ public class AuthService {
 
     public LoginResponseDTO refreshToken(String requestRefreshToken) {
         RefreshToken entity = refreshTokenRepository.findByToken(requestRefreshToken)
-                .orElseThrow(() -> new RuntimeException("Refresh Token não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh Token não encontrado"));
 
         if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(entity);
-            throw new RuntimeException("Refresh Token expirado. Faça login novamente");
+            throw new BadCredentialsException("Refresh Token expirado. Faça login novamente");
         }
 
         String newAccessToken = tokenService.generateAccessToken(entity.getUser());
