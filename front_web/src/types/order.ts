@@ -7,7 +7,7 @@ export interface MenuItem {
   price: number;
   inStock: number;
   minimumStock: number;
-  repositionInterval: number; 
+  replacementInterval: number; 
   expirationData: string;
   availableToPickUp: number;
   specifications: string;

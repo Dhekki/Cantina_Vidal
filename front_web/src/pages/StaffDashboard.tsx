@@ -214,7 +214,7 @@ const StaffDashboard = () => {
             <OrderStatusBadge status={selectedOrder?.status} />
           </div>
           <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className='text-foreground/80 mb-2'>
                 Detalhes do Pedido - {selectedOrder?.orderCode}
               </DialogTitle>
           </DialogHeader>

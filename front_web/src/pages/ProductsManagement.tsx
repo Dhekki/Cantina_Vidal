@@ -42,7 +42,6 @@ import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
 import { CategoryDialog } from '@/components/CategoryDialog';
-import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
 import SearchInput from '@/components/ui/search-input';
 import { Badge } from '@/components/ui/badge';
 
@@ -88,6 +87,9 @@ const ProductsManagement = () => {
     name: '',
     description: '',
     price: '',
+    stock: '',
+    minimumStock: '',
+    replacementInterval: '',
     category: '',
     image: '',
     dataValidade: '',
@@ -107,20 +109,33 @@ const ProductsManagement = () => {
 
   const hasUnsavedChanges = () => {
     return (
-      formData.name         !== initialFormData.name         ||
-      formData.description  !== initialFormData.description  ||
-      formData.price        !== initialFormData.price        ||
-      formData.category     !== initialFormData.category     ||
-      formData.dataValidade !== initialFormData.dataValidade ||
-      formData.image        !== initialFormData.image
+      formData.name                !== initialFormData.name                ||
+      formData.description         !== initialFormData.description         ||
+      formData.price               !== initialFormData.price               ||
+      formData.category            !== initialFormData.category            ||
+      formData.stock               !== initialFormData.stock               ||
+      formData.minimumStock        !== initialFormData.minimumStock        ||
+      formData.replacementInterval !== initialFormData.replacementInterval ||
+      formData.dataValidade        !== initialFormData.dataValidade        ||
+      formData.image               !== initialFormData.image
     );
   };
 
   const handleDialogClose = (open: boolean) => {
-    if(!open && hasUnsavedChanges()) {
-      setIsUnsavedChangesDialogOpen(true);
+    if(!open) {
+      // Tentando fechar o dialog
+      if(hasUnsavedChanges()) {
+        setIsUnsavedChangesDialogOpen(true);
+      } else {
+        setIsAddEditDialogOpen(false);
+        setFormData(emptyFormData);
+        setInitialFormData(emptyFormData);
+        setSelectedProduct(null);
+        setEditMode(false);
+      }
     } else {
-      setIsAddEditDialogOpen(open);
+      // Abrindo o dialog
+      setIsAddEditDialogOpen(true);
     }
   };
 
@@ -129,6 +144,8 @@ const ProductsManagement = () => {
     setIsAddEditDialogOpen(false);
     setFormData(emptyFormData);
     setInitialFormData(emptyFormData);
+    setSelectedProduct(null);
+    setEditMode(false);
   };
 
   const handleStayOnForm = () => {
@@ -142,6 +159,8 @@ const ProductsManagement = () => {
       description: '',
       price: '',
       stock: '',
+      minimumStock: '',
+      replacementInterval: '',
       category: '',
       image: '',
       dataValidade: '',
@@ -154,14 +173,19 @@ const ProductsManagement = () => {
   const handleEdit = (product: MenuItem) => {
     setEditMode(true);
     setSelectedProduct(product);
+
     const editFormData = {
-      name: product.name,
-      description: product.description,
-      price: product.price.toString(),
-      category: product.category[0],
-      dataValidade: product.expirationData,
-      image: product.image,
+      name:                product.name,
+      description:         product.description,
+      price:               product.price.toString(),
+      category:            product.category[0],
+      stock:               product.inStock.toString(),
+      minimumStock:        product.minimumStock.toString(),
+      replacementInterval: product.replacementInterval?.toString(),
+      dataValidade:        product.expirationData,
+      image:               product.image,
     };
+
     setFormData(editFormData);
     setInitialFormData(editFormData);
     setIsAddEditDialogOpen(true);
@@ -202,32 +226,34 @@ const ProductsManagement = () => {
         p.id === selectedProduct.id 
           ? {
               ...p,
-              name: formData.name,
-              description: formData.description,
-              price: parseFloat(formData.price),
-              category: [formData.category],
-              image: formData.image,
+              name:                formData.name,
+              description:         formData.description,
+              price:               parseFloat(formData.price),
+              inStock:             parseInt(formData.stock),
+              minimumStock:        parseInt(formData.minimumStock),
+              replacementInterval: parseInt(formData.replacementInterval),
+              expirationData:      formData.dataValidade,
+              category:            [formData.category],
+              image:               formData.image,
             }
           : p
       ));
       toast.success('Produto atualizado com sucesso');
     } else {
       const newProduct: MenuItem = {
-        id: `product-${Date.now()}`,
-        name: formData.name,
-        // Default values for tests
-        availableToPickUp: 0,
-        specifications: 'New product test',
-        inStock: 0,
-        expirationData: '2026-01-12',
-        repositionInterval: 12,
-        minimumStock: 12,
-
-        description: formData.description,
-        price: parseFloat(formData.price),
-        category: [formData.category],
-        image: formData.image,
-        available: true,
+        id:                  `product-${Date.now()}`,
+        name:                formData.name,
+        description:         formData.description,
+        price:               parseFloat(formData.price),
+        category:            [formData.category],
+        image:               formData.image,
+        available:           true,
+        availableToPickUp:   parseInt(formData.stock),
+        inStock:             parseInt(formData.stock),
+        minimumStock:        parseInt(formData.minimumStock),
+        replacementInterval: parseInt(formData.replacementInterval),
+        expirationData:      formData.dataValidade,
+        specifications:      formData.description,
       };
       setProducts([...products, newProduct]);
       toast.success('Produto cadastrado com sucesso');
@@ -359,13 +385,11 @@ const ProductsManagement = () => {
                 <TableCell>
                   <div className="flex items-center justify-start gap-2">
                     {product.category.map((catg, idx) => (
-                    <Badge variant="categorie" className="py-1">
+                    <Badge key={idx} variant="categorie" className="py-1">
                       <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                            alt="Tag icon" className='me-2'/>
+                           alt="Tag icon" className='me-2'/>
                     
-                      <p className='font-semibold'>
-                        {catg}
-                      </p>
+                      <p className='font-semibold'>{catg}</p>
                     </Badge>
                     ))}
                   </div>
@@ -374,6 +398,7 @@ const ProductsManagement = () => {
                 <TableCell className='text-end'>R${product.price.toFixed(2)}</TableCell>
                 <TableCell className='text-end'>{product.inStock}</TableCell>
                 <TableCell className='text-end'>{product.availableToPickUp}</TableCell>
+                
                 <TableCell>
                   <div className="flex items-center gap-2 w-[120px]">
                     <Switch
@@ -424,8 +449,9 @@ const ProductsManagement = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editMode ? 'Editar Produto' : 'Adicionar Produto'}
+              {editMode ? 'Editar Produto' : 'Cadastrar Produto'}
             </DialogTitle>
+
             <DialogDescription>
               {editMode 
                 ? 'Atualize as informações do produto' 
@@ -435,26 +461,153 @@ const ProductsManagement = () => {
           
           <form onSubmit={handleSubmit}>
             <div className="space-y-4 py-4">
-              <div className="flex">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
+              {/* Row: Product Name / Expiration date */}
+              <div className="flex gap-4">
+                {/* Input: Product name */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="name">Nome do Produto</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/box-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
                   />
+
+                    <Input
+                      id="name"
+                      autoComplete='off'
+                      placeholder='Nome do produto'
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
+                
+                {/* Input: Expiration Date */}
+                <div className="space-y-2 w-full">
                   <Label htmlFor="dataValidade">Data de Validade</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/calendar-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                  />
+
                   <Input
                     id="dataValidade"
+                    type='date'
+                    placeholder='Data de validade'
                     value={formData.dataValidade}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, dataValidade: e.target.value })}
                     required
                   />
+                  </div>
                 </div>
               </div>
+              {/* Row: Product Price / Quantity in Stock */}
+              <div className="flex gap-4">
+                {/* Input: Product Price */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="price">Preço</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/reais-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                  />
+
+                    <Input
+                      id="price"
+                      type='number'
+                      step={'0.01'}
+                      placeholder='Preço'
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                {/* Input: Quantity in Stock */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="inStock">Quantidade em Estoque</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/boxes-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                  />
+
+                    <Input
+                      id="inStock"
+                      type='number'
+                      step={'1'}
+                      placeholder='Quantidade'
+                      autoComplete='off'
+                      value={formData.stock}
+                      onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Row: Minimum Stock / Replacement Interval */}
+              <div className="flex gap-4">
+                {/* Input: Minimum Stock */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="minimumStock">Estoque Mínimo</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/stock-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                  />
+
+                    <Input
+                      id="minimumStock"
+                      type='number'
+                      step={'1'}
+                      placeholder='Estoque mínimo'
+                      autoComplete='off'
+                      value={formData.minimumStock}
+                      onChange={(e) => setFormData({ ...formData, minimumStock: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                
+                {/* Input: Replacement Interval */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="replacementInterval">Intervalo de Reposição (dias)</Label>
+                  <div className="relative">
+                  <img
+                    src="../../public/imgs/input-icons/boxes-icon.svg"
+                    alt="User icon"
+                    aria-hidden="true"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                  />
+
+                    <Input
+                      id="replacementInterval"
+                      type='number'
+                      step={'1'}
+                      placeholder='Intervalo (dias)'
+                      autoComplete='off'
+                      value={formData.replacementInterval}
+                      onChange={(e) => setFormData({ ...formData, replacementInterval: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição</Label>
                 <Textarea
@@ -464,50 +617,68 @@ const ProductsManagement = () => {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Preço</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoria</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.filter(c => c !== 'All').map(category => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="image">URL da Imagem</Label>
-                <Input
-                  id="image"
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  required
-                />
+
+              <div className="flex gap-4 w-full">
+                {/* Input: Images Upload */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="image">Imagem do Produto</Label>
+                  <label 
+                    htmlFor="image-upload"
+                    className="flex flex-col justify-center items-center border border-input/90 px-5 py-8 gap-2 rounded-md hover:bg-muted/30 cursor-pointer"
+                  >
+                    <img src="../../public/imgs/input-icons/upload-file-icon.svg" alt="Upload file icon" className='h-8 w-8' />
+                    <p className='text-sm text-center font-medium text-foreground/50'>
+                      {formData.image ? 'Imagem selecionada' : 'Arraste o arquivo aqui ou clique para selecionar'}
+                    </p>
+                  </label>
+
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      
+                      if(file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData({ ...formData, image: reader.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* Input: Category */}
+                <div className="space-y-2 w-full">
+                  <Label htmlFor="category">Categoria</Label>
+                
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {categories.filter(c => c !== 'All').map(category => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => handleDialogClose(false)}>
                 Cancelar
               </Button>
+              
               <Button type="submit">
                 {editMode ? 'Salvar' : 'Adicionar'}
               </Button>

@@ -45,7 +45,7 @@ const filteredProducts = useMemo(() => {
     // Filter by search query
     if(query) {
       return (
-        p.name.toLowerCase().includes(query) ||
+        p.name.toLowerCase().includes(query)       ||
         String(p.id).toLowerCase().includes(query) ||
         categories.some(c => c.toLowerCase().includes(query))
       );
