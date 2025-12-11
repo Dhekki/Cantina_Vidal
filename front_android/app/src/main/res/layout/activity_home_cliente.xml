@@ -2,335 +2,79 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fffcf9"
-    tools:context=".view.HomeClienteActivity"
-    >
+    android:background="@drawable/fffcf9">
 
-    <ScrollView
+    <!-- Conteúdo principal com rolagem -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="80dp">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:orientation="vertical"
-           >
+            android:paddingBottom="80dp">
 
-            <FrameLayout
+            <include layout="@layout/item_home_header" />
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_height="8dp" />
 
-                <TextView
-                    android:id="@+id/titulo2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Home"
-                    android:layout_margin="20dp"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+            <include layout="@layout/item_home_categorias" />
 
-                <FrameLayout
-                    android:id="@+id/btnNotificacoes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical">
-
-                    <ImageButton
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_marginEnd="4dp"
-                        android:background="@drawable/fundo_sino"
-                        android:backgroundTint="@color/white2"
-                        android:contentDescription="@string/notificacoes"
-                        android:padding="4dp"
-                        android:src="@drawable/icon___sino" />
-
-                    <View
-                        android:id="@+id/indicadorNotificacao"
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="#FF0000"
-                        android:visibility="gone" />
-                </FrameLayout>
-            </FrameLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="-10dp"
-                android:background="@drawable/shape_linha"
-                android:gravity="center_vertical"
+                android:layout_marginHorizontal="20dp"
                 android:orientation="horizontal"
-                android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_marginEnd="10dp"
-                    android:contentDescription="Ícone de busca"
-                    android:src="@drawable/icon___search" />
-
-                <EditText
-                    android:id="@+id/barraPesquisa"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="Pesquise almoços, bebidas, doces..."
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/cinza"
-                    tools:targetApi="o" />
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_marginEnd="90dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp">
-
-                    <LinearLayout
-                        android:id="@+id/categoriaBebidas"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de bebidas"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="@string/bebidas"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/categoriaAlmoco"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de almoço"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Almoços"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/categoriaDoces"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de doces"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Doces"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/categoriaSalgados"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de salgados"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Salgados"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/categoriaSobremesas"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de sobremesas"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Sobremesas"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/categoriaCafes"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:background="@drawable/shape_circulo"
-                        android:backgroundTint="@color/laranja_escuro"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageButton
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@null"
-                            android:contentDescription="Botão de cafés"
-                            android:src="@drawable/icon___bebidas" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Cafés"
-                            android:textAlignment="center"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="-12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Explore as opções"
-                    android:textColor="@color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/btnVerTudo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="8dp"
                     android:text="Ver tudo"
-                    android:textColor="@color/laranja_escuro"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/laranja" />
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_home"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal" >
-
-
-                </LinearLayout>
-
-            </LinearLayout>
+                android:layout_marginHorizontal="10dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="8dp"
+                tools:listitem="@layout/item_produto" />
 
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    </ScrollView>
+    <include
+        layout="@layout/item_home_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:layout_marginLeft="16dp"/>
 
 </FrameLayout>

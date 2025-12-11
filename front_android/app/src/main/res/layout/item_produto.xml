@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="161dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:background="@drawable/shape_linha"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageProduto"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon___cocacola"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-20dp"
+            android:background="@drawable/shape_linha"
+            android:backgroundTint="@color/white2"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnDiminuir"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                android:clickable="true"
+                app:backgroundTint="@color/white2"
+                app:borderWidth="0dp"
+                app:elevation="0dp"
+                app:fabCustomSize="32dp"
+                app:maxImageSize="20dp"
+                app:srcCompat="@drawable/icon_menos"
+                app:tint="@color/laranja" />
+
+            <TextView
+                android:id="@+id/textQuantidade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAumentar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                android:clickable="true"
+                app:backgroundTint="@color/white2"
+                app:borderWidth="0dp"
+                app:elevation="0dp"
+                app:fabCustomSize="32dp"
+                app:maxImageSize="20dp"
+                app:srcCompat="@drawable/icon_mais"
+                app:tint="@color/laranja" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textProdutoNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            android:text="Refrigerante Guaraná Tônico Massa"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textProdutoPreco"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="R$ 3,03"
+                android:layout_marginEnd="-56dp"
+                android:textColor="@color/laranja"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textProdutoDescricao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="· Lata 350ml"
+                android:textColor="@color/cinza"
+                android:textSize="12sp"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

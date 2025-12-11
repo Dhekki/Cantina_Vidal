@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginEnd="90dp"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp">
+
+            <LinearLayout
+                android:id="@+id/categoriaBebidas"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de bebidas"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/bebidas"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoriaAlmoco"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de almoço"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Almoços"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoriaDoces"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de doces"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Doces"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoriaSalgados"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de salgados"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Salgados"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoriaSobremesas"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de sobremesas"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Sobremesas"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoriaCafes"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="@drawable/shape_circulo"
+                android:backgroundTint="@color/laranja_escuro"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@null"
+                    android:contentDescription="Botão de cafés"
+                    android:src="@drawable/icon___bebidas" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Cafés"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
+</FrameLayout>
