@@ -59,7 +59,7 @@ public class LoginClienteActivity extends AppCompatActivity {
 //            }
 
             // Realiza login
-            viewModel.realizarLogin(email, senha).observe(this, sucesso -> {
+//            viewModel.realizarLogin(email, senha).observe(this, sucesso -> {
                 //if (sucesso != null && sucesso) {
                     Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginClienteActivity.this, HomeClienteActivity.class);
@@ -68,7 +68,7 @@ public class LoginClienteActivity extends AppCompatActivity {
                 //} else {
                 //    Toast.makeText(this, "Email ou senha incorretos!", Toast.LENGTH_SHORT).show();
                 //}
-            });
+//            });
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

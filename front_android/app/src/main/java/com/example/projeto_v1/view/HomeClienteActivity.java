@@ -23,24 +23,19 @@ public class HomeClienteActivity extends AppCompatActivity {
         androidx.recyclerview.widget.RecyclerView recyclerView =
                 findViewById(R.id.recycler_home);
 
-        // 1. Criar lista de produtos
         List<Produto> produtos = criarListaProdutos();
 
-        // 2. Criar adapter
         ProdutoAdapter adapter = new ProdutoAdapter(produtos);
 
-        // 3. IMPORTANTE: Configurar GridLayoutManager com 2 colunas
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
 
-        // 4. Definir adapter
         recyclerView.setAdapter(adapter);
     }
 
     private List<Produto> criarListaProdutos() {
         List<Produto> produtos = new ArrayList<>();
 
-        // Adicione produtos - eles aparecerão em 2 colunas
         produtos.add(new Produto(1, "Refrigerante Guaraná Tônico Massa", "Lata 350ml", 3.03,
                 R.drawable.icon___cocacola));
         produtos.add(new Produto(2, "Coca-Cola Original", "Lata 350ml", 3.50,
