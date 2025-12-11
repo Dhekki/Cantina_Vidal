@@ -522,42 +522,71 @@ const ProductsManagement = () => {
 
       {/* Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Detalhes do Produto</DialogTitle>
-          </DialogHeader>
+        <DialogContent className='max-w-[810px]'>
           {selectedProduct && (
-            <div className="space-y-4">
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name}
-                className="w-full h-48 object-cover rounded-lg"
-              />
+            <div className="space-y-4 flex gap-11">
+              <div className="border border-input rounded-xl p-5 w-96 h-90">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="w-full h-full object-cover shadow rounded-sm"
+                />
+              </div>
+
               <div className="space-y-2">
                 <div>
-                  <Label className="text-muted-foreground">Nome</Label>
-                  <p className="text-lg font-medium">{selectedProduct.name}</p>
+                  <p className={selectedProduct.available ? 'text-green-600' : 'text-red-600'}>
+                    {selectedProduct.available ? 'Ativo' : 'Inativo'}
+                  </p>
                 </div>
+
+                <DialogHeader>
+                  <DialogTitle className='text-foreground/80'>
+                    Detalhes do Produto
+                  </DialogTitle>
+                </DialogHeader>
+
+                <div className='py-2'>
+                  <Label className="text-sm font-medium text-foreground/40">Nome</Label>
+                  <p className="font-semibold text-foreground/80">
+                    {selectedProduct.name}
+                  </p>
+                </div>
+
                 <div>
-                  <Label className="text-muted-foreground">Descrição</Label>
-                  <p>{selectedProduct.description}</p>
+                  <Label className="text-sm font-medium text-foreground/40">Descrição</Label>
+                  <p className="font-semibold text-foreground/80">
+                    {selectedProduct.description}
+                  </p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-3 gap-1">
                   <div>
-                    <Label className="text-muted-foreground">Preço</Label>
-                    <p className="text-lg font-bold text-primary">
+                    <Label className="text-sm font-medium text-foreground/40">Preço</Label>
+                    <p className="font-semibold text-foreground/80">
                       R${selectedProduct.price.toFixed(2)}
                     </p>
                   </div>
+
                   <div>
-                    <Label className="text-muted-foreground">Categoria</Label>
-                    <p>{selectedProduct.category}</p>
+                    <Label className="text-sm font-medium text-foreground/40">Quantidade</Label>
+                    <p className="font-semibold text-foreground/80">
+                      {selectedProduct.inStock}
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium text-foreground/40">Data de Validade</Label>
+                    <p className="font-semibold text-foreground/80">
+                      {selectedProduct.expirationData.replace('-', '/')}
+                    </p>
                   </div>
                 </div>
+
                 <div>
-                  <Label className="text-muted-foreground">Status</Label>
-                  <p className={selectedProduct.available ? 'text-green-600' : 'text-red-600'}>
-                    {selectedProduct.available ? 'Ativo' : 'Inativo'}
+                  <Label className="text-sm font-medium text-foreground/40">Categorias</Label>
+                  <p className='font-semibold text-foreground/80'>
+                    {selectedProduct.category}
                   </p>
                 </div>
               </div>
