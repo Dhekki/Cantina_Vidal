@@ -29,6 +29,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final EmailService emailService;
     private static final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${jwt.refresh-expiration}")
@@ -48,6 +49,8 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         String verificationCode = String.valueOf(secureRandom.nextInt(900000) + 100000); // Between 100.000 and 999.999
+
+//        emailService.composeEmail(verificationCode, dto.email());
 
         user.setVerificationCode(verificationCode);
         user.setVerificationExpiresAt(LocalDateTime.now().plusSeconds(900)); // 15 minutes
