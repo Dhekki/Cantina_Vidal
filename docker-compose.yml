@@ -17,6 +17,7 @@ services:
       - FILE_UPLOAD_DIR=/app/uploads
     volumes:
       - uploads_data:/app/uploads
+      - ./logs:/app/logs
     networks:
       - app-network
 
