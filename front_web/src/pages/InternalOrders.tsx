@@ -18,7 +18,6 @@ import {
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories } from '@/lib/mockData';
-import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
 import SearchInput from '@/components/ui/search-input';
 
 interface CartItem extends MenuItem {
@@ -34,26 +33,27 @@ const InternalOrders = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isCategoriesActive, setIsCategoriesActive]   = useState(false)
 
-  const filteredProducts = useMemo(() => {
-    let result = products;
-    
+const filteredProducts = useMemo(() => {
+  const query = searchQuery.trim().toLowerCase();
+
+  return products.filter(p => {
+    const categories = Array.isArray(p.category) ? p.category : [p.category];
+
     // Filter by category
-    if(selectedCategory !== 'All') {
-      result = result.filter(p => p.category === selectedCategory);
-    }
+    if(selectedCategory !== 'All' && !categories.includes(selectedCategory)) return false;
     
     // Filter by search query
-    if(searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(p =>
+    if(query) {
+      return (
         p.name.toLowerCase().includes(query) ||
-        p.id.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query)
+        String(p.id).toLowerCase().includes(query) ||
+        categories.some(c => c.toLowerCase().includes(query))
       );
     }
-    
-    return result;
-  }, [products, selectedCategory, searchQuery]);
+
+    return true;
+  });
+}, [products, selectedCategory, searchQuery]);
 
   const showCategoryFilter = () => {
     setIsCategoriesActive(true);

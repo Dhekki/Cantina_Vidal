@@ -11,7 +11,7 @@ export interface MenuItem {
   expirationData: string;
   availableToPickUp: number;
   specifications: string;
-  category: string;
+  category: string[];
   image: string;
   available: boolean;
 }

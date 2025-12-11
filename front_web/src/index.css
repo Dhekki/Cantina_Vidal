@@ -39,12 +39,19 @@
     --success: 142 76% 36%;
     --info: 199 89% 48%;
 
-    /* Status colors */
+    /* Orders status colors */
     --status-received:   0 139 210;
     --status-preparing:  226 169 59;
     --status-ready:      62 166 90;
     --status-delivered:  82 174 50;
     --status-canceled:   216 74 42;
+    
+    /* Product status colors */
+    --status-active:   82 174 50;
+    --status-inactive: 0 0 53;
+
+    /* Categories badge colors */
+    --categorie-badge: 226 170 60;
 
     /* Additional design tokens */
     --menu-item: 83 83 83;
@@ -93,3 +100,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* #icon {
+  width: 24px;
+  height: 24px;
+  background-color: #e5a546;
+  mask: url('../public/imgs/button-icons/tag-icon.svg') no-repeat center / contain;
+  -webkit-mask: url('../public/imgs/button-icons/tag-icon.svg') no-repeat center / contain;
+} */

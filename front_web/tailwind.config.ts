@@ -15,8 +15,8 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        input:  "hsl(var(--input))",
+        ring:   "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         menu: {
@@ -71,6 +71,20 @@ export default {
           canceled: {
             primary:   "rgb(var(--status-canceled))",
             secondary: "rgba(var(--status-canceled) / 0.14)",
+          },
+          active: {
+            primary:   "rgb(var(--status-active))",
+            secondary: "rgba(var(--status-active) / 0.14)",
+          },
+          inactive: {
+            primary:   "rgb(var(--status-inactive))",
+            secondary: "rgba(var(--status-inactive) / 0.14)",
+          },
+        },
+        badge: {
+          categorie: {
+            primary:   "rgb(var(--categorie-badge))",
+            secondary: "rgba(var(--categorie-badge) / 0.14)",
           },
         },
         success: "hsl(var(--success))",

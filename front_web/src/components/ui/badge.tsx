@@ -13,6 +13,9 @@ const badgeVariants = cva(
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         cartBadge: "border border-primary bg-primary/10 text-primary px-3",
+        active: "border border-status-active-primary bg-status-active-primary/10 text-status-active-primary px-3",
+        inactive: "border border-status-inactive-primary/70 bg-status-inactive-primary/10 text-status-inactive-primary/80 px-3",
+        categorie: "border border-badge-categorie-primary/70 bg-badge-categorie-primary/10 text-badge-categorie-primary px-3",
       },
     },
     defaultVariants: {

@@ -44,6 +44,7 @@ import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
 import { CategoryDialog } from '@/components/CategoryDialog';
 import SearchIcon from '../../public/imgs/input-icons/search-icon.svg';
 import SearchInput from '@/components/ui/search-input';
+import { Badge } from '@/components/ui/badge';
 
 
 const ProductsManagement = () => {
@@ -53,25 +54,25 @@ const ProductsManagement = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   const filteredProducts = useMemo(() => {
-    let result = products;
-    
-    // Filter by category
-    if(selectedCategory !== 'All') {
-      result = result.filter(p => p.category === selectedCategory);
-    }
-    
-    // Filter by search query
-    if(searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
 
-      result = result.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.id.toLowerCase().includes(query)   ||
-        p.category.toLowerCase().includes(query)
-      );
-    }
-    
-    return result;
+    return products.filter(p => {
+      const categories = Array.isArray(p.category) ? p.category : [p.category];
+
+      // Filter by category
+      if(selectedCategory !== 'All' && !categories.includes(selectedCategory)) return false;
+
+      // Filter by search query
+      if(query) {
+        return (
+          p.name.toLowerCase().includes(query)       ||
+          String(p.id).toLowerCase().includes(query) ||
+          categories.some(c => c.toLowerCase().includes(query))
+        );
+      }
+
+      return true;
+    });
   }, [products, selectedCategory, searchQuery]);
   
   const [editMode, setEditMode] = useState(false);
@@ -106,17 +107,17 @@ const ProductsManagement = () => {
 
   const hasUnsavedChanges = () => {
     return (
-      formData.name        !== initialFormData.name        ||
-      formData.description !== initialFormData.description ||
-      formData.price       !== initialFormData.price       ||
-      formData.category    !== initialFormData.category    ||
-      formData.dataValidade    !== initialFormData.dataValidade    ||
-      formData.image       !== initialFormData.image
+      formData.name         !== initialFormData.name         ||
+      formData.description  !== initialFormData.description  ||
+      formData.price        !== initialFormData.price        ||
+      formData.category     !== initialFormData.category     ||
+      formData.dataValidade !== initialFormData.dataValidade ||
+      formData.image        !== initialFormData.image
     );
   };
 
   const handleDialogClose = (open: boolean) => {
-    if (!open && hasUnsavedChanges()) {
+    if(!open && hasUnsavedChanges()) {
       setIsUnsavedChangesDialogOpen(true);
     } else {
       setIsAddEditDialogOpen(open);
@@ -157,7 +158,7 @@ const ProductsManagement = () => {
       name: product.name,
       description: product.description,
       price: product.price.toString(),
-      category: product.category,
+      category: product.category[0],
       dataValidade: product.expirationData,
       image: product.image,
     };
@@ -177,7 +178,7 @@ const ProductsManagement = () => {
   };
 
   const handleDelete = () => {
-    if (selectedProduct) {
+    if(selectedProduct) {
       setProducts(products.filter(p => p.id !== selectedProduct.id));
       toast.success('Produto excluído com sucesso');
       setIsDeleteDialogOpen(false);
@@ -204,7 +205,7 @@ const ProductsManagement = () => {
               name: formData.name,
               description: formData.description,
               price: parseFloat(formData.price),
-              category: formData.category,
+              category: [formData.category],
               image: formData.image,
             }
           : p
@@ -224,7 +225,7 @@ const ProductsManagement = () => {
 
         description: formData.description,
         price: parseFloat(formData.price),
-        category: formData.category,
+        category: [formData.category],
         image: formData.image,
         available: true,
       };
@@ -314,7 +315,7 @@ const ProductsManagement = () => {
               <TableHead>Imagem</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Descrição</TableHead>
-              <TableHead>Categoria</TableHead>
+              <TableHead>Categorias</TableHead>
               <TableHead>Preço</TableHead>
               <TableHead>Em Estoque</TableHead>
               <TableHead>Disponíveis</TableHead>
@@ -352,8 +353,23 @@ const ProductsManagement = () => {
                   />
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
+
                 <TableCell>{product.description}</TableCell>
-                <TableCell>{product.category}</TableCell>
+
+                <TableCell>
+                  <div className="flex items-center justify-start gap-2">
+                    {product.category.map((catg, idx) => (
+                    <Badge variant="categorie" className="py-1">
+                      <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                            alt="Tag icon" className='me-2'/>
+                    
+                      <p className='font-semibold'>
+                        {catg}
+                      </p>
+                    </Badge>
+                    ))}
+                  </div>
+                </TableCell>
                 
                 <TableCell className='text-end'>R${product.price.toFixed(2)}</TableCell>
                 <TableCell className='text-end'>{product.inStock}</TableCell>
@@ -522,10 +538,10 @@ const ProductsManagement = () => {
 
       {/* Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className='max-w-[810px]'>
+        <DialogContent className='max-w-[810px] w-full h-fit py-12 px-10'>
           {selectedProduct && (
-            <div className="space-y-4 flex gap-11">
-              <div className="border border-input rounded-xl p-5 w-96 h-90">
+            <div className="flex gap-11">
+              <div className="border border-input rounded-xl p-5 w-[352px] h-[352px]">
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
@@ -535,59 +551,84 @@ const ProductsManagement = () => {
 
               <div className="space-y-2">
                 <div>
-                  <p className={selectedProduct.available ? 'text-green-600' : 'text-red-600'}>
+                  <Badge variant={selectedProduct.available ? 'active' : 'inactive'} 
+                         className="mb-2">
+                    <img src={`../../public/imgs/badge-icons/product-${selectedProduct.available 
+                                                                       ? 'active' : 'inactive'}-icon.svg`} 
+                         alt={(selectedProduct.available ? 'active' : 'inactive') + 'icon'}
+                         className='me-1'
+                    />
                     {selectedProduct.available ? 'Ativo' : 'Inativo'}
-                  </p>
+                  </Badge>
                 </div>
 
                 <DialogHeader>
-                  <DialogTitle className='text-foreground/80'>
+                  <DialogTitle className='text-foreground/80 mb-2'>
                     Detalhes do Produto
                   </DialogTitle>
                 </DialogHeader>
 
-                <div className='py-2'>
-                  <Label className="text-sm font-medium text-foreground/40">Nome</Label>
-                  <p className="font-semibold text-foreground/80">
-                    {selectedProduct.name}
-                  </p>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-foreground/40">Descrição</Label>
-                  <p className="font-semibold text-foreground/80">
-                    {selectedProduct.description}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-1">
+                <div className="w-full flex flex-col gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-foreground/40">Preço</Label>
+                    <Label className="text-sm font-medium text-foreground/40">
+                      Nome
+                    </Label>
                     <p className="font-semibold text-foreground/80">
-                      R${selectedProduct.price.toFixed(2)}
+                      {selectedProduct.name}
                     </p>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-foreground/40">Quantidade</Label>
+                    <Label className="text-sm font-medium text-foreground/40">
+                      Descrição
+                    </Label>
                     <p className="font-semibold text-foreground/80">
-                      {selectedProduct.inStock}
+                      {selectedProduct.description}
                     </p>
                   </div>
 
-                  <div>
-                    <Label className="text-sm font-medium text-foreground/40">Data de Validade</Label>
-                    <p className="font-semibold text-foreground/80">
-                      {selectedProduct.expirationData.replace('-', '/')}
-                    </p>
-                  </div>
-                </div>
+                  <div className="flex justify-between gap-1">
+                    <div>
+                      <Label className="text-sm font-medium text-foreground/40">
+                        Preço
+                      </Label>
+                      <p className="font-semibold text-foreground/80">
+                        R${selectedProduct.price.toFixed(2)}
+                      </p>
+                    </div>
 
-                <div>
-                  <Label className="text-sm font-medium text-foreground/40">Categorias</Label>
-                  <p className='font-semibold text-foreground/80'>
-                    {selectedProduct.category}
-                  </p>
+                    <div>
+                      <Label className="text-sm font-medium text-foreground/40">
+                        Quantidade
+                      </Label>
+                      <p className="font-semibold text-foreground/80 truncate">
+                        {selectedProduct.inStock} unidades
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-foreground/40">
+                        Data de Validade
+                      </Label>
+                      <p className="font-semibold text-foreground/80">
+                        {new Date(selectedProduct.expirationData).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className='flex flex-col gap-2'>
+                    <Label className="text-sm font-medium text-foreground/40">
+                      Categorias
+                    </Label>
+                    <Badge variant="categorie" className="w-fit">
+                      <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                            alt="Tag icon" className='me-2'/>
+                  
+                      <p className='font-semibold'>
+                        {selectedProduct.category}
+                      </p>
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
@@ -599,14 +640,22 @@ const ProductsManagement = () => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogTitle>
+              Confirmar Exclusão
+            </AlertDialogTitle>
+
             <AlertDialogDescription>
               Tem certeza que deseja excluir o produto "{selectedProduct?.name}"? 
               Esta ação não pode ser desfeita.
             </AlertDialogDescription>
+
           </AlertDialogHeader>
+
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>
+              Cancelar
+            </AlertDialogCancel>
+
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Excluir
             </AlertDialogAction>
