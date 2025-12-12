@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.projeto_v1.R;
 
 public class MainActivity extends AppCompatActivity {
-    private static final long TEMPO_DE_ESPERA = 5000L;
+    private static final long TEMPO_DE_ESPERA = 3000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_main);
         (new Handler()).postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(MainActivity.this, CadastroClienteActivity.class);
+                Intent intent = new Intent(MainActivity.this, LoginClienteActivity.class);
                 MainActivity.this.startActivity(intent);
                 MainActivity.this.finish();
             }
