@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/fffcf9">
 
-    <!-- Conteúdo principal com rolagem -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,23 +17,27 @@
             android:orientation="vertical"
             android:paddingBottom="80dp">
 
-            <include layout="@layout/item_home_header" />
+            <include layout="@layout/item_home_topo" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_categorias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_home_categorias" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="8dp" />
-
-            <include layout="@layout/item_home_categorias" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
+                android:layout_height="24dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginBottom="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
@@ -48,38 +51,29 @@
                     android:paddingBottom="12dp"
                     android:textColor="@color/black" />
 
-                <!--
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ver tudo"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:paddingBottom="12dp"
-                    android:textColor="@color/laranja" /> -->
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="20dp">
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_home"
-                    android:layout_width="match_parent"
+                    android:id="@+id/recycler_produtos"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
-                    tools:listitem="@layout/item_produto" />
+                    tools:listitem="@layout/item_home_produto" />
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <include
-        layout="@layout/item_home_navigation"
+        layout="@layout/item_home_navegacao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:gravity="center"/>
+        android:gravity="center" />
 
 </FrameLayout>

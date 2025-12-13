@@ -6,20 +6,18 @@ public class Produto {
     private String descricao;
     private double preco;
     private int quantidade;
+    private Categoria categoria;
+
     private int imagemResourceId;
 
-    // Construtor completo
-    public Produto(Integer id, String nome, String descricao, double preco, int imagemResourceId, int quantidade) {
+    public Produto(Integer id, String nome, String descricao, double preco, int imagemResourceId, Categoria categoria) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.preco = preco;
         this.imagemResourceId = imagemResourceId;
-        this.quantidade = quantidade;
-    }
-
-    public Produto(Integer id, String nome, String descricao, double preco,int imagemResourceId) {
-        this(id, nome, descricao, preco, imagemResourceId, 0);
+        this.quantidade = 0;
+        this.categoria = categoria;
     }
 
     public Integer getId() { return id; }
@@ -31,5 +29,13 @@ public class Produto {
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 }

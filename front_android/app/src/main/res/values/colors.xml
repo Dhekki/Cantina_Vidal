@@ -6,11 +6,15 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#000000</color>
+    <color name="black2">#1C1C1E</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white2">#F9F9F9</color>
     <color name="white3">#F5F5F5</color>
     <color name="laranja">#D84A2A</color>
     <color name="laranja_claro">#FCF0EE</color>
     <color name="cinza">#555555</color>
+    <color name="cinza2">#8E8E93</color>
+    <color name="cinza3">#7B7879</color>
     <color name="laranja_escuro">#D35400</color>
+    <color name="laranja_neon">#DD7A33</color>
 </resources>

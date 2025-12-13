@@ -2,4 +2,6 @@
     <string name="app_name">Projeto_v1</string>
     <string name="bebidas">Bebidas</string>
     <string name="notificacoes">Notificações</string>
+    <string name="produtos">Refrigerante Guaraná Tônico Massa</string>
+    <string name="botao_de_bebidas">Botão de bebidas</string>
 </resources>

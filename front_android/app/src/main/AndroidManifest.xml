@@ -16,11 +16,14 @@
         android:theme="@style/Theme.Projeto_v1"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.PedidosClienteActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.HomeClienteActivity"
             android:exported="false" />
         <activity
             android:name=".view.RecuperarSenhaActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true">

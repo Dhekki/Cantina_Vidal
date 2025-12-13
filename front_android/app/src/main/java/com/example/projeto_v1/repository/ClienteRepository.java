@@ -22,33 +22,6 @@ public class ClienteRepository {
     // Adicionar quando o banco de dados estiver pronto.
     // private final String AUTH = "Bearer ";
 
-    public void listarClientes(MutableLiveData<List<Cliente>> clientesLiveData) {
-
-
-        apiService.listarClientes(API_KEY, AUTH).enqueue(new Callback<List<Cliente>>() {
-            @Override
-            public void onResponse(Call<List<Cliente>> call, Response<List<Cliente>> response) {
-
-
-                Log.d("API_DEBUG", "Codigo: " + response.code());
-                Log.d("API_DEBUG", "Body: " + new Gson().toJson(response.body()));
-
-
-                if (response.isSuccessful()) {
-                    clientesLiveData.setValue(response.body());
-                } else {
-                    clientesLiveData.setValue(null);
-                }
-            }
-
-
-            @Override
-            public void onFailure(Call<List<Cliente>> call, Throwable t) {
-                clientesLiveData.setValue(null);
-            }
-        });
-    }
-
     public MutableLiveData<Boolean> cadastrarCliente(Cliente cliente) {
         MutableLiveData<Boolean> sucesso = new MutableLiveData<>();
 

@@ -53,7 +53,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/icon_nome"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_marginEnd="16dp"/>
 
                 <EditText
                     android:id="@+id/edtNome"
@@ -81,7 +81,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/icon_email"
-                    android:layout_marginEnd="10dp"/>
+                    android:layout_marginEnd="16dp"/>
 
                 <EditText
                     android:id="@+id/edtEmail"

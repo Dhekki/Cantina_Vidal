@@ -1,17 +1,16 @@
 package com.example.projeto_v1.viewmodel;
 
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.projeto_v1.model.Categoria;
-import com.example.projeto_v1.model.Produto;
 import com.example.projeto_v1.network.ApiService;
 import com.example.projeto_v1.network.RetrofitClient;
 import com.example.projeto_v1.repository.CategoriaRepository;
-import com.example.projeto_v1.repository.ProdutoRepository;
 
 import java.util.List;
 
-public class CategoriaViewModel {
+public class CategoriaViewModel extends ViewModel {
     private ApiService apiService;
     private final CategoriaRepository repository;
     private final MutableLiveData<List<Categoria>> categorias = new MutableLiveData<>();

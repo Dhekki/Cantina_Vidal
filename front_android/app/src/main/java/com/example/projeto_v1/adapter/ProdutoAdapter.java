@@ -14,16 +14,27 @@ import java.util.List;
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHolder> {
 
     private List<Produto> lista;
+    private OnProdutoQuantidadeChangeListener listener;
 
-    public ProdutoAdapter(List<Produto> lista) {
+    public interface OnProdutoQuantidadeChangeListener {
+        void onQuantidadeChanged();
+    }
+
+    public ProdutoAdapter(List<Produto> lista, OnProdutoQuantidadeChangeListener listener) {
         this.lista = lista;
+        this.listener = listener;
+    }
+
+    public void atualizarLista(List<Produto> novaLista) {
+        this.lista = novaLista;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View item = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_produto, parent, false);
+                .inflate(R.layout.item_home_produto, parent, false);
         return new ViewHolder(item);
     }
 
@@ -31,7 +42,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Produto produto = lista.get(position);
 
-        // Configurar dados
         holder.textNome.setText(produto.getNome());
         holder.textPreco.setText(String.format("R$ %.2f", produto.getPreco()));
         holder.textDescricao.setText(produto.getDescricao());
@@ -45,6 +55,10 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
             int quantidade = produto.getQuantidade() + 1;
             produto.setQuantidade(quantidade);
             holder.textQuantidade.setText(String.valueOf(quantidade));
+
+            if (listener != null) {
+                listener.onQuantidadeChanged();
+            }
         });
 
         holder.btnDiminuir.setOnClickListener(v -> {
@@ -53,6 +67,10 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
                 quantidade--;
                 produto.setQuantidade(quantidade);
                 holder.textQuantidade.setText(String.valueOf(quantidade));
+
+                if (listener != null) {
+                    listener.onQuantidadeChanged();
+                }
             }
         });
     }

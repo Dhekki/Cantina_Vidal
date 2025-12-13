@@ -1,14 +1,11 @@
 package com.example.projeto_v1.viewmodel;
 
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.projeto_v1.model.Cliente;
 import com.example.projeto_v1.model.Produto;
 import com.example.projeto_v1.network.ApiService;
 import com.example.projeto_v1.network.RetrofitClient;
-import com.example.projeto_v1.repository.ClienteRepository;
 import com.example.projeto_v1.repository.ProdutoRepository;
 
 import java.util.List;
