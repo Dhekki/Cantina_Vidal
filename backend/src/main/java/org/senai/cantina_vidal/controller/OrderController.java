@@ -1,11 +1,14 @@
 package org.senai.cantina_vidal.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senai.cantina_vidal.dto.order.OrderRequestDTO;
 import org.senai.cantina_vidal.dto.order.OrderResponseDTO;
+import org.senai.cantina_vidal.dto.order.OrderStatusDTO;
 import org.senai.cantina_vidal.entity.Order;
 import org.senai.cantina_vidal.entity.User;
+import org.senai.cantina_vidal.enums.OrderStatus;
 import org.senai.cantina_vidal.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/orders")
+@SecurityRequirement(name = "bearer-key")
 public class OrderController {
     private final OrderService service;
 

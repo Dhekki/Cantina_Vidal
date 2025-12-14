@@ -1,6 +1,7 @@
 package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.senai.cantina_vidal.dto.order.OrderItemRequestDTO;
 import org.senai.cantina_vidal.dto.order.OrderRequestDTO;
 import org.senai.cantina_vidal.entity.Order;
@@ -32,6 +33,11 @@ public class OrderService {
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
+    public Order findById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+    }
+
     public Order findById(Long id, User user) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
@@ -40,6 +46,31 @@ public class OrderService {
             throw new ResourceNotFoundException("Pedido não encontrado");
 
         return order;
+    }
+
+    public List<Order> findAllOrders(OrderStatus status) {
+        if (status != null)
+            return orderRepository.findByStatusOrderByCreatedAtDesc(status.name());
+
+        return orderRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Transactional
+    public Order updateStatus(Long id, OrderStatus requestStatus) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Pedido não encontrado com o id: " + id));
+
+        OrderStatus currentStatus = OrderStatus.valueOf(order.getStatus());
+
+        if (currentStatus == OrderStatus.DELIVERED)
+            throw new ConflictException("Pedidos finalizados não pode ser cancelado");
+
+        if (requestStatus == OrderStatus.CANCELLED)
+            order.setStatus(requestStatus.name());
+        else
+            order.setStatus(currentStatus.next().name());
+
+        return orderRepository.save(order);
     }
 
     @Transactional
