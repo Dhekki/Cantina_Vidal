@@ -98,7 +98,7 @@ export const CalculatorDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9">
+        <Button size="icon" className="h-9 w-9">
           <Calculator className="h-5 w-5" />
         </Button>
       </DialogTrigger>

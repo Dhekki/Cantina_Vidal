@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Save, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -119,18 +119,34 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
                 <div key={category} className="flex items-center gap-2 p-2 rounded-md border-b border-input/60 bg-background text-base">
                   {editingCategory?.index === index ? (
                     <>
-                      <Input
-                        value={editingCategory.value}
-                        onChange={(e) => setEditingCategory({ index, value: e.target.value })}
-                        onKeyDown={(e) => e.key === 'Enter' && handleEditCategory(index)}
-                        className="h-8"
-                        autoFocus
-                      />
-                      <Button size="sm" onClick={() => handleEditCategory(index)}>
-                        Salvar
+                      <div className="relative flex-1">
+                        <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                             alt="Tag icon" className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-4 me-2'/>
+                        <Input
+                          value={editingCategory.value}
+                          onChange={(e)  => setEditingCategory({ index, value: e.target.value })}
+                          onKeyDown={(e) => e.key === 'Enter' && handleEditCategory(index)}
+                          className="h-8 "
+                          autoFocus
+                        />
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleEditCategory(index)}
+                      >
+                        <Save className="h-3 w-3" />
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => setEditingCategory(null)}>
-                        Cancelar
+
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => setEditingCategory(null)}
+                      >
+                        <X className="h-3 w-3" />
                       </Button>
                     </>
                   ) : (

@@ -90,7 +90,7 @@ const ProductsManagement = () => {
     stock: '',
     minimumStock: '',
     replacementInterval: '',
-    category: '',
+    category: [] as string[],
     image: '',
     dataValidade: '',
   };
@@ -112,7 +112,7 @@ const ProductsManagement = () => {
       formData.name                !== initialFormData.name                ||
       formData.description         !== initialFormData.description         ||
       formData.price               !== initialFormData.price               ||
-      formData.category            !== initialFormData.category            ||
+      JSON.stringify(formData.category) !== JSON.stringify(initialFormData.category) ||
       formData.stock               !== initialFormData.stock               ||
       formData.minimumStock        !== initialFormData.minimumStock        ||
       formData.replacementInterval !== initialFormData.replacementInterval ||
@@ -123,7 +123,6 @@ const ProductsManagement = () => {
 
   const handleDialogClose = (open: boolean) => {
     if(!open) {
-      // Tentando fechar o dialog
       if(hasUnsavedChanges()) {
         setIsUnsavedChangesDialogOpen(true);
       } else {
@@ -134,7 +133,6 @@ const ProductsManagement = () => {
         setEditMode(false);
       }
     } else {
-      // Abrindo o dialog
       setIsAddEditDialogOpen(true);
     }
   };
@@ -161,7 +159,7 @@ const ProductsManagement = () => {
       stock: '',
       minimumStock: '',
       replacementInterval: '',
-      category: '',
+      category: [] as string[],
       image: '',
       dataValidade: '',
     };
@@ -178,7 +176,7 @@ const ProductsManagement = () => {
       name:                product.name,
       description:         product.description,
       price:               product.price.toString(),
-      category:            product.category[0],
+      category:            [...product.category],
       stock:               product.inStock.toString(),
       minimumStock:        product.minimumStock.toString(),
       replacementInterval: product.replacementInterval?.toString(),
@@ -221,6 +219,11 @@ const ProductsManagement = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if(formData.category.length === 0) {
+      toast.error('Selecione pelo menos uma categoria.');
+      return;
+    }
+    
     if(editMode && selectedProduct) {
       setProducts(products.map(p => 
         p.id === selectedProduct.id 
@@ -233,7 +236,7 @@ const ProductsManagement = () => {
               minimumStock:        parseInt(formData.minimumStock),
               replacementInterval: parseInt(formData.replacementInterval),
               expirationData:      formData.dataValidade,
-              category:            [formData.category],
+              category:            formData.category,
               image:               formData.image,
             }
           : p
@@ -245,7 +248,7 @@ const ProductsManagement = () => {
         name:                formData.name,
         description:         formData.description,
         price:               parseFloat(formData.price),
-        category:            [formData.category],
+        category:            formData.category,
         image:               formData.image,
         available:           true,
         availableToPickUp:   parseInt(formData.stock),
@@ -446,33 +449,32 @@ const ProductsManagement = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={isAddEditDialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent>
+        <DialogContent className='max-w-[608px] w-full py-12 px-10'>
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className='text-3xl text-foreground/80'>
               {editMode ? 'Editar Produto' : 'Cadastrar Produto'}
             </DialogTitle>
 
-            <DialogDescription>
+            <DialogDescription className='text-sm'>
               {editMode 
                 ? 'Atualize as informações do produto' 
-                : 'Preencha os dados do novo produto'}
+                : 'Preencha os dados para cadastrar um novo produto.'}
             </DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleSubmit}>
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 py-4">
               {/* Row: Product Name / Expiration date */}
               <div className="flex gap-4">
                 {/* Input: Product name */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="name">Nome do Produto</Label>
                   <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/box-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
+                    <img
+                      src="../../public/imgs/input-icons/box-icon.svg"
+                      alt="User icon"
+                      aria-hidden="true"
+                      className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                    />
 
                     <Input
                       id="name"
@@ -487,7 +489,6 @@ const ProductsManagement = () => {
                 
                 {/* Input: Expiration Date */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="dataValidade">Data de Validade</Label>
                   <div className="relative">
                   <img
                     src="../../public/imgs/input-icons/calendar-icon.svg"
@@ -511,7 +512,6 @@ const ProductsManagement = () => {
               <div className="flex gap-4">
                 {/* Input: Product Price */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="price">Preço</Label>
                   <div className="relative">
                   <img
                     src="../../public/imgs/input-icons/reais-icon.svg"
@@ -534,7 +534,7 @@ const ProductsManagement = () => {
                 
                 {/* Input: Quantity in Stock */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="inStock">Quantidade em Estoque</Label>
+                  {/* <Label htmlFor="inStock">Quantidade em Estoque</Label> */}
                   <div className="relative">
                   <img
                     src="../../public/imgs/input-icons/boxes-icon.svg"
@@ -561,14 +561,13 @@ const ProductsManagement = () => {
               <div className="flex gap-4">
                 {/* Input: Minimum Stock */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="minimumStock">Estoque Mínimo</Label>
                   <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/stock-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
+                    <img
+                      src="../../public/imgs/input-icons/stock-icon.svg"
+                      alt="User icon"
+                      aria-hidden="true"
+                      className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                    />
 
                     <Input
                       id="minimumStock"
@@ -585,14 +584,13 @@ const ProductsManagement = () => {
                 
                 {/* Input: Replacement Interval */}
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="replacementInterval">Intervalo de Reposição (dias)</Label>
                   <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/boxes-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
+                    <img
+                      src="../../public/imgs/input-icons/boxes-icon.svg"
+                      alt="User icon"
+                      aria-hidden="true"
+                      className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                    />
 
                     <Input
                       id="replacementInterval"
@@ -609,58 +607,112 @@ const ProductsManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Descrição</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
-                />
+                <div className="relative">
+                  <div className="absolute left-3 top-4 -translate-y-1/2 flex items-center gap-2">
+                    <img
+                      src="../../public/imgs/input-icons/notes-icon.svg"
+                      alt="User icon"
+                      aria-hidden="true"
+                      className=" h-5 w-5  opacity-70"
+                    />
+
+                    <p className='text-base text-muted-foreground mt-1'>
+                      Descrição
+                    </p>
+                  </div>
+
+                  <Textarea
+                    id="description"
+                    placeholder='Faça uma breve descrição do seu produto.'
+                    className='h-[132px]'
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-between items-center text-sm font-semibold text-muted-foreground/60 w-full">
+                  <p>A descrição ficará visível no app de vendas.</p>
+                  <p>
+                    <span id='caracter-counter text-'>
+                      {formData.description.length}
+                    </span>/500
+                  </p>
+                </div>
               </div>
 
               <div className="flex gap-4 w-full">
                 {/* Input: Images Upload */}
-                <div className="space-y-2 w-full">
-                  <Label htmlFor="image">Imagem do Produto</Label>
-                  <label 
-                    htmlFor="image-upload"
-                    className="flex flex-col justify-center items-center border border-input/90 px-5 py-8 gap-2 rounded-md hover:bg-muted/30 cursor-pointer"
-                  >
-                    <img src="../../public/imgs/input-icons/upload-file-icon.svg" alt="Upload file icon" className='h-8 w-8' />
-                    <p className='text-sm text-center font-medium text-foreground/50'>
-                      {formData.image ? 'Imagem selecionada' : 'Arraste o arquivo aqui ou clique para selecionar'}
-                    </p>
-                  </label>
+                {!formData.image ? (
+                  <div className="space-y-2 w-full">
+                    <label 
+                      htmlFor="image-upload"
+                      className="flex flex-col justify-center items-center border border-input/90 px-5 py-8 gap-2 rounded-md hover:bg-muted/30 cursor-pointer"
+                    >
+                      <img src="../../public/imgs/input-icons/upload-file-icon.svg" 
+                            alt="Upload file icon" 
+                            className='h-8 w-8'
+                      />
 
-                  <Input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      
-                      if(file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormData({ ...formData, image: reader.result as string });
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                </div>
+                      <p className='text-sm text-center font-medium text-foreground/50'>
+                        {formData.image ? 'Imagem selecionada' 
+                                  : 'Arraste o arquivo aqui ou clique para selecionar'}
+                      </p>
+                    </label>
+
+                    <Input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        
+                        if(file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setFormData({ ...formData, image: reader.result as string });
+                          };
+                          
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="border border-input/90 px-5 py-5 gap-2 rounded-md hover:bg-muted/30 cursor-pointer relative" >
+                    <div id='image-overflow'></div>
+
+                    <div className="w-[216px] h-[216px]">
+                      <img src={formData.image} 
+                          alt="Image uploaded" className='object-cover object-center w-full h-full shadow rounded-[2px]' onMouseOver={() =>{}} />
+                    </div>
+                  </div>
+                )}
 
                 {/* Input: Category */}
-                <div className="space-y-2 w-full">
-                  <Label htmlFor="category">Categoria</Label>
-                
+                <div id='categories-container' className="space-y-4 w-full">
                   <Select
-                    value={formData.category}
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    value=""
+                    onValueChange={(value) => {
+                      if(value && !formData.category.includes(value)) {
+                        setFormData({ ...formData, category: [...formData.category, value] });
+                      }
+                    }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma categoria" />
+                      <div className="relative">
+                        <img
+                          src="../../public/imgs/button-icons/tag-icon.svg"
+                          alt="User icon"
+                          aria-hidden="true"
+                          className="absolute top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
+                        />
+
+                        <Label className='font-normal pl-7'>
+                          Categorias
+                        </Label>
+                      </div>
                     </SelectTrigger>
 
                     <SelectContent>
@@ -671,15 +723,66 @@ const ProductsManagement = () => {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  {/* Selected Categories Badges */}
+                  {formData.category.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.category.map((categ) => (
+                        <Badge key={categ} variant="categorie" className="px-3">
+                          <img 
+                            src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                            alt="Tag icon" className='me-2 h-4 w-4'
+                          />
+                          
+                          <span className='font-semibold text-sm'>
+                            {categ}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({
+                                ...formData,
+                                category: formData.category.filter(c => c !== categ)
+                              });
+                            }}
+                            className="ml-2 hover:bg-foreground/10 rounded-full p-0.5"
+                          >
+                            <img 
+                              src="../../imgs/badge-icons/remove-category-icon.svg"
+                              alt="Remove category"
+                              className='h-3 w-3'
+                            />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground/60 mt-2">
+                      Selecione uma ou mais categorias acima
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => handleDialogClose(false)}>
+
+            <DialogFooter className='h-fit'>
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full py-6"
+                onClick={() => handleDialogClose(false)}
+              >
                 Cancelar
               </Button>
               
-              <Button type="submit">
+              <Button 
+                type="submit"
+                onClick={() => {
+                  console.log(formData)
+                }}
+                className="w-full py-6"
+              >
                 {editMode ? 'Salvar' : 'Adicionar'}
               </Button>
             </DialogFooter>
@@ -690,20 +793,25 @@ const ProductsManagement = () => {
       {/* Unsaved Changes Confirmation Dialog */}
       <AlertDialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
         <AlertDialogContent>
+          {/* Dialog Header */}
           <AlertDialogHeader>
             <AlertDialogTitle>Alterações não salvas</AlertDialogTitle>
             <AlertDialogDescription>
               Existem alterações não salvas no formulário. Deseja sair sem salvar?
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
+          {/* Unsaved Changes Options */}
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleStayOnForm}>
               Permanecer no formulário
             </AlertDialogCancel>
+
             <AlertDialogAction onClick={handleDiscardChanges}>
               Sair sem salvar
             </AlertDialogAction>
           </AlertDialogFooter>
+
         </AlertDialogContent>
       </AlertDialog>
 
@@ -712,7 +820,8 @@ const ProductsManagement = () => {
         <DialogContent className='max-w-[810px] w-full h-fit py-12 px-10'>
           {selectedProduct && (
             <div className="flex gap-11">
-              <div className="border border-input rounded-xl p-5 w-[352px] h-[352px]">
+
+              <div className="border border-input rounded-xl p-5 min-w-[352px] min-h-[352px] w-full h-full">
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
@@ -720,7 +829,7 @@ const ProductsManagement = () => {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 w-full">
                 <div>
                   <Badge variant={selectedProduct.available ? 'active' : 'inactive'} 
                          className="mb-2">
@@ -758,13 +867,13 @@ const ProductsManagement = () => {
                     </p>
                   </div>
 
-                  <div className="flex justify-between gap-1">
+                  <div className="flex justify-between w-full">
                     <div>
                       <Label className="text-sm font-medium text-foreground/40">
                         Preço
                       </Label>
                       <p className="font-semibold text-foreground/80">
-                        R${selectedProduct.price.toFixed(2)}
+                        R${selectedProduct.price.toFixed(2).replace('.', ',')}
                       </p>
                     </div>
 
@@ -791,14 +900,19 @@ const ProductsManagement = () => {
                     <Label className="text-sm font-medium text-foreground/40">
                       Categorias
                     </Label>
-                    <Badge variant="categorie" className="w-fit">
-                      <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                            alt="Tag icon" className='me-2'/>
-                  
-                      <p className='font-semibold'>
-                        {selectedProduct.category}
-                      </p>
-                    </Badge>
+                    
+                    <div className="flex gap-2">
+                      {selectedProduct.category.map(catg => (
+                        <Badge key={catg} variant="categorie" className="w-fit">
+                          <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                                alt="Tag icon" className='me-2'/>
+                      
+                          <p className='font-semibold'>
+                            {catg}
+                          </p>
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
