@@ -5,6 +5,7 @@ public enum OrderStatus {
     IN_PREPARATION,
     DONE,
     DELIVERED,
+    NOT_DELIVERED,
     CANCELLED;
 
     public OrderStatus next() {
@@ -12,8 +13,11 @@ public enum OrderStatus {
             case RECEIVED -> IN_PREPARATION;
             case IN_PREPARATION -> DONE;
             case DONE -> DELIVERED;
-            case DELIVERED -> throw new IllegalStateException("O pedido já foi entregue");
-            case CANCELLED -> throw new IllegalStateException("O pedido está cancelado");
+            case DELIVERED, NOT_DELIVERED, CANCELLED -> throw new IllegalStateException("O pedido já foi finalizado e seu status não pode ser alterado");
         };
+    }
+
+    public boolean isTerminal() {
+        return this == DELIVERED || this == NOT_DELIVERED || this == CANCELLED;
     }
 }

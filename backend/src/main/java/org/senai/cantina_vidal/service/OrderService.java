@@ -58,14 +58,19 @@ public class OrderService {
     @Transactional
     public Order updateStatus(Long id, OrderStatus requestStatus) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Pedido não encontrado com o id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com o id: " + id));
 
         OrderStatus currentStatus = OrderStatus.valueOf(order.getStatus());
 
-        if (currentStatus == OrderStatus.DELIVERED)
-            throw new ConflictException("Pedidos finalizados não pode ser cancelado");
+        if (currentStatus.isTerminal())
+            throw new ConflictException("Pedidos finalizados não podem ser alterados");
 
-        if (requestStatus == OrderStatus.CANCELLED)
+        if (requestStatus == OrderStatus.NOT_DELIVERED) {
+           if (currentStatus != OrderStatus.DONE)
+               throw new ConflictException("Apenas pedidos prontos podem ser marcados como não retirados");
+
+            order.setStatus(requestStatus.name());
+        } else if (requestStatus == OrderStatus.CANCELLED)
             order.setStatus(requestStatus.name());
         else
             order.setStatus(currentStatus.next().name());
