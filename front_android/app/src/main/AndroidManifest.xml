@@ -32,7 +32,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Outras activities do projeto -->
+        </activity>
         <activity
             android:name=".view.CadastroClienteActivity"
             android:exported="false" />

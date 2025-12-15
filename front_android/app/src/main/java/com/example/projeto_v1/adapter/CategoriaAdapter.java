@@ -1,9 +1,12 @@
 package com.example.projeto_v1.adapter;
 
+import androidx.core.content.ContextCompat;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,26 +42,44 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.View
 
         holder.textNome2.setText(categoria.getNome());
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                // Notifica a Activity com o objeto Categoria clicado
-                listener.onCategoriaClick(categoria);
+        if (categorias != null && categorias.size() < 2) {
+            holder.itemView.setClickable(false);
+            holder.itemView.setFocusable(false);
 
-                // 4. Atualiza o estado visual (Seleciona o novo item)
-                int previousPosition = selectedPosition;
-                selectedPosition = position;
+        } else {
+            holder.itemView.setClickable(true);
+            holder.itemView.setFocusable(true);
 
-                // Notifica o Adapter para redesenhar a cor:
-                notifyItemChanged(previousPosition);
-                notifyItemChanged(selectedPosition);
-            }
-        });
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    int clickedPosition = holder.getBindingAdapterPosition();
+
+                    if (clickedPosition != RecyclerView.NO_POSITION) {
+                        Categoria clickedCategoria = categorias.get(clickedPosition);
+                        listener.onCategoriaClick(clickedCategoria);
+
+                        int previousPosition = selectedPosition;
+                        selectedPosition = clickedPosition;
+
+                        notifyItemChanged(previousPosition);
+                        notifyItemChanged(selectedPosition);
+                    }
+                }
+            });
+        }
+
+        int laranjaNeon = ContextCompat.getColor(holder.itemView.getContext(), R.color.laranja_neon);
+        int laranjaClaro = ContextCompat.getColor(holder.itemView.getContext(), R.color.laranja_claro);
+        int corTextoBranco = ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white);
+        int corTextoNormal = ContextCompat.getColor(holder.itemView.getContext(), R.color.black2);
 
         if (position == selectedPosition) {
-            holder.textNome2.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.laranja_neon));
+            holder.textNome2.setTextColor(corTextoBranco);
+            holder.containerCategoria.setBackgroundTintList(ColorStateList.valueOf(laranjaNeon));
+
         } else {
-            // Aplica a cor de 'Não Selecionado' (laranja_claro)
-            holder.textNome2.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.laranja_claro));
+            holder.textNome2.setTextColor(corTextoNormal);
+            holder.containerCategoria.setBackgroundTintList(ColorStateList.valueOf(laranjaClaro));
         }
     }
 
@@ -70,12 +91,14 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageCategoria;
         TextView textNome2;
+        LinearLayout containerCategoria;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageCategoria = itemView.findViewById(R.id.imageCategoria);
             textNome2 = itemView.findViewById(R.id.textCategoriaNome);
+            containerCategoria = itemView.findViewById(R.id.containerCategoria);
         }
     }
 }

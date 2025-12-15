@@ -32,9 +32,9 @@
 
         <ImageView
             android:id="@+id/imageView6"
-            android:layout_width="350dp"
-            android:layout_height="350dp"
-            android:src="@drawable/d96e07076bdee23e064ac44929297a4dd75176d2"
+            android:layout_width="218dp"
+            android:layout_height="218dp"
+            android:src="@drawable/logo_vidal"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.491"

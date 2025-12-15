@@ -59,8 +59,9 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="Pesquise almoços, bebidas, doces..."
+                android:imeOptions="actionSearch"
                 android:importantForAutofill="no"
-                android:inputType="text"
+                android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
                 android:textColorHint="@color/cinza"
                 tools:targetApi="o" />

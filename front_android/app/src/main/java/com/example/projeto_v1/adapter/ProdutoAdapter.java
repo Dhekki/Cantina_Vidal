@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.model.Produto;
@@ -13,20 +14,20 @@ import java.util.List;
 
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHolder> {
 
-    private List<Produto> lista;
+    private List<Produto> produtos;
     private OnProdutoQuantidadeChangeListener listener;
 
     public interface OnProdutoQuantidadeChangeListener {
         void onQuantidadeChanged();
     }
 
-    public ProdutoAdapter(List<Produto> lista, OnProdutoQuantidadeChangeListener listener) {
-        this.lista = lista;
+    public ProdutoAdapter(List<Produto> produtos, OnProdutoQuantidadeChangeListener listener) {
+        this.produtos = produtos;
         this.listener = listener;
     }
 
     public void atualizarLista(List<Produto> novaLista) {
-        this.lista = novaLista;
+        this.produtos = novaLista;
         notifyDataSetChanged();
     }
 
@@ -40,7 +41,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Produto produto = lista.get(position);
+        Produto produto = produtos.get(position);
 
         holder.textNome.setText(produto.getNome());
         holder.textPreco.setText(String.format("R$ %.2f", produto.getPreco()));
@@ -77,7 +78,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return lista != null ? lista.size() : 0;
+        return produtos != null ? produtos.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
