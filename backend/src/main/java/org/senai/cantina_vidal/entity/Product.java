@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +17,8 @@ import java.util.Set;
 @Builder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Table(name = "products")
 public class Product extends UserDateAudit {
     @Id
@@ -44,8 +48,14 @@ public class Product extends UserDateAudit {
     @NotNull
     @Builder.Default
     @ColumnDefault("true")
-    @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    @Column(name = "available", nullable = false)
+    private Boolean available = true;
+
+    @NotNull
+    @Builder.Default
+    @ColumnDefault("false")
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 
     @NotNull
     @Builder.Default

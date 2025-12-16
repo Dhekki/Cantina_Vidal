@@ -5,11 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Builder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Table(name = "categories")
 public class Category extends UserDateAudit {
     @Id
@@ -33,7 +37,7 @@ public class Category extends UserDateAudit {
 
     @NotNull
     @Builder.Default
-    @ColumnDefault("true")
-    @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    @ColumnDefault("false")
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }

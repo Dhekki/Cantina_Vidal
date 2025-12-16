@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.jspecify.annotations.Nullable;
 import org.senai.cantina_vidal.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +21,8 @@ import java.util.List;
 @Builder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Table(name = "users")
 public class User extends UserDateAudit implements UserDetails {
     @Id
@@ -53,9 +57,9 @@ public class User extends UserDateAudit implements UserDetails {
 
     @NotNull
     @Builder.Default
-    @ColumnDefault("true")
-    @Column(name = "active", nullable = false)
-    private Boolean active = true;
+    @ColumnDefault("false")
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 
     @NotNull
     @Builder.Default
@@ -109,6 +113,6 @@ public class User extends UserDateAudit implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return !deleted;
     }
 }

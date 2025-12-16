@@ -7,15 +7,13 @@ public record UserResponseDTO(
         String name,
         String email,
         String role,
-        String imageUrl,
-        Boolean active
+        String imageUrl
 ) {
     public UserResponseDTO(User entity) {
         this(   entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
                 entity.getRole().name(),
-                entity.getImageUrl(),
-                entity.getActive());
+                entity.getImageUrl());
     }
 }
