@@ -5,13 +5,13 @@ import org.senai.cantina_vidal.entity.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public record OrderResponseDTO(
+public record OrderCustomerResponseDTO(
         Long id,
         Integer dailyId,
+        String pickupCode,
         String status,
         BigDecimal total,
 
@@ -20,10 +20,11 @@ public record OrderResponseDTO(
 
         List<OrderItemResponseDTO> items
 ) {
-    public OrderResponseDTO(Order entity) {
+    public OrderCustomerResponseDTO(Order entity) {
         this(
                 entity.getId(),
                 entity.getDailyId(),
+                entity.getPickupCode(),
                 entity.getStatus(),
                 entity.getTotal(),
                 entity.getCreatedAt(),

@@ -18,8 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,6 +33,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final Random random = new Random();
 
     public List<Order> findUserOrders(User user) {
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
@@ -82,6 +88,8 @@ public class OrderService {
     public Order createOrder(OrderRequestDTO dto, User user) {
         Order order = Order.builder()
                 .user(user)
+                .dailyId(getDailyId())
+                .pickupCode(getPickupCode())
                 .status(OrderStatus.RECEIVED.name())
                 .total(BigDecimal.ZERO)
                 .build();
@@ -95,7 +103,7 @@ public class OrderService {
             Product product = productRepository.findById(itemDto.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o ID: " + itemDto.productId()));
 
-            if (!product.getActive())
+            if (!product.getAvailable())
                 throw new ConflictException("Produto indisponível/inativo: " + product.getName());
 
             int availableStock = product.getQuantityStock() - product.getQuantityHeld() - product.getQuantityCommitted();
@@ -125,5 +133,24 @@ public class OrderService {
         order.setItems(items);
 
         return orderRepository.save(order);
+    }
+
+    private int getDailyId() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+
+        return orderRepository.findMaxDailyIdOfDay(startOfDay, endOfDay)
+                .orElse(0) + 1;
+    }
+
+    private String getPickupCode() {
+        StringBuilder sb = new StringBuilder();
+        String characters = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+        int codeLength = 3;
+
+        for (int i = 0; i < codeLength; i++)
+            sb.append(characters.charAt(random.nextInt(characters.length())));
+
+        return sb.toString();
     }
 }

@@ -34,9 +34,12 @@ public class Order extends UserDateAudit {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    @Size(max = 10)
-    @Column(name = "pickup_code", length = 10)
+    @Size(max = 3)
+    @Column(name = "pickup_code", length = 3)
     private String pickupCode;
+
+    @Column(name = "daily_id")
+    private Integer dailyId;
 
     @Column(name = "scheduled_pickup_time")
     private LocalDateTime scheduledPickupTime;
