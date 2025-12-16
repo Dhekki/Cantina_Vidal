@@ -1,0 +1,115 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="16dp"
+    android:background="@drawable/shape_linha2"
+    android:elevation="4dp"
+    android:paddingBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/shape_status_preparo"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp">
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:background="@drawable/icon_fogo"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/amarelo_claro"/>
+
+            <TextView
+                android:id="@+id/textStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Em preparo"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/amarelo_claro"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewProdutos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/barra_navegacao"
+        android:backgroundTint="@color/cinza4"
+        android:layout_marginVertical="12dp"
+        android:layout_marginHorizontal="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/textTotalItens"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total 2 itens"
+            android:textSize="14sp"
+            android:textColor="@color/cinza2"/>
+
+        <TextView
+            android:id="@+id/textPrecoTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$6,06"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btnCancelarWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/shape_arredondado"
+        android:backgroundTint="@color/laranja"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar pedido"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+</LinearLayout>

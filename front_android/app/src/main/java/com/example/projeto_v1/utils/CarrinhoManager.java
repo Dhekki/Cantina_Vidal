@@ -16,4 +16,10 @@ public class CarrinhoManager {
     public static void setProdutosNoCarrinho(List<Produto> todosProdutos) {
         produtosNoCarrinhoMap = todosProdutos.stream().filter(p -> p.getQuantidade() > 0).collect(Collectors.toMap(Produto::getId, p -> p));
     }
+
+    public static void limparCarrinho() {
+        if (produtosNoCarrinhoMap != null) {
+            produtosNoCarrinhoMap.clear();
+        }
+    }
 }

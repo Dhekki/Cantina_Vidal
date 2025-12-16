@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:allowBackup="true"
@@ -15,11 +17,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Projeto_v1"
         android:usesCleartextTraffic="true">
+<!--        <activity-->
+<!--            android:name=".view.TesteUploadActivity"-->
+<!--            android:exported="false" />-->
+        <activity
+            android:name=".view.PerfilClienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.PagamentosClienteActivity"
+            android:exported="false" />
         <activity
             android:name=".view.PedidosClienteActivity"
             android:exported="false" />
         <activity
             android:name=".view.HomeClienteActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:exported="false" />
         <activity
             android:name=".view.RecuperarSenhaActivity"

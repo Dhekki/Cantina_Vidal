@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.model.Produto;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHolder> {
 
-    private List<Produto> produtos;
+    private List<Produto> listaCompleta;
+    private List<Produto> listaExibida;
     private OnProdutoQuantidadeChangeListener listener;
 
     public interface OnProdutoQuantidadeChangeListener {
@@ -22,12 +25,14 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
     }
 
     public ProdutoAdapter(List<Produto> produtos, OnProdutoQuantidadeChangeListener listener) {
-        this.produtos = produtos;
+        this.listaCompleta = produtos;
+        this.listaExibida = new ArrayList<>(produtos);
         this.listener = listener;
     }
 
     public void atualizarLista(List<Produto> novaLista) {
-        this.produtos = novaLista;
+        listaExibida.clear();
+        listaExibida.addAll(novaLista);
         notifyDataSetChanged();
     }
 
@@ -41,7 +46,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Produto produto = produtos.get(position);
+        Produto produto = listaExibida.get(position);
 
         holder.textNome.setText(produto.getNome());
         holder.textPreco.setText(String.format("R$ %.2f", produto.getPreco()));
@@ -78,7 +83,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return produtos != null ? produtos.size() : 0;
+        return listaExibida.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
