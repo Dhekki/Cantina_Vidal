@@ -19,6 +19,8 @@ const buttonVariants = cva(
         canceled: "bg-status-canceled-primary text-white hover:bg-status-canceled-primary/90",
         notPaid: "bg-status-canceled-primary text-white hover:bg-status-canceled-primary/90",
         dangerOutline: "bg-transparent text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
+        // Pop-ups buttons
+        editPopUp: "bg-transparent text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
       },
       size: {
         icon: "h-10 w-10 p-0",

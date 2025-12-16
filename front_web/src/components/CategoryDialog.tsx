@@ -11,6 +11,16 @@ import {
   DialogContent,
   DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogDescription,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -25,6 +35,8 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
   const [isOpen, setIsOpen] = useState(false);
   const [newCategory, setNewCategory] = useState('');
   const [editingCategory, setEditingCategory] = useState<{ index: number; value: string } | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; categoryName: string } | null>(null);
+  const [editConfirmation, setEditConfirmation] = useState<{ isOpen: boolean; index: number } | null>(null);
 
   // Filter out 'All' from editable categories
   const editableCategories = categories.filter(c => c !== 'All');
@@ -46,6 +58,13 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
   };
 
   const handleEditCategory = (index: number) => {
+    setEditConfirmation({ isOpen: true, index });
+  };
+
+  const confirmEditCategory = () => {
+    if (!editConfirmation) return;
+    
+    const index = editConfirmation.index;
     const actualIndex = categories.indexOf(editableCategories[index]);
 
     if(editingCategory && editingCategory.value.trim()) {
@@ -57,11 +76,20 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
       
       toast.success('Categoria atualizada');
     }
+    
+    setEditConfirmation(null);
   };
 
   const handleDeleteCategory = (categoryName: string) => {
-    onCategoriesChange(categories.filter(c => c !== categoryName));
+    setDeleteConfirmation({ isOpen: true, categoryName });
+  };
+
+  const confirmDeleteCategory = () => {
+    if (!deleteConfirmation) return;
+    
+    onCategoriesChange(categories.filter(c => c !== deleteConfirmation.categoryName));
     toast.success('Categoria removida');
+    setDeleteConfirmation(null);
   };
 
   return (
@@ -87,11 +115,11 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
         <div className="space-y-4 py-4">
           {/* Add new category */}
           <div className="flex gap-2">
-            <div className="w-full relative">
-              <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                   alt="Tag icon" className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-4 me-2'/>
-
+            <div className="w-full">
               <Input
+                label="Nova categoria"
+                imageSrc="../../public/imgs/badge-icons/category-tag-icon.svg"
+                imageAlt="Tag icon"
                 placeholder="Nova categoria..."
                 value={newCategory}
                 onChange={(e)  => setNewCategory(e.target.value)}
@@ -119,14 +147,15 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
                 <div key={category} className="flex items-center gap-2 p-2 rounded-md border-b border-input/60 bg-background text-base">
                   {editingCategory?.index === index ? (
                     <>
-                      <div className="relative flex-1">
-                        <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                             alt="Tag icon" className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-4 me-2'/>
+                      <div className="flex-1">
                         <Input
+                          label="Editar categoria"
+                          imageSrc="../../public/imgs/badge-icons/category-tag-icon.svg"
+                          imageAlt="Tag icon"
                           value={editingCategory.value}
                           onChange={(e)  => setEditingCategory({ index, value: e.target.value })}
                           onKeyDown={(e) => e.key === 'Enter' && handleEditCategory(index)}
-                          className="h-8 "
+                          className="h-8"
                           autoFocus
                         />
                       </div>
@@ -197,6 +226,44 @@ export const CategoryDialog = ({ categories, onCategoriesChange }: CategoryDialo
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Delete Category Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmation?.isOpen ?? false} onOpenChange={(open) => !open && setDeleteConfirmation(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja remover a categoria "{deleteConfirmation?.categoryName}"? 
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteCategory} className="bg-destructive hover:bg-destructive/90">
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Category Confirmation Dialog */}
+      <AlertDialog open={editConfirmation?.isOpen ?? false} onOpenChange={(open) => !open && setEditConfirmation(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Edição</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja editar esta categoria? 
+              Todos os produtos associados serão atualizados com o novo nome.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmEditCategory}>
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };

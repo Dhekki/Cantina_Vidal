@@ -87,6 +87,9 @@ export default {
             secondary: "rgba(var(--categorie-badge) / 0.14)",
           },
         },
+        // popUp: {
+        //   edit: 
+        // },
         success: "hsl(var(--success))",
         info: "hsl(var(--info))",
       },

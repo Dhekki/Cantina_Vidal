@@ -34,16 +34,17 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectItem,
-  SelectValue,
   SelectTrigger, 
   SelectContent,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
+
 import { CategoryDialog } from '@/components/CategoryDialog';
-import SearchInput from '@/components/ui/search-input';
+
 import { Badge } from '@/components/ui/badge';
+import SearchInput from '@/components/ui/search-input';
 
 
 const ProductsManagement = () => {
@@ -468,44 +469,31 @@ const ProductsManagement = () => {
               <div className="flex gap-4">
                 {/* Input: Product name */}
                 <div className="space-y-2 w-full">
-                  <div className="relative">
-                    <img
-                      src="../../public/imgs/input-icons/box-icon.svg"
-                      alt="User icon"
-                      aria-hidden="true"
-                      className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                    />
-
                     <Input
                       id="name"
+                      imageSrc = '../../public/imgs/input-icons/box-icon.svg'
+                      imageAlt='Box icon'
+                      label='Nome do produto'
                       autoComplete='off'
-                      placeholder='Nome do produto'
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
                     />
-                  </div>
                 </div>
                 
                 {/* Input: Expiration Date */}
                 <div className="space-y-2 w-full">
-                  <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/calendar-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
-
-                  <Input
-                    id="dataValidade"
-                    type='date'
-                    placeholder='Data de validade'
-                    value={formData.dataValidade}
-                    onChange={(e) => setFormData({ ...formData, dataValidade: e.target.value })}
-                    required
-                  />
-                  </div>
+                    <Input
+                      id="dataValidade"
+                      type='date'
+                      placeholder='Data de validade'
+                      imageSrc = '../../public/imgs/input-icons/calendar-icon.svg'
+                      imageAlt='Calendar icon'
+                      label='Data de validade'
+                      value={formData.dataValidade}
+                      onChange={(e) => setFormData({ ...formData, dataValidade: e.target.value })}
+                      required
+                    />
                 </div>
               </div>
               {/* Row: Product Price / Quantity in Stock */}
@@ -513,18 +501,14 @@ const ProductsManagement = () => {
                 {/* Input: Product Price */}
                 <div className="space-y-2 w-full">
                   <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/reais-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
 
                     <Input
                       id="price"
                       type='number'
                       step={'0.01'}
-                      placeholder='Preço'
+                      imageSrc = '../../public/imgs/input-icons/reais-icon.svg'
+                      imageAlt='Price icon'
+                      label='Preço'
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                       required
@@ -536,18 +520,14 @@ const ProductsManagement = () => {
                 <div className="space-y-2 w-full">
                   {/* <Label htmlFor="inStock">Quantidade em Estoque</Label> */}
                   <div className="relative">
-                  <img
-                    src="../../public/imgs/input-icons/boxes-icon.svg"
-                    alt="User icon"
-                    aria-hidden="true"
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                  />
 
                     <Input
                       id="inStock"
                       type='number'
                       step={'1'}
-                      placeholder='Quantidade'
+                      imageSrc = '../../public/imgs/input-icons/boxes-icon.svg'
+                      imageAlt='Boxes icon'
+                      label='Quantidade'
                       autoComplete='off'
                       value={formData.stock}
                       onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
@@ -562,18 +542,20 @@ const ProductsManagement = () => {
                 {/* Input: Minimum Stock */}
                 <div className="space-y-2 w-full">
                   <div className="relative">
-                    <img
+                    {/* <img
                       src="../../public/imgs/input-icons/stock-icon.svg"
                       alt="User icon"
                       aria-hidden="true"
                       className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70"
-                    />
+                    /> */}
 
                     <Input
                       id="minimumStock"
                       type='number'
                       step={'1'}
-                      placeholder='Estoque mínimo'
+                      imageSrc = '../../public/imgs/input-icons/stock-icon.svg'
+                      imageAlt='Stock icon'
+                      label='Estoque mínimo'
                       autoComplete='off'
                       value={formData.minimumStock}
                       onChange={(e) => setFormData({ ...formData, minimumStock: e.target.value })}
@@ -596,7 +578,9 @@ const ProductsManagement = () => {
                       id="replacementInterval"
                       type='number'
                       step={'1'}
-                      placeholder='Intervalo (dias)'
+                      label='Intervalo de Reposição (dias)'
+                      imageSrc = '../../public/imgs/input-icons/boxes-icon.svg'
+                      imageAlt='Boxes icon'
                       autoComplete='off'
                       value={formData.replacementInterval}
                       onChange={(e) => setFormData({ ...formData, replacementInterval: e.target.value })}
@@ -663,6 +647,7 @@ const ProductsManagement = () => {
                     <Input
                       id="image-upload"
                       type="file"
+                      label='Quantidade'
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => {
@@ -793,21 +778,27 @@ const ProductsManagement = () => {
       {/* Unsaved Changes Confirmation Dialog */}
       <AlertDialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
         <AlertDialogContent>
+          {/* Dialog Icon */}
+          <img src="../../public/imgs/pop-ups-icons/edit-icon.png" alt="" />
+
           {/* Dialog Header */}
           <AlertDialogHeader>
-            <AlertDialogTitle>Alterações não salvas</AlertDialogTitle>
+            <AlertDialogTitle>
+              Alterações não salvas
+            </AlertDialogTitle>
+
             <AlertDialogDescription>
               Existem alterações não salvas no formulário. Deseja sair sem salvar?
             </AlertDialogDescription>
           </AlertDialogHeader>
           
           {/* Unsaved Changes Options */}
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleStayOnForm}>
-              Permanecer no formulário
+          <AlertDialogFooter className='w-full'>
+            <AlertDialogCancel onClick={handleStayOnForm} className='w-full'>
+              Cancelar
             </AlertDialogCancel>
 
-            <AlertDialogAction onClick={handleDiscardChanges}>
+            <AlertDialogAction onClick={handleDiscardChanges} className='w-full'>
               Sair sem salvar
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 
 import { LogOut } from 'lucide-react';
@@ -10,9 +10,20 @@ import { Button } from '@/components/ui/button';
 import { AppSidebar } from '@/components/AppSidebar';
 import { NotificationDropdown } from '@/components/NotificationDropdown';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import {
+  AlertDialog,
+  AlertDialogTitle,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogDescription,
+} from '@/components/ui/alert-dialog';
 
 const StaffLayout = () => {
   const navigate = useNavigate();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   
   const {
     notifications,
@@ -52,8 +63,13 @@ const StaffLayout = () => {
   }, [addNotification]);
 
   const handleLogout = () => {
+    setIsLogoutDialogOpen(true);
+  };
+
+  const confirmLogout = () => {
     localStorage.removeItem('staffAuth');
     navigate('/staff/login');
+    setIsLogoutDialogOpen(false);
   };
 
   return (
@@ -83,6 +99,23 @@ const StaffLayout = () => {
           </main>
         </div>
       </div>
+
+      <AlertDialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Saída</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja sair do sistema? Você precisará fazer login novamente para acessar.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLogout}>
+              Sair
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 };
