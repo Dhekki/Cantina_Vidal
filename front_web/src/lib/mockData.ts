@@ -136,6 +136,7 @@ export const mockOrders: Order[] = [
       name: 'Emma Johnson'
     },
     status: 'received',
+    isPaid: true,
     createdAt: new Date(Date.now() - 1000 * 60 * 5),
     total: 7.00,
   },
@@ -150,9 +151,10 @@ export const mockOrders: Order[] = [
     student: {
       name: 'Liam Smith',
     },
-    status: 'preparing',
+    status: 'notPaid',
     createdAt: new Date(Date.now() - 1000 * 60 * 10),
     total: 7.50,
+    isPaid: false,
   },
   {
     id: '3',
@@ -167,6 +169,7 @@ export const mockOrders: Order[] = [
     status: 'ready',
     createdAt: new Date(Date.now() - 1000 * 60 * 15),
     total: 8.50,
+    isPaid: false,
   },
 ];
 

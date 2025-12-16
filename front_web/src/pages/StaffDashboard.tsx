@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mockOrders } from '@/lib/mockData';
 import { Order, OrderStatus } from '@/types/order';
 import { OrderCard } from '@/components/staff/OrderCard';
@@ -89,6 +89,39 @@ const StaffDashboard = () => {
     : null;
 
   const nextStatusLabel = getNextStatusLabel(nextStatus);
+
+  const shouldMarkAsNotPaid = (order: Order): boolean => {
+    if(order.isPaid) return false;
+
+    if(['canceled', 'delivered', 'notPaid'].includes(order.status)) 
+      return false;
+
+    const orderDate = new Date(order.createdAt);
+    const midnight = new Date(orderDate);
+    
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0, 0, 0, 0);
+
+    return new Date() >= midnight;
+  };
+
+  const updateOrdersAfterMidnight = () => {
+    setOrders(prev =>
+      prev.map(order =>
+        shouldMarkAsNotPaid(order)
+          ? { ...order, status: 'notPaid' }
+          : order
+      )
+    );
+  };
+
+  useEffect(() => {
+    updateOrdersAfterMidnight();
+
+    const interval = setInterval(updateOrdersAfterMidnight, 60_000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -286,7 +319,7 @@ const StaffDashboard = () => {
                 
                 {(() => {
                   const nextStatus      = getNextStatus(selectedOrder.status);
-                  const nextStatusLabel = getNextStatusLabel(selectedOrder.status);
+                  const nextStatusLabel = getNextStatusLabel(nextStatus);
                   
                   return nextStatus && nextStatus !== 'canceled' ? (
                     <Button

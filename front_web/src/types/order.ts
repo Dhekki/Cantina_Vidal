@@ -27,6 +27,7 @@ export interface StudentInfo {
 
 export interface Order {
   id: string;
+  isPaid: boolean;
   orderCode: string;
   pickUpTime: string;
   items: CartItem[];
