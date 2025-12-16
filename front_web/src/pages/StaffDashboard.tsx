@@ -19,74 +19,76 @@ const StaffDashboard = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    setOrders((prev) =>
-      prev.map((order) =>
+    setOrders(prev =>
+      prev.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
   };
 
-  const getOrdersByStatus = (status: OrderStatus) => {
-    return orders.filter((order) => order.status === status);
-  };
+  const getOrdersByStatus = (status: OrderStatus) =>
+    orders.filter(order => order.status === status);
 
-  const statusTabs = [
-    { value: 'all'       as const, label: 'Todos os Pedidos', count: orders.length },
-    { value: 'received'  as const, label: 'Recebidos',        count: getOrdersByStatus('received').length },
-    { value: 'preparing' as const, label: 'Em Preparo',       count: getOrdersByStatus('preparing').length },
-    { value: 'ready'     as const, label: 'Feitos',           count: getOrdersByStatus('ready').length },
-    { value: 'delivered' as const, label: 'Entregues',        count: getOrdersByStatus('delivered').length},
-    { value: 'canceled'  as const, label: 'Cancelados',       count: getOrdersByStatus('canceled').length},
+  const orderStatuses: OrderStatus[] = [
+    'received',
+    'preparing',
+    'ready',
+    'delivered',
+    'canceled',
+    'notPaid',
   ];
 
-  interface OrderCardProps {
-    order: Order;
-    onStatusChange: (orderId: string, newStatus: Order["status"]) => void;
-    onViewDetails:  (order: Order) => void;
-  }
+  const statusTabs = [
+    { value: 'all',       label: 'Todos os Pedidos', count: orders.length },
+    { value: 'received',  label: 'Recebidos',        count: getOrdersByStatus('received').length  },
+    { value: 'preparing', label: 'Em Preparo',       count: getOrdersByStatus('preparing').length },
+    { value: 'ready',     label: 'Feitos',           count: getOrdersByStatus('ready').length     },
+    { value: 'delivered', label: 'Entregues',        count: getOrdersByStatus('delivered').length },
+    { value: 'canceled',  label: 'Cancelados',       count: getOrdersByStatus('canceled').length  },
+    { value: 'notPaid',   label: 'Não pagos',        count: getOrdersByStatus('notPaid').length   },
+  ];
 
-  const statusMessages: Record<Order["status"], string> = {
-    received:  "Recebido",
-    preparing: "Em preparo",
-    ready:     "Feito",
-    delivered: "Entregue",
-    canceled:  "Cancelado",
-  };
-
-
-  const statusLabels = {
-    received:  { singular: "recebido",   plural: "recebidos"   },
-    preparing: { singular: "em preparo", plural: "em preparo"  },
-    ready:     { singular: "pronto",     plural: "prontos"     },
-    delivered: { singular: "entregue",   plural: "entregues"   },
-    canceled:  { singular: "cancelado",  plural: "cancelados"  },
+  const statusLabels: Record<OrderStatus, { singular: string; plural: string }> = {
+    received:  { singular: 'recebido',   plural: 'recebidos'  },
+    preparing: { singular: 'em preparo', plural: 'em preparo' },
+    ready:     { singular: 'pronto',     plural: 'prontos'    },
+    delivered: { singular: 'entregue',   plural: 'entregues'  },
+    canceled:  { singular: 'cancelado',  plural: 'cancelados' },
+    notPaid:   { singular: 'não pago',   plural: 'não pagos'  },
   };
 
   const getNextStatus = (currentStatus: OrderStatus): OrderStatus | null => {
-    const statusFlow: OrderStatus[] = ['received', 'preparing', 'ready', 'delivered'];
-    const currentIndex = statusFlow.indexOf(currentStatus);
-    return currentIndex < statusFlow.length - 1 ? statusFlow[currentIndex + 1] : null;
+    const flow: OrderStatus[] = ['received', 'preparing', 'ready', 'delivered'];
+    const index = flow.indexOf(currentStatus);
+
+    return index !== -1 && index < flow.length - 1 ? flow[index + 1] : null;
   };
 
-  const getNextStatusLabel = (currentStatus: OrderStatus): string => {
-    const nextStatus = getNextStatus(currentStatus);
-    if (!nextStatus) return '';
-    
+  const getNextStatusLabel = (nextStatus: OrderStatus | null): string => {
+    if(!nextStatus) return '';
+
     const labels: Record<OrderStatus, string> = {
-      received: 'Marcar como Recebido',
+      received:  'Marcar como Recebido',
       preparing: 'Iniciar Preparo',
-      ready: 'Marcar como Pronto',
+      ready:     'Marcar como Pronto',
       delivered: 'Marcar como Entregue',
-      canceled: 'Cancelar',
+      canceled:  'Cancelar',
+      notPaid:   'Não pago',
     };
-    
-    return labels[nextStatus] || '';
+
+    return labels[nextStatus];
   };
 
   const handleCancelOrder = (orderId: string) => {
     handleStatusChange(orderId, 'canceled');
     setSelectedOrder(null);
   };
+
+  const nextStatus = selectedOrder
+    ? getNextStatus(selectedOrder.status)
+    : null;
+
+  const nextStatusLabel = getNextStatusLabel(nextStatus);
 
   return (
     <div className="space-y-6">
@@ -104,13 +106,12 @@ const StaffDashboard = () => {
 
         {/* Tabs area */}
         <Tabs defaultValue="all" className="space-y-7">
-          <div className="max-w-6xl">
-            <TabsList className="grid w-full h-fit grid-cols-6">
+          <div className="max-w-7xl">
+            <TabsList className="grid w-full h-fit grid-cols-7">
               {statusTabs.map((tab) => (
                 <StatusTabsTrigger
                   key={tab.value}
                   value={tab.value}
-                  status={tab.value}
                   className="relative"
                 >
                   {tab.label}
@@ -166,7 +167,7 @@ const StaffDashboard = () => {
             )}
           </TabsContent>
 
-          {(['received', 'preparing', 'ready', 'delivered', 'canceled'] as OrderStatus[]).map((status) => (
+          {orderStatuses.map(status => (
             <TabsContent key={status} value={status} className="space-y-4">
               <div
                 className="
@@ -179,7 +180,7 @@ const StaffDashboard = () => {
                   items-stretch
                 "
               >
-                {getOrdersByStatus(status).map((order) => (
+                {getOrdersByStatus(status).map(order => (
                   <div key={order.id} className="w-full max-w-[400px]">
                     <OrderCard
                       order={order}
@@ -189,9 +190,10 @@ const StaffDashboard = () => {
                   </div>
                 ))}
               </div>
+
               {getOrdersByStatus(status).length === 0 && (
                 <div className="text-center w-full flex flex-col items-center justify-center border border-slate-100 p-16 rounded-md space-y-3 shadow-sm">
-                  <img src="../../imgs/empty-list-icon.png" alt="Empty status icon" className='h-36' />
+                  <FileX className="h-16 w-16 text-muted-foreground" />
 
                   <div className="space-y-2">
                     <p className="text-gray-600 text-2xl">

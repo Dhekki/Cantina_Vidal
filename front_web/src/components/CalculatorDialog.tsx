@@ -186,7 +186,7 @@ export const CalculatorDialog = ({ children }: { children?: ReactNode }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        {children || (
+      {children || (
           <Button size="icon" className="h-9 w-9">
             <Calculator className="h-5 w-5" />
           </Button>

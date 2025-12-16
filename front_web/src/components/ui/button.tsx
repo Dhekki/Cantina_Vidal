@@ -17,6 +17,7 @@ const buttonVariants = cva(
         ready: "bg-status-ready-primary text-white hover:bg-status-ready-primary/90",
         delivered: "bg-status-delivered-primary text-white hover:bg-status-delivered-primary/90",
         canceled: "bg-status-canceled-primary text-white hover:bg-status-canceled-primary/90",
+        notPaid: "bg-status-canceled-primary text-white hover:bg-status-canceled-primary/90",
         dangerOutline: "bg-transparent text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
       },
       size: {

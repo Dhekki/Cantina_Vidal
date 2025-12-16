@@ -32,6 +32,10 @@ const statusColorMap = {
     active: "data-[state=active]:bg-status-canceled-secondary data-[state=active]:text-status-canceled-primary data-[state=active]:border-status-canceled-primary",
     inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-canceled-primary hover:text-status-canceled-primary hover:bg-status-canceled-secondary"
   },
+  notPaid: {
+    active: "data-[state=active]:bg-status-canceled-secondary data-[state=active]:text-status-canceled-primary data-[state=active]:border-status-canceled-primary",
+    inactive: "border-input transition-all duration-[.5s] ease-in-out hover:border-status-canceled-primary hover:text-status-canceled-primary hover:bg-status-canceled-secondary"
+  },
 };
 
 export const StatusTabsTrigger = React.forwardRef<
