@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, ShoppingBag, ChevronLeft } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingBag, ChevronLeft, Calculator } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -65,10 +65,18 @@ export function AppSidebar() {
               {/* Calculator */}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Calculadora">
-                  <div className="flex items-center cursor-pointer">
-                    <CalculatorDialog />
-                    {open && <span className="ml-2">Calculadora</span>}
-                  </div>
+                  <CalculatorDialog>
+                    <button
+                      type="button"
+                      aria-label="Calculadora"
+                      className="hover:bg-accent py-3 px-4 text-lg font-medium text-menu-color gap-4 items-center border border-transparent flex justify-start group-data-[collapsible=icon]:justify-center w-full"
+                    >
+                      <span className="icon w-5 h-5 flex items-center justify-center shrink-0">
+                        <Calculator className="w-5 h-5" />
+                      </span>
+                      {open && <span>Calculadora</span>}
+                    </button>
+                  </CalculatorDialog>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
