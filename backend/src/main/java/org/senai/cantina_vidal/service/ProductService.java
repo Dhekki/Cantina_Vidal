@@ -116,7 +116,7 @@ public class ProductService {
     @Transactional
     public Product update(Long id, ProductPatchRequestDTO dto) {
         Product entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
 
         mapper.updateProductFromDTO(dto, entity);
 
@@ -126,7 +126,7 @@ public class ProductService {
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException("Produto não encontrado");
+            throw new ResourceNotFoundException("Produto não encontrado com o id: " + id);
 
         repository.deleteById(id);
     }
@@ -134,7 +134,7 @@ public class ProductService {
     @Transactional
     public void toggleAvailability(Long id) {
         Product entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
 
         entity.setAvailable(!entity.getAvailable());
 

@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadController {
     private final FileStorageService service;
 
-
     @Operation(
             description = "Aceita arquivos de imagem (**JPG, PNG, JPEG, WEBP**)."
     )
