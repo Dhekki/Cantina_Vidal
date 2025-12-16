@@ -20,7 +20,8 @@ public record OrderResponseDTO(
         List<OrderItemResponseDTO> items
 ) {
     public OrderResponseDTO(Order entity) {
-        this(entity.getId(),
+        this(
+                entity.getId(),
                 entity.getStatus(),
                 entity.getTotal(),
                 entity.getCreatedAt(),
