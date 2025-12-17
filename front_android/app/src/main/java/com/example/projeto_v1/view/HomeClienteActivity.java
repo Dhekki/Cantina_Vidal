@@ -70,52 +70,52 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
-    // --- PONTO CRUCIAL: ONDE A MÁGICA ACONTECE AO VOLTAR DO CARRINHO ---
+    // --- CORREÇÃO PRINCIPAL: Sincroniza ao voltar para a tela ---
     @Override
     protected void onResume() {
         super.onResume();
 
-        // 1. Força a sincronização entre a Lista Visual (Home) e a Lista Real (Singleton)
-        sincronizarListasPeloNome();
+        // 1. Caso o Carrinho Singleton tenha se perdido (app fechou em 2o plano), tenta recuperar do Manager
+        if (Carrinho.getInstance().getProdutos().isEmpty() && !CarrinhoManager.getProdutosNoCarrinhoMap().isEmpty()) {
+            Carrinho.getInstance().setProdutos(new ArrayList<>(CarrinhoManager.getProdutosNoCarrinhoMap().values()));
+        }
 
-        // 2. Atualiza a barra inferior com os novos totais
+        // 2. Sincroniza visualmente a Home com os dados do Carrinho
+        sincronizarHomeComCarrinho();
+
+        // 3. Atualiza a barra inferior e filtros
         atualizarEstadoCarrinho(produtosGeral);
-
-        // 3. Reaplica filtros (caso o usuário tivesse digitado algo na busca)
         aplicarFiltros();
     }
 
-    private void sincronizarListasPeloNome() {
+    private void sincronizarHomeComCarrinho() {
         if (produtosGeral == null) return;
 
-        // Passo A: Zera TUDO na Home. Assumimos que o carrinho foi esvaziado.
+        // Passo A: Zera todas as quantidades na Home (Limpeza)
         for (Produto pHome : produtosGeral) {
             pHome.setQuantidade(0);
         }
 
-        // Passo B: Pega o que REALMENTE está no carrinho (Singleton)
+        // Passo B: Pega os produtos que estão no Carrinho
         List<Produto> itensNoCarrinho = Carrinho.getInstance().getProdutos();
 
-        // Passo C: Para cada item do carrinho, procura o "irmão gêmeo" na Home pelo NOME e atualiza
-        if (itensNoCarrinho != null) {
+        // Passo C: Cruza os dados pelo NOME
+        if (itensNoCarrinho != null && !itensNoCarrinho.isEmpty()) {
             for (Produto pCarrinho : itensNoCarrinho) {
                 for (Produto pHome : produtosGeral) {
-                    // Compara Nomes ignorando maiúsculas/minúsculas e espaços
+                    // Se o nome for igual, atualiza a quantidade na Home
                     if (pHome.getNome().trim().equalsIgnoreCase(pCarrinho.getNome().trim())) {
                         pHome.setQuantidade(pCarrinho.getQuantidade());
-                        break; // Achou, pula para o próximo item do carrinho
+                        break;
                     }
                 }
             }
         }
 
-        // Passo D: Avisa o Adapter para redesenhar os números (0 ou X) na tela
+        // Passo D: Avisa o adaptador para pintar os números na tela
         if (produtoAdapter != null) {
             produtoAdapter.notifyDataSetChanged();
         }
-
-        // Passo E: Atualiza o Manager (Persistência) para ficar igual ao Singleton e Home
-        CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
     private void inicializarComponentes() {
@@ -131,7 +131,7 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
 
     private void configurarCarrinho() {
         btnCarrinho.setOnClickListener(v -> {
-            // Antes de ir, garante que o Manager está atualizado
+            // Salva o estado atual antes de ir para a tela de carrinho
             CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
             Intent intent = new Intent(HomeClienteActivity.this, CarrinhoClienteActivity.class);
             startActivity(intent);
@@ -140,6 +140,11 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
 
     public void goNavegacaoPedidos(View view) {
         startActivity(new Intent(this, PedidosClienteActivity.class));
+    }
+
+    public void goNavegacaoPerfil(View view) {
+        startActivity(new Intent(this, PerfilClienteActivity.class));
+        finish();
     }
 
     private void setupSearchListener() {
@@ -209,7 +214,6 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         double precoTotal = 0.0;
         int totalItens = 0;
 
-        // Calcula com base nos produtos da Home (que já foram sincronizados no onResume)
         for (Produto produto : produtos) {
             if (produto.getQuantidade() > 0) {
                 precoTotal += (produto.getPreco() * produto.getQuantidade());
@@ -226,13 +230,10 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
-    // --- Listas e Dados ---
-
     private void setupRecyclerViewCategorias() {
         recyclerCategorias = findViewById(R.id.recycler_categorias);
         List<Categoria> categorias = criarListaCategorias();
         categoriaAdapter = new CategoriaAdapter(categorias, this);
-
         recyclerCategorias.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerCategorias.setAdapter(categoriaAdapter);
     }
@@ -252,17 +253,14 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
 
     @Override
     public void onQuantidadeChanged() {
-        // Atualiza a barra visual
         atualizarEstadoCarrinho(produtosGeral);
 
-        // Atualiza o Singleton IMEDIATAMENTE (Cria uma lista nova baseada na Home)
+        // Atualiza Singleton e Manager instantaneamente ao clicar +/-
         List<Produto> ativos = new ArrayList<>();
         for(Produto p : produtosGeral) {
             if(p.getQuantidade() > 0) ativos.add(p);
         }
         Carrinho.getInstance().setProdutos(ativos);
-
-        // Atualiza o Manager (Persistência)
         CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
@@ -320,8 +318,7 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
             produtos.add(new Produto("Prato Feito", "600g", 15.00, R.drawable.icon___cocacola, almocos));
         }
 
-        // RECUPERA DADOS PERSISTIDOS (Backup)
-        // Isso é útil se o Singleton foi limpo, mas o Manager ainda tem dados
+        // Backup inicial: recupera dados do Manager se existirem (ex: app reiniciado)
         Map<String, Produto> salvos = CarrinhoManager.getProdutosNoCarrinhoMap();
         if (salvos != null && !salvos.isEmpty()) {
             for (Produto produto : produtos) {

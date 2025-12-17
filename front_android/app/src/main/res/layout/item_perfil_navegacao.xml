@@ -47,18 +47,13 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/barra_navegacao"
-                android:layout_marginBottom="0dp" />
-
             <ImageView
                 android:id="@+id/btnPedidos"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/icon___pedidos2"
+                android:onClick="goNavegacaoPedidos"
+                android:src="@drawable/icon___pedidos"
                 android:layout_gravity="center" />
 
             <TextView
@@ -67,7 +62,8 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="8dp"
                 android:text="Pedidos"
-                android:textColor="@color/laranja"
+                android:textColor="@color/cinza3"
+                android:onClick="goNavegacaoPedidos"
                 android:textSize="12sp"
                 android:textStyle="bold"/>
         </LinearLayout>
@@ -79,13 +75,19 @@
             android:layout_weight="1"
             android:gravity="center">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/barra_navegacao"
+                android:layout_marginBottom="0dp" />
+
             <ImageView
                 android:id="@+id/btnPerfil"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="centerCrop"
                 android:onClick="goNavegacaoPerfil"
-                android:src="@drawable/icon_nome"
+                android:src="@drawable/icon_perfil3"
                 android:layout_gravity="center" />
 
             <TextView
@@ -95,7 +97,7 @@
                 android:paddingHorizontal="8dp"
                 android:text="Perfil"
                 android:onClick="goNavegacaoPerfil"
-                android:textColor="@color/cinza"
+                android:textColor="@color/laranja"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>

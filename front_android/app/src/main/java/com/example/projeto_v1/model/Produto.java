@@ -39,6 +39,9 @@ public class Produto implements Serializable {
     // --- GETTERS E SETTERS ---
 
     public String getId() { return id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNome() { return nome; }
 
@@ -53,4 +56,5 @@ public class Produto implements Serializable {
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+
 }

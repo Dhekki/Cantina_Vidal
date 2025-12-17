@@ -34,6 +34,7 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                android:layout_marginTop="1dp"
                 android:src="@drawable/icon_relogio"
                 android:layout_marginEnd="4dp"
                 app:tint="#D34020"/>
@@ -140,7 +141,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Confirmar Pedido"
+            android:text="Confirmar pedido"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"

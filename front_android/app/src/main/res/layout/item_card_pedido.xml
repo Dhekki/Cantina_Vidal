@@ -13,14 +13,14 @@
         android:id="@+id/textStatusPedido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Em preparo"
-        android:textColor="@color/amarelo_claro"
+        android:text=" Recebido"
+        android:textColor="@color/azul"
         android:textSize="12sp"
         android:textStyle="bold"
         android:paddingHorizontal="12dp"
         android:paddingVertical="6dp"
-        android:background="@drawable/shape_status_preparo"
-        android:drawableLeft="@drawable/icon_fogo"
+        android:background="@drawable/shape_status_recebido"
+        android:drawableLeft="@drawable/icon_status_recebido"
         android:drawablePadding="6dp"
         android:gravity="center_vertical"
         android:layout_marginBottom="16dp"/>
@@ -30,14 +30,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="false"
-        tools:listitem="@layout/item_pagamentos_produto"
+        tools:listitem="@layout/item_pedidos_produto"
         tools:itemCount="2"/>
 
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:background="@color/cinza4"-->
-<!--        android:layout_marginVertical="16dp"/>-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/barra_navegacao"
+        android:backgroundTint="@color/cinza4"
+        android:layout_marginVertical="12dp"
+        android:layout_marginHorizontal="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

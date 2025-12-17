@@ -2,6 +2,7 @@ package com.example.projeto_v1.network;
 
 import com.example.projeto_v1.model.Cliente;
 import com.example.projeto_v1.model.UploadResponse;
+import com.example.projeto_v1.model.UserResponse;
 
 import java.util.List;
 
@@ -56,6 +57,10 @@ public interface ApiService {
     );
 
     @Multipart
-    @POST("uploads") Call<UploadResponse> uploadImage(@Header("Authorization") String token,
-                                                      @Part MultipartBody.Part file );
+    @POST("uploads")
+    Call<UploadResponse> uploadImage(@Header("Authorization") String token,
+                                     @Part MultipartBody.Part file);
+
+    @GET("users/me")
+    Call<UserResponse> getMyProfile(@Header("Authorization") String token);
 }

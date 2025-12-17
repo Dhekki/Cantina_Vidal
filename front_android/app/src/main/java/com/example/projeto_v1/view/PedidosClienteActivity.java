@@ -51,4 +51,9 @@ public class PedidosClienteActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    public void goNavegacaoPerfil(View view) {
+        startActivity(new Intent(this, PerfilClienteActivity.class));
+        finish();
+    }
 }

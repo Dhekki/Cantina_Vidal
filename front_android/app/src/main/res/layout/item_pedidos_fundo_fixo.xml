@@ -23,25 +23,27 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:background="@drawable/shape_status_preparo"
+            android:background="@drawable/shape_status_recebido"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp">
 
             <View
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:background="@drawable/icon_fogo"
+                android:background="@drawable/icon_status_recebido"
                 android:layout_marginEnd="4dp"
-                android:backgroundTint="@color/amarelo_claro"/>
+                android:layout_gravity="center_vertical"
+                android:backgroundTint="@color/azul"/>
 
             <TextView
                 android:id="@+id/textStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Em preparo"
+                android:text="Recebido"
+                android:layout_gravity="center_vertical"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/amarelo_claro"/>
+                android:textColor="@color/azul"/>
         </LinearLayout>
     </LinearLayout>
 
