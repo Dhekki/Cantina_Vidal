@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { authService } from '@/services/auth.service';
 
 import userIcon from "/imgs/input-icons/user_icon.svg";
 import lockIcon from "/imgs/input-icons/lock_icon.svg";
@@ -11,18 +12,57 @@ import lockIcon from "/imgs/input-icons/lock_icon.svg";
 const StaffLogin = () => {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simple credential validation for testing
-    if(password === '1234') {
+    setLoading(true);
+
+    try {
+      const response = await authService.login({ email, password });
+      
+      // Salva o token e marca como autenticado
+      localStorage.setItem('token', response.accessToken);      
       localStorage.setItem('staffAuth', 'true');
+      
+      toast.success('Login realizado com sucesso!', {
+        description: `Bem-vindo, ${response.username || 'Usuário'}`,
+      });
+      
       navigate('/staff/dashboard');
-    } else {
-      toast.error('Invalid PIN');
+    } catch (error: any) {
+      console.error('Erro no login:', error);
+      
+      let errorMessage = 'Credenciais inválidas';
+      let errorTitle = 'Erro no login';
+      
+      // Tratamento específico para ApiError do auth.service
+      if (error.name === 'ApiError') {
+        if (error.status === 500) {
+          errorTitle = 'Erro no servidor';
+          errorMessage = 'O servidor encontrou um erro interno. Verifique se o backend está configurado corretamente.';
+        } else if (error.status === 401 || error.status === 403) {
+          errorMessage = 'Usuário ou senha incorretos';
+        } else if (error.status === 400) {
+          errorMessage = 'Dados de login inválidos';
+        } else {
+          errorMessage = error.message;
+        }
+      } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        errorTitle = 'Erro de conexão';
+        errorMessage = 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 8000.';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorTitle, {
+        description: errorMessage,
+        duration: 5000,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,11 +91,11 @@ const StaffLogin = () => {
               />
 
               <Input
-                id="admin-username"
+                id="admin-email"
                 type="text"
-                value={username}
+                value={email}
                 placeholder="Nome de usuário"
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -70,7 +110,7 @@ const StaffLogin = () => {
 
               <Input
                 id="admin-password"
-                type="password"
+                type="text"
                 value={password}
                 placeholder="Senha"
                 onChange={(e) => setPassword(e.target.value)}
@@ -79,12 +119,12 @@ const StaffLogin = () => {
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Para testes: 1234
+              Insira suas credenciais de acesso
             </p>
           </div>
 
-          <Button type="submit" size="lg" className="w-full">
-            Acessar Painel
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? 'Acessando...' : 'Acessar Painel'}
           </Button>
         </form>
       </div>

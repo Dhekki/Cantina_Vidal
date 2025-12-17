@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -52,7 +51,8 @@ import { CategoryDialog } from '@/components/CategoryDialog';
 
 import { Badge } from '@/components/ui/badge';
 import SearchInput from '@/components/ui/search-input';
-
+import { productsService } from '@/services/products.service';
+import { Product } from '@/services/products.service';
 
 const ProductsManagement = () => {
   const [products, setProducts]       = useState<MenuItem[]>(mockMenuItems);
@@ -76,8 +76,8 @@ const ProductsManagement = () => {
       if(selectedCategory !== 'All' && !categories.includes(selectedCategory)) return false;
 
       // Filter by status
-      if(statusFilter === 'active' && !p.available) return false;
-      if(statusFilter === 'inactive' && p.available) return false;
+      if(statusFilter === 'active'   && !p.available) return false;
+      if(statusFilter === 'inactive' && p.available)  return false;
 
       // Filter by search query
       if(query) {
@@ -275,7 +275,7 @@ const ProductsManagement = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if(formData.category.length === 0) {
@@ -302,7 +302,7 @@ const ProductsManagement = () => {
       ));
       toast.success('Produto atualizado com sucesso');
     } else {
-      const newProduct: MenuItem = {
+      const newProduct: Product = {
         id:                  `product-${Date.now()}`,
         name:                formData.name,
         description:         formData.description,
@@ -317,8 +317,17 @@ const ProductsManagement = () => {
         expirationData:      formData.dataValidade,
         specifications:      formData.description,
       };
-      setProducts([...products, newProduct]);
-      toast.success('Produto cadastrado com sucesso');
+
+      try {
+        const response = await productsService.create({ newProduct })
+        toast.success('Produto cadastrado com sucesso');
+        
+      } catch(error : any) {
+        console.error('Erro ao cadastrar novo produto: ', error);
+        toast.success('Produto n cadastrado com sucesso');
+      }
+
+      
     }
     
     setIsAddEditDialogOpen(false);
