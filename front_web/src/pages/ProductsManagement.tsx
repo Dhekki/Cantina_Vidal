@@ -1,7 +1,8 @@
+
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, ChevronsUpDown, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Table,
   TableRow,
@@ -37,6 +38,12 @@ import {
   SelectTrigger, 
   SelectContent,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories as defaultCategories } from '@/lib/mockData';
@@ -52,15 +59,24 @@ const ProductsManagement = () => {
   const [categories, setCategories]   = useState<string[]>(defaultCategories);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  
+  // Sorting states
+  const [sortColumn, setSortColumn] = useState<'name' | 'price' | 'stock' | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return products.filter(p => {
+    let filtered = products.filter(p => {
       const categories = Array.isArray(p.category) ? p.category : [p.category];
 
       // Filter by category
       if(selectedCategory !== 'All' && !categories.includes(selectedCategory)) return false;
+
+      // Filter by status
+      if(statusFilter === 'active' && !p.available) return false;
+      if(statusFilter === 'inactive' && p.available) return false;
 
       // Filter by search query
       if(query) {
@@ -73,7 +89,34 @@ const ProductsManagement = () => {
 
       return true;
     });
-  }, [products, selectedCategory, searchQuery]);
+
+    // Apply sorting
+    if(sortColumn) {
+      filtered = [...filtered].sort((a, b) => {
+        let aValue: string | number;
+        let bValue: string | number;
+
+        if(sortColumn === 'name') {
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+        } else if(sortColumn === 'price') {
+          aValue = a.price;
+          bValue = b.price;
+        } else if(sortColumn === 'stock') {
+          aValue = a.inStock;
+          bValue = b.inStock;
+        } else {
+          return 0;
+        }
+
+        if(aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if(aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return filtered;
+  }, [products, selectedCategory, searchQuery, sortColumn, sortDirection, statusFilter]);
   
   const [editMode, setEditMode] = useState(false);
   const [isCategoriesActive, setIsCategoriesActive]   = useState(false);
@@ -217,6 +260,20 @@ const ProductsManagement = () => {
     toast.success(`Produto ${product?.available ? 'desativado' : 'ativado'}`);
   };
 
+  const handleSort = (column: 'name' | 'price' | 'stock') => {
+    if(sortColumn === column) {
+      if(sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else {
+        setSortColumn(null);
+        setSortDirection('asc');
+      }
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -343,14 +400,97 @@ const ProductsManagement = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-20 min-w-[80px] max-w-[100px]">Imagem</TableHead>
-              <TableHead className="min-w-[200px] max-w-[378px] w-full">Nome</TableHead>
+              
+              <TableHead className="min-w-[200px] max-w-[378px] w-full flex justify-between items-center">
+                <button
+                  onClick={() => handleSort('name')}
+                  className="flex justify-between items-center w-full hover:text-foreground transition-colors"
+                >
+                  Nome
+                  { sortColumn === 'name' 
+                      ? sortDirection === 'asc' 
+                        ? (<ChevronUp   className='text-primary h-4 w-4' />)
+                        : (<ChevronDown className='text-primary/80 h-4 w-4' />)
+                      : (<ChevronsUpDown className='text-foreground/80 h-4 w-4' />)
+                  }           
+                </button>
+              </TableHead>
+              
               <TableHead className="min-w-[200px] max-w-[378px] w-full">Descrição</TableHead>
-              <TableHead className="min-w-[300px] max-w-[378px] w-full">Categorias</TableHead>
-              <TableHead className="w-[145px] min-w-[145px] max-w-[145px] text-right">Preço</TableHead>
-              <TableHead className="w-[125px] min-w-[125px] max-w-[125px] text-right">Em Estoque</TableHead>
+              <TableHead className="min-w-[200px] max-w-[378px] w-full">Categorias</TableHead>
+              
+              <TableHead className="w-[145px] min-w-[145px] max-w-[145px] text-right">
+                <button
+                  onClick={() => handleSort('price')}
+                  className="flex items-center gap-2 hover:text-foreground transition-colors ml-auto"
+                >
+                  Preço
+                  { sortColumn === 'price' 
+                      ? sortDirection === 'asc' 
+                        ? (<ChevronUp   className='text-primary h-4 w-4' />)
+                        : (<ChevronDown className='text-neutral-400 h-4 w-4' />)
+                      : (<ChevronsUpDown className='text-foreground/80 h-4 w-4' />)
+                  }
+                </button>
+              </TableHead>
+              
+              <TableHead className="w-[125px] min-w-[132px] max-w-[125px] text-right">
+                <button
+                  onClick={() => handleSort('stock')}
+                  className="flex items-center gap-2 hover:text-foreground transition-colors ml-auto"
+                >
+                  Em Estoque
+                  { sortColumn === 'stock' 
+                      ? sortDirection === 'asc' 
+                        ? (<ChevronUp   className='text-primary h-4 w-4' />)
+                        : (<ChevronDown className='text-neutral-400 h-4 w-4' />)
+                      : (<ChevronsUpDown className='text-foreground/80 h-4 w-4' />)
+                  }
+                </button>
+              </TableHead>
+              
               <TableHead className="w-[125px] min-w-[125px] max-w-[125px] text-right">Disponíveis</TableHead>
-              <TableHead className="w-[170px] min-w-[170px] max-w-[170px]">Status</TableHead>
-              <TableHead className="w-[188px] min-w-[188px] max-w-[188px] text-center">Ações</TableHead>
+              
+              <TableHead className="w-[170px] min-w-[170px] max-w-[170px]">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 hover:text-foreground transition-colors">
+                      Status
+
+                      <ChevronDown 
+                        className={`h-4 w-4 ${
+                          statusFilter === 'active' 
+                            ? 'text-green-500' 
+                            : statusFilter === 'inactive'
+                            ? 'text-red-500'
+                            : 'text-foreground/80'
+                        }`}
+                      />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuItem onClick={() => setStatusFilter('all')}>
+                      Todos
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setStatusFilter('active')}>
+                      <span className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                        Ativos
+                      </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setStatusFilter('inactive')}>
+                      <span className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-foreground/40"></span>
+                        Inativos
+                      </span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableHead>
+              
+              <TableHead className="w-[188px] min-w-[188px] max-w-[188px] text-center">
+                Ações
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -388,7 +528,6 @@ const ProductsManagement = () => {
 
                 <TableCell className="min-w-[200px] max-w-[378px] w-full">
                   <div className="flex items-center justify-start gap-2 overflow-hidden">
-                    
                     {product.category.slice(0, 2).map((catg, idx) => (
                       <Badge key={idx} variant="categorie" className="py-1 whitespace-nowrap">
                         <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
