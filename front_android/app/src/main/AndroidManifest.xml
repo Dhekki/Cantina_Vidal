@@ -17,9 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Projeto_v1"
         android:usesCleartextTraffic="true">
-<!--        <activity-->
-<!--            android:name=".view.TesteUploadActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".view.CarrinhoClienteActivity"
+            android:exported="false" />
+        <!-- <activity -->
+        <!-- android:name=".view.TesteUploadActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".view.PerfilClienteActivity"
             android:exported="false" />
@@ -31,8 +34,8 @@
             android:exported="false" />
         <activity
             android:name=".view.HomeClienteActivity"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".view.RecuperarSenhaActivity"
             android:exported="false" />

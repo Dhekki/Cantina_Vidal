@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Carrinho {
-
     private static final Carrinho instance = new Carrinho();
-
     private final List<Produto> produtos = new ArrayList<>();
 
     private Carrinho() {}
@@ -20,13 +18,18 @@ public class Carrinho {
     }
 
     public void adicionarProduto(Produto produto) {
+        // Verifica se o produto já está na lista para não duplicar visualmente
+        boolean existe = false;
         for (Produto p : produtos) {
             if (p.getNome().equals(produto.getNome())) {
-                p.setQuantidade(p.getQuantidade() + produto.getQuantidade());
-                return;
+                existe = true;
+                // Se quiser somar quantidade aqui: p.setQuantidade(p.getQuantidade() + produto.getQuantidade());
+                break;
             }
         }
-        produtos.add(produto);
+        if (!existe) {
+            produtos.add(produto);
+        }
     }
 
     public void removerProduto(Produto produto) {
@@ -39,8 +42,14 @@ public class Carrinho {
 
     public void setProdutos(List<Produto> novosProdutos) {
         produtos.clear();
-        for (Produto p : novosProdutos) {
-            produtos.add(p);
+        produtos.addAll(novosProdutos);
+    }
+
+    public double getValorTotal() {
+        double total = 0;
+        for (Produto p : produtos) {
+            total += (p.getPreco() * p.getQuantidade());
         }
+        return total;
     }
 }

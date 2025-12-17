@@ -3,108 +3,89 @@ package com.example.projeto_v1.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.adapter.PedidoAdapter;
-import com.example.projeto_v1.model.Carrinho;
-import com.example.projeto_v1.model.Produto;
-import com.example.projeto_v1.utils.CarrinhoManager;
-
-import java.util.List;
+import com.example.projeto_v1.repository.PedidosRepository;
 
 public class PedidosClienteActivity extends AppCompatActivity {
 
     private RecyclerView recyclerPedidos;
     private TextView textTotalItens, textTotalPreco;
     private View layoutCancelarPedido;
-
-    private List<Produto> listaProdutos;
-    private PedidoAdapter adapter;
+    private View layoutContainerGeral; // Para esconder se estiver vazio
+    private ImageView btnVoltar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pedidos_cliente);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        inicializarViews();
+        verificarPedidoAtivo();
+
+        btnVoltar.setOnClickListener(v -> {
+            Intent intent = new Intent(PedidosClienteActivity.this, HomeClienteActivity.class);
+            startActivity(intent);
+            finish();
         });
 
-        inicializarViews();
-        configurarRecyclerView();
-        // carregarProdutos(); // Removido, pois a lógica de carregamento está em configurarRecyclerView()
-        atualizarResumo();
-        configurarBotao();
+        layoutCancelarPedido.setOnClickListener(v -> {
+            // Lógica: Cancelar pedido esvazia o pedido ativo
+            PedidosRepository.getInstance().cancelarPedido();
+            Toast.makeText(this, "Pedido cancelado.", Toast.LENGTH_SHORT).show();
+            verificarPedidoAtivo(); // Atualiza a tela para vazio
+        });
     }
 
     private void inicializarViews() {
-        recyclerPedidos = findViewById(R.id.recycler_pedidos);
-        textTotalItens = findViewById(R.id.text_total_itens);
-        textTotalPreco = findViewById(R.id.text_total_preco);
-        layoutCancelarPedido = findViewById(R.id.layout_cancelar_pedido);
+        recyclerPedidos = findViewById(R.id.recycler_pedidos2);
+        textTotalItens = findViewById(R.id.text_total_itens2);
+        textTotalPreco = findViewById(R.id.text_total_preco2);
+        layoutCancelarPedido = findViewById(R.id.layout_confirmar_pedido); // Reutilizando ID ou crie um layout_cancelar
+        btnVoltar = findViewById(R.id.btn_voltar);
+        // Sugestão: No XML mude o texto do botão para "Cancelar Pedido" e a cor para Vermelho se possível
+    }
+
+    private void verificarPedidoAtivo() {
+        if (!PedidosRepository.getInstance().hasPedidoAtivo()) {
+            // Se não tem pedido, esconde a lista ou mostra msg "Sem pedidos"
+            recyclerPedidos.setAdapter(null);
+            textTotalItens.setText("0 itens");
+            textTotalPreco.setText("R$ 0,00");
+            layoutCancelarPedido.setVisibility(View.GONE); // Esconde botão cancelar
+        } else {
+            layoutCancelarPedido.setVisibility(View.VISIBLE);
+            configurarRecyclerView();
+            atualizarResumo();
+        }
     }
 
     private void configurarRecyclerView() {
-        listaProdutos = Carrinho.getInstance().getProdutos();
-
-        adapter = new PedidoAdapter(listaProdutos, this::atualizarResumo);
+        PedidoAdapter adapter = new PedidoAdapter(PedidosRepository.getInstance().getPedidoAtual(), null);
         recyclerPedidos.setLayoutManager(new LinearLayoutManager(this));
         recyclerPedidos.setAdapter(adapter);
     }
 
     private void atualizarResumo() {
-        int totalItens = 0;
-        double totalPreco = 0;
+        double total = PedidosRepository.getInstance().getTotalPedido();
+        int qtd = 0;
+        for (var p : PedidosRepository.getInstance().getPedidoAtual()) qtd += p.getQuantidade();
 
-        for (Produto p : listaProdutos) {
-            totalItens += p.getQuantidade();
-            totalPreco += p.getPreco() * p.getQuantidade();
-        }
-
-        textTotalItens.setText("Total " + totalItens + " itens");
-        textTotalPreco.setText(String.format("R$ %.2f", totalPreco));
+        textTotalItens.setText("Total " + qtd + " itens");
+        textTotalPreco.setText(String.format("R$ %.2f", total));
     }
 
-    private void configurarBotao() {
-        layoutCancelarPedido.setOnClickListener(v -> {
-            if (listaProdutos.isEmpty()) {
-                return;
-            }
-
-            // 1. Limpa o carrinho global (singleton Carrinho)
-            Carrinho.getInstance().limpar();
-
-            // 2. Limpa o estado salvo no CarrinhoManager
-            CarrinhoManager.limparCarrinho();
-
-            // 3. Notifica o adapter que a lista foi zerada
-            adapter.notifyDataSetChanged();
-
-            // 4. Atualiza a exibição do resumo para R$0,00 e 0 itens
-            atualizarResumo();
-        });
-    }
-
-    // Navegação inferior
+    // Métodos de navegação da BottomBar (Home, Pedidos, Menu...)
     public void goNavegacaoHome(View view) {
-        Intent intent = new Intent(this, HomeClienteActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, HomeClienteActivity.class));
         finish();
-    }
-
-    public void goNavegacaoPedidos(View view) {
-        // Permanece na tela atual
     }
 }

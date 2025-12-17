@@ -1,28 +1,32 @@
 package com.example.projeto_v1.view;
 
-import com.example.projeto_v1.model.Carrinho;
-import com.example.projeto_v1.utils.CarrinhoManager;
-import com.example.projeto_v1.utils.GridSpacingItemDecoration;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.adapter.CategoriaAdapter;
 import com.example.projeto_v1.adapter.ProdutoAdapter;
+import com.example.projeto_v1.model.Carrinho;
 import com.example.projeto_v1.model.Categoria;
 import com.example.projeto_v1.model.Produto;
+import com.example.projeto_v1.utils.CarrinhoManager;
+import com.example.projeto_v1.utils.GridSpacingItemDecoration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +34,11 @@ import java.util.Map;
 
 public class HomeClienteActivity extends AppCompatActivity implements ProdutoAdapter.OnProdutoQuantidadeChangeListener, CategoriaAdapter.OnCategoriaClickListener {
 
-    private TextView textPrecoCarrinho;
-    private TextView textTotalCarrinho;
-    private TextView textSemProdutos;
+    private TextView textPrecoCarrinho, textTotalCarrinho, textSemProdutos;
     private Button btnCarrinho;
     private View carrinhoBarra;
     private EditText barraPesquisa;
-    private RecyclerView recyclerProdutos;
+    private RecyclerView recyclerProdutos, recyclerCategorias;
 
     private List<Produto> produtosGeral;
     private ProdutoAdapter produtoAdapter;
@@ -45,52 +47,64 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
     private Categoria categoriaSelecionada;
     private CategoriaAdapter categoriaAdapter;
 
-    public void goNavegacaoPedidos(View view) {
-        preencherCarrinhoComProdutosAtivos();
-        Intent intent = new Intent(HomeClienteActivity.this, PedidosClienteActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("pesquisa", barraPesquisa.getText().toString());
-        outState.putInt("categoria", categoriaSelecionada != null ? categoriaSelecionada.getId() : 0);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        aplicarFiltros();
-        atualizarEstadoCarrinho(produtosGeral);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_cliente);
 
         inicializarComponentes();
-        configurarCarrinho();
-        setupRecyclerViewCategorias();
+        setupRecyclerViewCategorias(); // Carrega categorias primeiro
 
         produtosGeral = criarListaProdutos();
-        categoriaSelecionada = getCategoriaById(0);
+        categoriaSelecionada = getCategoriaById(0); // Inicia com "Todos"
 
         setupRecyclerViewProdutos();
-        atualizarEstadoCarrinho(produtosGeral);
+        configurarCarrinho();
         setupSearchListener();
 
         if (savedInstanceState != null) {
             String pesquisa = savedInstanceState.getString("pesquisa", "");
             int categoriaId = savedInstanceState.getInt("categoria", 0);
-
             categoriaSelecionada = getCategoriaById(categoriaId);
             barraPesquisa.setText(pesquisa);
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // CORREÇÃO: Ao voltar para esta tela, sincroniza a lista da Home com o Carrinho real
+        sincronizarQuantidadesComCarrinho();
+        atualizarEstadoCarrinho(produtosGeral);
         aplicarFiltros();
+    }
+
+    private void sincronizarQuantidadesComCarrinho() {
+        if (produtosGeral == null) return;
+
+        // 1. Zera tudo primeiro (assume que tudo foi removido/resetado)
+        for (Produto p : produtosGeral) {
+            p.setQuantidade(0);
+        }
+
+        // 2. Reaplica as quantidades APENAS dos itens que ainda estão no Carrinho (Singleton)
+        List<Produto> noCarrinho = Carrinho.getInstance().getProdutos();
+        if (noCarrinho != null) {
+            for (Produto pCarrinho : noCarrinho) {
+                for (Produto pGeral : produtosGeral) {
+                    // Compara por ID (mais seguro) ou Nome se ID for zero
+                    if (pGeral.getId() == pCarrinho.getId()) {
+                        pGeral.setQuantidade(pCarrinho.getQuantidade());
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 3. Notifica o adaptador da Home para redesenhar os números (0 ou X)
+        if (produtoAdapter != null) {
+            produtoAdapter.notifyDataSetChanged();
+        }
     }
 
     private void inicializarComponentes() {
@@ -100,47 +114,40 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         btnCarrinho = carrinhoBarra.findViewById(R.id.btnCarrinho);
         barraPesquisa = findViewById(R.id.barraPesquisa);
         recyclerProdutos = findViewById(R.id.recycler_produtos);
+        recyclerCategorias = findViewById(R.id.recycler_categorias); // Certifique-se que o ID no XML é este
         textSemProdutos = findViewById(R.id.text_sem_produtos);
     }
 
     private void configurarCarrinho() {
         btnCarrinho.setOnClickListener(v -> {
             preencherCarrinhoComProdutosAtivos();
-            Intent intent = new Intent(HomeClienteActivity.this, PedidosClienteActivity.class);
+            // Vai para a tela de Carrinho (para editar/revisar)
+            Intent intent = new Intent(HomeClienteActivity.this, CarrinhoClienteActivity.class);
             startActivity(intent);
-            finish();
         });
     }
 
+    // Navegação da barra inferior (ícone de pedidos)
+    public void goNavegacaoPedidos(View view) {
+        startActivity(new Intent(this, PedidosClienteActivity.class));
+    }
+
     private void preencherCarrinhoComProdutosAtivos() {
-        List<Produto> produtosComQuantidade = new ArrayList<>();
-        for (Produto produto : produtosGeral) {
-            if (produto.getQuantidade() > 0) {
-                produtosComQuantidade.add(produto);
-            }
-        }
-        Carrinho.getInstance().setProdutos(produtosComQuantidade);
+        // Atualiza o Manager para persistência se o app fechar,
+        // mas a lógica principal usa o Singleton Carrinho.
         CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
     private void setupSearchListener() {
-        barraPesquisa.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                aplicarFiltros();
-            }
-
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
+        barraPesquisa.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { aplicarFiltros(); }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         barraPesquisa.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
                 esconderTeclado();
-                // REMOVIDO: barraPesquisa.clearFocus(); -> Isso causava o "pulo" da tela.
                 return true;
             }
             return false;
@@ -190,13 +197,13 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
-    private void atualizarEstadoCarrinho(List<Produto> produtosCarrinho) {
-        if (produtosCarrinho == null) return;
+    private void atualizarEstadoCarrinho(List<Produto> produtos) {
+        if (produtos == null) return;
 
         double precoTotal = 0.0;
         int totalItens = 0;
 
-        for (Produto produto : produtosCarrinho) {
+        for (Produto produto : produtos) {
             if (produto.getQuantidade() > 0) {
                 precoTotal += (produto.getPreco() * produto.getQuantidade());
                 totalItens += produto.getQuantidade();
@@ -205,54 +212,30 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
 
         if (totalItens > 0) {
             carrinhoBarra.setVisibility(View.VISIBLE);
-            String precoFormatado = String.format("R$%.2f", precoTotal);
-            textPrecoCarrinho.setText(precoFormatado);
-            String totalItensTexto = String.format("Total: %d %s", totalItens, (totalItens == 1 ? "item" : "itens"));
-            textTotalCarrinho.setText(totalItensTexto);
+            textPrecoCarrinho.setText(String.format("R$%.2f", precoTotal));
+            textTotalCarrinho.setText("Total: " + totalItens + " itens");
         } else {
             carrinhoBarra.setVisibility(View.GONE);
         }
     }
 
+    // --- Configuração Listas e Dados ---
+
     private void setupRecyclerViewCategorias() {
-        RecyclerView recyclerViewCategorias = findViewById(R.id.recycler_categorias);
+        // Agora busca pelo ID correto do XML
+        recyclerCategorias = findViewById(R.id.recycler_categorias);
         List<Categoria> categorias = criarListaCategorias();
-        this.categoriaAdapter = new CategoriaAdapter(categorias, this);
+        categoriaAdapter = new CategoriaAdapter(categorias, this);
 
-        androidx.recyclerview.widget.LinearLayoutManager layoutManager =
-                new androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false);
-
-        recyclerViewCategorias.setLayoutManager(layoutManager);
-        recyclerViewCategorias.setAdapter(this.categoriaAdapter);
+        recyclerCategorias.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerCategorias.setAdapter(categoriaAdapter);
     }
 
-    private List<Categoria> criarListaCategorias() {
-        List<Categoria> categorias = new ArrayList<>();
-
-        Categoria todos   = new Categoria(0, "Todos", R.drawable.icon___bebidas);
-        Categoria bebidas = new Categoria(1, "Bebidas", R.drawable.icon___bebidas);
-        Categoria lanches = new Categoria(2, "Lanches", R.drawable.icon___bebidas);
-        Categoria doces   = new Categoria(3, "Doces", R.drawable.icon___bebidas);
-        Categoria almocos = new Categoria(4, "Almoços", R.drawable.icon___bebidas);
-
-        categorias.add(todos);
-        categorias.add(bebidas);
-        categorias.add(lanches);
-        categorias.add(doces);
-        categorias.add(almocos);
-
-        categoriasMap.put(0, todos);
-        categoriasMap.put(1, bebidas);
-        categoriasMap.put(2, lanches);
-        categoriasMap.put(3, doces);
-        categoriasMap.put(4, almocos);
-
-        categoriasGeral = categorias;
-        return categorias;
-    }
-
-    private Categoria getCategoriaById(int id) {
-        return categoriasMap.get(id);
+    private void setupRecyclerViewProdutos() {
+        produtoAdapter = new ProdutoAdapter(produtosGeral, this);
+        recyclerProdutos.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerProdutos.setAdapter(produtoAdapter);
+        recyclerProdutos.addItemDecoration(new GridSpacingItemDecoration(2, (int)(30 * getResources().getDisplayMetrics().density), (int)(10 * getResources().getDisplayMetrics().density), true));
     }
 
     @Override
@@ -261,28 +244,43 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         aplicarFiltros();
     }
 
-    private void setupRecyclerViewProdutos() {
-        produtoAdapter = new ProdutoAdapter(produtosGeral, this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+    @Override
+    public void onQuantidadeChanged() {
+        // Atualiza a barra visual
+        atualizarEstadoCarrinho(produtosGeral);
 
-        recyclerProdutos.setLayoutManager(layoutManager);
-        recyclerProdutos.setAdapter(produtoAdapter);
-        recyclerProdutos.setNestedScrollingEnabled(false);
-
-        if (recyclerProdutos.getItemDecorationCount() > 0) {
-            for (int i = 0; i < recyclerProdutos.getItemDecorationCount(); i++) {
-                recyclerProdutos.removeItemDecorationAt(i);
-            }
+        // Atualiza o Singleton do Carrinho imediatamente ao clicar nos botões + ou - na Home
+        List<Produto> ativos = new ArrayList<>();
+        for(Produto p : produtosGeral) {
+            if(p.getQuantidade() > 0) ativos.add(p);
         }
+        Carrinho.getInstance().setProdutos(ativos);
 
-        int spanCount = 2;
-        int internalSpacing = 30;
-        int edgeSpacing = 10;
-        int spacingPx = (int) (internalSpacing * getResources().getDisplayMetrics().density);
-        int edgeSpacingPx = (int) (edgeSpacing * getResources().getDisplayMetrics().density);
-
-        recyclerProdutos.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacingPx, edgeSpacingPx, true));
+        // Atualiza o Manager para persistência
+        CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("pesquisa", barraPesquisa.getText().toString());
+        outState.putInt("categoria", categoriaSelecionada != null ? categoriaSelecionada.getId() : 0);
+    }
+
+    private List<Categoria> criarListaCategorias() {
+        List<Categoria> categorias = new ArrayList<>();
+        categorias.add(new Categoria(0, "Todos", R.drawable.icon___bebidas));
+        categorias.add(new Categoria(1, "Bebidas", R.drawable.icon___bebidas));
+        categorias.add(new Categoria(2, "Lanches", R.drawable.icon___bebidas));
+        categorias.add(new Categoria(3, "Doces", R.drawable.icon___bebidas));
+        categorias.add(new Categoria(4, "Almoços", R.drawable.icon___bebidas));
+
+        for(Categoria c : categorias) categoriasMap.put(c.getId(), c);
+        categoriasGeral = categorias;
+        return categorias;
+    }
+
+    private Categoria getCategoriaById(int id) { return categoriasMap.get(id); }
 
     private List<Produto> criarListaProdutos() {
         List<Produto> produtos = new ArrayList<>();
@@ -316,20 +314,13 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
             produtos.add(new Produto(12, "Prato Feito", "600g", 15.00, R.drawable.icon___cocacola, almocos));
         }
 
-        Map<Integer, Produto> estadoSalvo = CarrinhoManager.getProdutosNoCarrinhoMap();
+        // Restaura do Manager (persistência)
+        Map<Integer, Produto> salvos = CarrinhoManager.getProdutosNoCarrinhoMap();
         for (Produto produto : produtos) {
-            if (estadoSalvo.containsKey(produto.getId())) {
-                produto.setQuantidade(estadoSalvo.get(produto.getId()).getQuantidade());
+            if (salvos.containsKey(produto.getId())) {
+                produto.setQuantidade(salvos.get(produto.getId()).getQuantidade());
             }
         }
         return produtos;
-    }
-
-    @Override
-    public void onQuantidadeChanged() {
-        if (produtosGeral != null) {
-            CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
-            atualizarEstadoCarrinho(produtosGeral);
-        }
     }
 }

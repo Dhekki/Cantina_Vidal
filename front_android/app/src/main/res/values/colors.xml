@@ -17,8 +17,10 @@
     <color name="cinza3">#7B7879</color>
     <color name="cinza4">#EFEFF6</color>
     <color name="cinza5">#5E5E5E</color>
+    <color name="cinza6">#F7F8FA</color>
     <color name="laranja_escuro">#D35400</color>
     <color name="laranja_neon">#DD7A33</color>
     <color name="amarelo_claro">#E2A93B</color>
     <color name="amarelo_claro2">#24E2A93B</color>
+    <color name="shadow_color">#12000000</color>
 </resources>

@@ -1,0 +1,108 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/imageProduto2"
+        android:layout_width="98dp"
+        android:layout_height="98dp"
+        android:contentDescription="Imagem do Produto"
+        android:layout_marginEnd="12dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_cocacola2" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textNome2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Refrigerante Guaraná Tônico Massa"
+                android:textColor="@color/black2"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textDescricao2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Garrafa 2L"
+                android:textColor="#808080"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textPrecoUnitario2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:text="R$3,03"
+                android:textColor="@color/black2"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="36dp"
+                android:background="@drawable/shape_linha"
+                android:backgroundTint="@color/cinza6"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp">
+
+                <ImageView
+                    android:id="@+id/iconLixeira"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="5dp"
+                    android:src="@drawable/icon_lixeira"
+                    android:backgroundTint="@color/black"/>
+
+                <TextView
+                    android:id="@+id/textQuantidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:text="1"
+                    android:textColor="@color/black2"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iconMais"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="5dp"
+                    android:layout_marginTop="1dp"
+                    android:src="@drawable/icon_mais2"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>=
+</LinearLayout>
