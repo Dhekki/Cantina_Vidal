@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
-    @PostMapping("/me")
+    @PatchMapping("/me")
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<UserResponseDTO> meUpdate(
             @AuthenticationPrincipal User user,
