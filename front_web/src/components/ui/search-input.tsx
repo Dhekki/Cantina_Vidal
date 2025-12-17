@@ -27,7 +27,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, InputProps> (
                 placeholder="Buscar por nome ou código."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-14"
+                className="!pl-14"
             />
         </div>
     );
