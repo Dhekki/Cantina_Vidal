@@ -75,8 +75,12 @@ public class ProductService {
 
 
     public Product findById(Long id) {
-        return repository.findById(id)
+        Product product = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
+
+        Hibernate.initialize(product.getCategories());
+
+        return product;
     }
 
     public Product findByIdCustomer(Long id) {
