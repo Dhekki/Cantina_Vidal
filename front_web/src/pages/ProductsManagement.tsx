@@ -59,6 +59,7 @@ const ProductsManagement = () => {
   const [categories, setCategories]   = useState<string[]>(defaultCategories);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [dateInputType, setDateInputType] = useState('text');
   
   // Sorting states
   const [sortColumn, setSortColumn] = useState<'name' | 'price' | 'stock' | null>(null);
@@ -404,7 +405,7 @@ const ProductsManagement = () => {
               <TableHead className="min-w-[200px] max-w-[378px] w-full flex justify-between items-center">
                 <button
                   onClick={() => handleSort('name')}
-                  className="flex justify-between items-center w-full hover:text-foreground transition-colors"
+                  className="flex gap-2 items-center w-full hover:text-foreground transition-colors"
                 >
                   Nome
                   { sortColumn === 'name' 
@@ -628,13 +629,14 @@ const ProductsManagement = () => {
                 <div className="space-y-2 w-full">
                     <Input
                       id="dataValidade"
-                      type='date'
+                      type={dateInputType}
                       placeholder='Data de validade'
                       imageSrc = '../../public/imgs/input-icons/calendar-icon.svg'
                       imageAlt='Calendar icon'
                       label='Data de validade'
                       value={formData.dataValidade}
                       onChange={(e) => setFormData({ ...formData, dataValidade: e.target.value })}
+                      onFocus={() => setDateInputType('date')}
                       required
                     />
                 </div>
@@ -790,7 +792,7 @@ const ProductsManagement = () => {
                     <Input
                       id="image-upload"
                       type="file"
-                      label='Quantidade'
+                      label=' '
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => {
@@ -940,6 +942,31 @@ const ProductsManagement = () => {
 
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Unsaved Changes Confirmation Dialog */}
+      <AlertDialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Alterações Não Salvas
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              Existem alterações não salvas no formulário. Deseja sair sem salvar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleStayOnForm}>
+              Continuar Editando
+            </AlertDialogCancel>
+
+            <AlertDialogAction onClick={handleDiscardChanges} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Sair sem Salvar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

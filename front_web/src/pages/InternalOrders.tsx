@@ -247,17 +247,16 @@ const filteredProducts = useMemo(() => {
                     Nome do Cliente (opcional)
                   </Label>
 
-                  <div className="relative h-fit">
-                    <img src="../../public/imgs/input-icons/user_icon.svg"
-                         alt="User icon" className='absolute left-3 top-1/2 -translate-y-1/2' />
-                    <Input
-                      id="customer"
-                      placeholder="Ex: Lucas, Marcos..."
-                      value={customerName}
-                      autoComplete='off'
-                      onChange={(e) => setCustomerName(e.target.value)}
-                    />
-                  </div>
+                  <Input
+                    id="customer"
+                    placeholder="Ex: Lucas, Marcos..."
+                    label=''
+                    imageAlt='User icon'
+                    imageSrc='../../public/imgs/input-icons/user_icon.svg'
+                    value={customerName}
+                    autoComplete='off'
+                    onChange={(e) => setCustomerName(e.target.value)}
+                  />
                 </div>
 
                 <Separator />
