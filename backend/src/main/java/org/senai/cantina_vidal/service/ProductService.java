@@ -2,6 +2,7 @@ package org.senai.cantina_vidal.service;
 
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.senai.cantina_vidal.dto.product.ProductPatchRequestDTO;
 import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
 import org.senai.cantina_vidal.entity.Category;
@@ -120,7 +121,11 @@ public class ProductService {
 
         mapper.updateProductFromDTO(dto, entity);
 
-        return repository.save(entity);
+        Product saved = repository.save(entity);
+
+        Hibernate.initialize(saved.getCategories());
+
+        return saved;
     }
 
     @Transactional
