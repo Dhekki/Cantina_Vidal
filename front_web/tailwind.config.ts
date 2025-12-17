@@ -87,11 +87,13 @@ export default {
             secondary: "rgba(var(--categorie-badge) / 0.14)",
           },
         },
-        // popUp: {
-        //   edit: 
-        // },
+        popUp: {
+          edit:   "rgb(var(--pop-up-edit))",
+          logout: "rgb(var(--pop-up-logout))",
+          delete: "rgb(var(--pop-up-delete))",
+        },
         success: "hsl(var(--success))",
-        info: "hsl(var(--info))",
+        info:    "hsl(var(--info))",
       },
       borderRadius: {
         lg: "var(--radius)",

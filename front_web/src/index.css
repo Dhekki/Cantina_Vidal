@@ -58,6 +58,11 @@
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+    /* Pop-ups colors */
+    --pop-up-edit:   222 124 54;
+    --pop-up-logout: 222 124 54;
+    --pop-up-delete: 217 79 48;
   }
 
   .dark {
@@ -100,11 +105,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* #icon {
-  width: 24px;
-  height: 24px;
-  background-color: #e5a546;
-  mask: url('../public/imgs/button-icons/tag-icon.svg') no-repeat center / contain;
-  -webkit-mask: url('../public/imgs/button-icons/tag-icon.svg') no-repeat center / contain;
-} */

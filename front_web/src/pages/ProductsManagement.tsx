@@ -597,7 +597,7 @@ const ProductsManagement = () => {
                       src="../../public/imgs/input-icons/notes-icon.svg"
                       alt="User icon"
                       aria-hidden="true"
-                      className=" h-5 w-5  opacity-70"
+                      className=" h-5 w-5 opacity-70"
                     />
 
                     <p className='text-base text-muted-foreground mt-1'>
@@ -779,7 +779,7 @@ const ProductsManagement = () => {
       <AlertDialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
         <AlertDialogContent>
           {/* Dialog Icon */}
-          <img src="../../public/imgs/pop-ups-icons/edit-icon.png" alt="" />
+          <img src="../../public/imgs/pop-ups-icons/edit-icon.png" alt="Edit icon" />
 
           {/* Dialog Header */}
           <AlertDialogHeader>

@@ -13,12 +13,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="relative w-full">
-        <img
-          src={imageSrc}
-          alt={imageAlt}
-          aria-hidden="true"
-          className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 z-50"
-        />
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            aria-hidden="true"
+            className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-70 z-40"
+          />
+        ) : ('')}
 
         <input
           id={inputId}

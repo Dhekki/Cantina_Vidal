@@ -20,13 +20,14 @@ const buttonVariants = cva(
         notPaid: "bg-status-canceled-primary text-white hover:bg-status-canceled-primary/90",
         dangerOutline: "bg-transparent text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
         // Pop-ups buttons
-        editPopUp: "bg-transparent text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
+        editPopUp: "bg-blue-400 w-full text-status-canceled-primary border border-status-canceled-primary hover:bg-status-canceled-primary/20",
       },
       size: {
         icon: "h-10 w-10 p-0",
         default: "h-10 px-4 py-2",
         sm: "h-10 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
+        full: "w-full",
         addProductSize: "h-11 rounded-full px-8",
         categorySize: "w-full h-fit flex items-center justify-start rounded-md py-4 px-5 gap-2",
       },

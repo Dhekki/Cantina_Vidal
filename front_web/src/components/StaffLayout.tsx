@@ -40,7 +40,6 @@ const StaffLayout = () => {
     if(!isAuth) navigate('/staff/login');
   }, [navigate]);
 
-  // Simulate new order notifications - In real app, this would be from websocket/polling
   useEffect(() => {
     const interval = setInterval(() => {
       // Simulate random new orders for demo purposes
@@ -102,14 +101,23 @@ const StaffLayout = () => {
 
       <AlertDialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <AlertDialogContent>
+          {/* Dialog Icon */}
+          <img src="../../public/imgs/pop-ups-icons/logout-icon.png" alt="Logout icon" />
+
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Saída</AlertDialogTitle>
+            <AlertDialogTitle>
+              Confirmar Saída
+            </AlertDialogTitle>
+
             <AlertDialogDescription>
               Tem certeza que deseja sair do sistema? Você precisará fazer login novamente para acessar.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction onClick={confirmLogout}>
               Sair
             </AlertDialogAction>
