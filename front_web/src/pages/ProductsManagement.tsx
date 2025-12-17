@@ -338,19 +338,19 @@ const ProductsManagement = () => {
         </div>
       </div>
 
-      <div className="border rounded-lg">
+      <div className="border rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Imagem</TableHead>
-              <TableHead>Nome</TableHead>
-              <TableHead>Descrição</TableHead>
-              <TableHead>Categorias</TableHead>
-              <TableHead>Preço</TableHead>
-              <TableHead>Em Estoque</TableHead>
-              <TableHead>Disponíveis</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-center">Ações</TableHead>
+              <TableHead className="w-20 min-w-[80px] max-w-[100px]">Imagem</TableHead>
+              <TableHead className="min-w-[200px] max-w-[378px] w-full">Nome</TableHead>
+              <TableHead className="min-w-[200px] max-w-[378px] w-full">Descrição</TableHead>
+              <TableHead className="min-w-[300px] max-w-[378px] w-full">Categorias</TableHead>
+              <TableHead className="w-[145px] min-w-[145px] max-w-[145px] text-right">Preço</TableHead>
+              <TableHead className="w-[125px] min-w-[125px] max-w-[125px] text-right">Em Estoque</TableHead>
+              <TableHead className="w-[125px] min-w-[125px] max-w-[125px] text-right">Disponíveis</TableHead>
+              <TableHead className="w-[170px] min-w-[170px] max-w-[170px]">Status</TableHead>
+              <TableHead className="w-[188px] min-w-[188px] max-w-[188px] text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -375,47 +375,51 @@ const ProductsManagement = () => {
             ) : null}
             {filteredProducts.map((product) => (
               <TableRow key={product.id}>
-                <TableCell>
+                <TableCell className="w-20 min-w-[80px] max-w-[100px]">
                   <img 
                     src={product.image} 
                     alt={product.name}
                     className="w-fit h-12 object-cover rounded"
                   />
                 </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell className="font-medium min-w-[200px] max-w-[378px] w-full truncate">{product.name}</TableCell>
 
-                <TableCell>{product.description}</TableCell>
+                <TableCell className="min-w-[200px] max-w-[378px] w-full truncate">{product.description}</TableCell>
 
-                <TableCell>
-                  <div className="flex items-center justify-start gap-2">
-                    {product.category.map((catg, idx) => (
-                    <Badge key={idx} variant="categorie" className="py-1">
-                      <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                           alt="Tag icon" className='me-2'/>
+                <TableCell className="min-w-[200px] max-w-[378px] w-full">
+                  <div className="flex items-center justify-start gap-2 overflow-hidden">
                     
-                      <p className='font-semibold'>{catg}</p>
-                    </Badge>
+                    {product.category.slice(0, 2).map((catg, idx) => (
+                      <Badge key={idx} variant="categorie" className="py-1 whitespace-nowrap">
+                        <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
+                             alt="Tag icon" className='me-2'/>
+                      
+                        <p className='font-semibold'>{catg}</p>
+                      </Badge>
                     ))}
+                    {product.category.length > 2 && (
+                      <span className="text-sm text-muted-foreground font-medium">...</span>
+                    )}
                   </div>
                 </TableCell>
                 
-                <TableCell className='text-end'>R${product.price.toFixed(2)}</TableCell>
-                <TableCell className='text-end'>{product.inStock}</TableCell>
-                <TableCell className='text-end'>{product.availableToPickUp}</TableCell>
+                <TableCell className='text-end w-[145px] min-w-[145px] max-w-[145px]'>R${product.price.toFixed(2)}</TableCell>
+                <TableCell className='text-end w-[125px] min-w-[125px] max-w-[125px]'>{product.inStock}</TableCell>
+                <TableCell className='text-end w-[125px] min-w-[125px] max-w-[125px]'>{product.availableToPickUp}</TableCell>
                 
-                <TableCell>
-                  <div className="flex items-center gap-2 w-[120px]">
+                <TableCell className="w-[170px] min-w-[170px] max-w-[170px]">
+                  <div className="flex items-center gap-2">
                     <Switch
                       checked={product.available}
                       onCheckedChange={() => handleToggleAvailable(product.id)}
                     />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">
                       {product.available ? 'Ativo' : 'Inativo'}
                     </span>
                   </div>
                 </TableCell>
                 
-                <TableCell>
+                <TableCell className="w-[188px] min-w-[188px] max-w-[188px]">
                   <div className="flex justify-center gap-2">
                     <Button
                       variant="outline"
@@ -670,7 +674,7 @@ const ProductsManagement = () => {
 
                     <div className="w-[216px] h-[216px]">
                       <img src={formData.image} 
-                          alt="Image uploaded" className='object-cover object-center w-full h-full shadow rounded-[2px]' onMouseOver={() =>{}} />
+                          alt="Image uploaded" className='object-cover object-center w-full h-full shadow rounded-[2px]' />
                     </div>
                   </div>
                 )}
@@ -772,143 +776,6 @@ const ProductsManagement = () => {
               </Button>
             </DialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Unsaved Changes Confirmation Dialog */}
-      <AlertDialog open={isUnsavedChangesDialogOpen} onOpenChange={setIsUnsavedChangesDialogOpen}>
-        <AlertDialogContent>
-          {/* Dialog Icon */}
-          <img src="../../public/imgs/pop-ups-icons/edit-icon.png" alt="Edit icon" />
-
-          {/* Dialog Header */}
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Alterações não salvas
-            </AlertDialogTitle>
-
-            <AlertDialogDescription>
-              Existem alterações não salvas no formulário. Deseja sair sem salvar?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          
-          {/* Unsaved Changes Options */}
-          <AlertDialogFooter className='w-full'>
-            <AlertDialogCancel onClick={handleStayOnForm} className='w-full'>
-              Cancelar
-            </AlertDialogCancel>
-
-            <AlertDialogAction onClick={handleDiscardChanges} className='w-full'>
-              Sair sem salvar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Details Dialog */}
-      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className='max-w-[810px] w-full h-fit py-12 px-10'>
-          {selectedProduct && (
-            <div className="flex gap-11">
-
-              <div className="border border-input rounded-xl p-5 min-w-[352px] min-h-[352px] w-full h-full">
-                <img
-                  src={selectedProduct.image}
-                  alt={selectedProduct.name}
-                  className="w-full h-full object-cover shadow rounded-sm"
-                />
-              </div>
-
-              <div className="space-y-2 w-full">
-                <div>
-                  <Badge variant={selectedProduct.available ? 'active' : 'inactive'} 
-                         className="mb-2">
-                    <img src={`../../public/imgs/badge-icons/product-${selectedProduct.available 
-                                                                       ? 'active' : 'inactive'}-icon.svg`} 
-                         alt={(selectedProduct.available ? 'active' : 'inactive') + 'icon'}
-                         className='me-1'
-                    />
-                    {selectedProduct.available ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                </div>
-
-                <DialogHeader>
-                  <DialogTitle className='text-foreground/80 mb-2'>
-                    Detalhes do Produto
-                  </DialogTitle>
-                </DialogHeader>
-
-                <div className="w-full flex flex-col gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-foreground/40">
-                      Nome
-                    </Label>
-                    <p className="font-semibold text-foreground/80">
-                      {selectedProduct.name}
-                    </p>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium text-foreground/40">
-                      Descrição
-                    </Label>
-                    <p className="font-semibold text-foreground/80">
-                      {selectedProduct.description}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between w-full">
-                    <div>
-                      <Label className="text-sm font-medium text-foreground/40">
-                        Preço
-                      </Label>
-                      <p className="font-semibold text-foreground/80">
-                        R${selectedProduct.price.toFixed(2).replace('.', ',')}
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-foreground/40">
-                        Quantidade
-                      </Label>
-                      <p className="font-semibold text-foreground/80 truncate">
-                        {selectedProduct.inStock} unidades
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium text-foreground/40">
-                        Data de Validade
-                      </Label>
-                      <p className="font-semibold text-foreground/80">
-                        {new Date(selectedProduct.expirationData).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className='flex flex-col gap-2'>
-                    <Label className="text-sm font-medium text-foreground/40">
-                      Categorias
-                    </Label>
-                    
-                    <div className="flex gap-2">
-                      {selectedProduct.category.map(catg => (
-                        <Badge key={catg} variant="categorie" className="w-fit">
-                          <img src="../../public/imgs/badge-icons/category-tag-icon.svg"
-                                alt="Tag icon" className='me-2'/>
-                      
-                          <p className='font-semibold'>
-                            {catg}
-                          </p>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </DialogContent>
       </Dialog>
 
