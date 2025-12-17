@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.adapter.CarrinhoAdapter;
 import com.example.projeto_v1.model.Carrinho;
+import com.example.projeto_v1.model.Pedido;
 import com.example.projeto_v1.repository.PedidosRepository;
 import com.example.projeto_v1.utils.CarrinhoManager;
 
@@ -54,24 +55,26 @@ public class PagamentosClienteActivity extends AppCompatActivity {
             }
 
             try {
-                // 1. Salva no Repositório de Pedidos
-                PedidosRepository.getInstance().confirmarPedido(Carrinho.getInstance().getProdutos());
+                // 1. Cria um NOVO objeto Pedido com os itens do carrinho atual
+                Pedido novoPedido = new Pedido(Carrinho.getInstance().getProdutos());
 
-                // 2. Limpa dados globais e persistência (Isso atualiza a Home indiretamente ao limpar o Manager)
+                // 2. Salva este CARD novo no repositório
+                PedidosRepository.getInstance().adicionarPedido(novoPedido);
+
+                // 3. Limpa o carrinho e dados temporários
                 Carrinho.getInstance().limpar();
                 CarrinhoManager.limparCarrinho();
 
-                // 3. Feedback
                 Toast.makeText(this, "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
 
-                // 4. Navegação para Pedidos (Limpando a pilha)
+                // 4. Navegação
                 Intent intent = new Intent(PagamentosClienteActivity.this, PedidosClienteActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Erro ao processar pedido: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -100,15 +103,15 @@ public class PagamentosClienteActivity extends AppCompatActivity {
     }
 
     private void configurarLista() {
-        // Usa o adapter com o layout de pagamento (botões + e -)
+        // TELA DE CHECKOUT
+        // Usa o Singleton Carrinho.getInstance().getProdutos()
+        // Como o CarrinhoActivity atualizou esse mesmo Singleton, os dados estarão aqui.
+
+        // Passa a lista REAL do Singleton e o layout ID correto
         adapter = new CarrinhoAdapter(
                 Carrinho.getInstance().getProdutos(),
-                R.layout.item_pagamentos_produto, // Certifique-se que este é o nome do XML do item com +/-
-                () -> {
-                    // Callback: Atualiza valores na tela e salva na persistência (Home)
-                    calcularValores();
-                    CarrinhoManager.setProdutosNoCarrinho(Carrinho.getInstance().getProdutos());
-                }
+                R.layout.item_pagamentos_produto, // Layout de visualização
+                null // Listener null (não precisa atualizar totais aqui se for estático)
         );
         recyclerProdutos.setLayoutManager(new LinearLayoutManager(this));
         recyclerProdutos.setAdapter(adapter);

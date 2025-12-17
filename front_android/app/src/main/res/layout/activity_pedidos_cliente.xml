@@ -16,114 +16,36 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
-            android:paddingTop="20dp">
+            android:paddingTop="32dp">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Meus Pedidos"
                 android:textAlignment="center"
                 android:textColor="@color/black2"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_marginBottom="24dp"/>
 
-            <TextView
-                android:text="Detalhes do Pedido"
-                android:textColor="@color/cinza5"
-                android:textSize="16sp"
-                android:layout_marginBottom="20dp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_pedidos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/shape_linha2"
-                android:elevation="4dp"
-                android:padding="16dp">
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="100dp"
+                tools:listitem="@layout/item_card_pedido"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" Em preparo"
-                    android:textColor="@color/amarelo_claro"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:background="@drawable/shape_status_preparo"
-                    android:drawableLeft="@drawable/icon_fogo"
-                    android:drawablePadding="4dp"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_pedidos"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_pedidos_produto"
-                    tools:itemCount="1"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/cinza4"
-                    android:layout_marginVertical="12dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:id="@+id/text_total_itens"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Total 2 itens"
-                        android:textSize="14sp"
-                        android:textColor="@color/cinza2"/>
-
-                    <TextView
-                        android:id="@+id/text_total_preco"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="R$6,06"
-                        android:textSize="16sp"
-                        android:textColor="@color/black2"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_cancelar_pedido"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingVertical="12dp"
-                    android:background="@drawable/shape_arredondado"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:id="@+id/text_cancelar_pedido"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cancelar pedido"
-                        android:textColor="@color/white2"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <View
+            <TextView
+                android:id="@+id/text_sem_pedidos"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="wrap_content"
+                android:text="Sem pedidos."
+                android:textAlignment="center"
+                android:textColor="@color/cinza5"
+                android:textSize="18sp"
+                android:layout_marginTop="40dp"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:text="x2"
                 android:textSize="12sp"
-                android:textColor="#808080"
+                android:textColor="@color/cinza2"
                 android:layout_marginTop="4dp"
                 android:gravity="end"/>
         </LinearLayout>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fffcf9"
-    tools:context=".view.PedidosClienteActivity">
+    tools:context=".view.CarrinhoClienteActivity">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -47,6 +47,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/container_carrinho_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_linha2"
@@ -80,7 +81,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Total 2 itens"
+                        android:text="Total 0 itens"
                         android:textColor="@color/cinza2"
                         android:textSize="14sp" />
 
@@ -88,9 +89,10 @@
                         android:id="@+id/text_total_preco2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="R$6,06"
+                        android:text="R$0,00"
                         android:textColor="@color/black2"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -99,21 +101,34 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/shape_arredondado"
+                    android:backgroundTint="@color/laranja"
                     android:gravity="center"
                     android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:paddingVertical="12dp">
 
                     <TextView
-                        android:id="@+id/text_cancelar_pedido"
+                        android:id="@+id/text_confirmar_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Confirmar pedido"
-                        android:textColor="@color/white2"
+                        android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_carrinho_vazio_aviso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seu carrinho está vazio."
+                android:gravity="center"
+                android:textColor="@color/cinza5"
+                android:visibility="gone"
+                android:layout_marginTop="50dp"/>
 
             <View
                 android:layout_width="match_parent"

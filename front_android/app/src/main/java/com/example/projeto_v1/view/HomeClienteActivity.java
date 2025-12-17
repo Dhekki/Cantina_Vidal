@@ -53,10 +53,10 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         setContentView(R.layout.activity_home_cliente);
 
         inicializarComponentes();
-        setupRecyclerViewCategorias(); // Carrega categorias primeiro
+        setupRecyclerViewCategorias();
 
         produtosGeral = criarListaProdutos();
-        categoriaSelecionada = getCategoriaById(0); // Inicia com "Todos"
+        categoriaSelecionada = getCategoriaById(0);
 
         setupRecyclerViewProdutos();
         configurarCarrinho();
@@ -70,41 +70,52 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
+    // --- PONTO CRUCIAL: ONDE A MÁGICA ACONTECE AO VOLTAR DO CARRINHO ---
     @Override
     protected void onResume() {
         super.onResume();
-        // CORREÇÃO: Ao voltar para esta tela, sincroniza a lista da Home com o Carrinho real
-        sincronizarQuantidadesComCarrinho();
+
+        // 1. Força a sincronização entre a Lista Visual (Home) e a Lista Real (Singleton)
+        sincronizarListasPeloNome();
+
+        // 2. Atualiza a barra inferior com os novos totais
         atualizarEstadoCarrinho(produtosGeral);
+
+        // 3. Reaplica filtros (caso o usuário tivesse digitado algo na busca)
         aplicarFiltros();
     }
 
-    private void sincronizarQuantidadesComCarrinho() {
+    private void sincronizarListasPeloNome() {
         if (produtosGeral == null) return;
 
-        // 1. Zera tudo primeiro (assume que tudo foi removido/resetado)
-        for (Produto p : produtosGeral) {
-            p.setQuantidade(0);
+        // Passo A: Zera TUDO na Home. Assumimos que o carrinho foi esvaziado.
+        for (Produto pHome : produtosGeral) {
+            pHome.setQuantidade(0);
         }
 
-        // 2. Reaplica as quantidades APENAS dos itens que ainda estão no Carrinho (Singleton)
-        List<Produto> noCarrinho = Carrinho.getInstance().getProdutos();
-        if (noCarrinho != null) {
-            for (Produto pCarrinho : noCarrinho) {
-                for (Produto pGeral : produtosGeral) {
-                    // Compara por ID (mais seguro) ou Nome se ID for zero
-                    if (pGeral.getId() == pCarrinho.getId()) {
-                        pGeral.setQuantidade(pCarrinho.getQuantidade());
-                        break;
+        // Passo B: Pega o que REALMENTE está no carrinho (Singleton)
+        List<Produto> itensNoCarrinho = Carrinho.getInstance().getProdutos();
+
+        // Passo C: Para cada item do carrinho, procura o "irmão gêmeo" na Home pelo NOME e atualiza
+        if (itensNoCarrinho != null) {
+            for (Produto pCarrinho : itensNoCarrinho) {
+                for (Produto pHome : produtosGeral) {
+                    // Compara Nomes ignorando maiúsculas/minúsculas e espaços
+                    if (pHome.getNome().trim().equalsIgnoreCase(pCarrinho.getNome().trim())) {
+                        pHome.setQuantidade(pCarrinho.getQuantidade());
+                        break; // Achou, pula para o próximo item do carrinho
                     }
                 }
             }
         }
 
-        // 3. Notifica o adaptador da Home para redesenhar os números (0 ou X)
+        // Passo D: Avisa o Adapter para redesenhar os números (0 ou X) na tela
         if (produtoAdapter != null) {
             produtoAdapter.notifyDataSetChanged();
         }
+
+        // Passo E: Atualiza o Manager (Persistência) para ficar igual ao Singleton e Home
+        CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
     private void inicializarComponentes() {
@@ -114,28 +125,21 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         btnCarrinho = carrinhoBarra.findViewById(R.id.btnCarrinho);
         barraPesquisa = findViewById(R.id.barraPesquisa);
         recyclerProdutos = findViewById(R.id.recycler_produtos);
-        recyclerCategorias = findViewById(R.id.recycler_categorias); // Certifique-se que o ID no XML é este
+        recyclerCategorias = findViewById(R.id.recycler_categorias);
         textSemProdutos = findViewById(R.id.text_sem_produtos);
     }
 
     private void configurarCarrinho() {
         btnCarrinho.setOnClickListener(v -> {
-            preencherCarrinhoComProdutosAtivos();
-            // Vai para a tela de Carrinho (para editar/revisar)
+            // Antes de ir, garante que o Manager está atualizado
+            CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
             Intent intent = new Intent(HomeClienteActivity.this, CarrinhoClienteActivity.class);
             startActivity(intent);
         });
     }
 
-    // Navegação da barra inferior (ícone de pedidos)
     public void goNavegacaoPedidos(View view) {
         startActivity(new Intent(this, PedidosClienteActivity.class));
-    }
-
-    private void preencherCarrinhoComProdutosAtivos() {
-        // Atualiza o Manager para persistência se o app fechar,
-        // mas a lógica principal usa o Singleton Carrinho.
-        CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
     private void setupSearchListener() {
@@ -173,8 +177,10 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
 
             if (categoriaSelecionada == null || categoriaSelecionada.getId() == 0) {
                 categoriaOk = true;
-            } else if (produto.getCategoria() != null && produto.getCategoria().getId().equals(categoriaSelecionada.getId())) {
-                categoriaOk = true;
+            } else if (produto.getCategoria() != null) {
+                if (produto.getCategoria().getId() == categoriaSelecionada.getId()) {
+                    categoriaOk = true;
+                }
             }
 
             boolean pesquisaOk = termo.isEmpty() ||
@@ -203,6 +209,7 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         double precoTotal = 0.0;
         int totalItens = 0;
 
+        // Calcula com base nos produtos da Home (que já foram sincronizados no onResume)
         for (Produto produto : produtos) {
             if (produto.getQuantidade() > 0) {
                 precoTotal += (produto.getPreco() * produto.getQuantidade());
@@ -219,10 +226,9 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
-    // --- Configuração Listas e Dados ---
+    // --- Listas e Dados ---
 
     private void setupRecyclerViewCategorias() {
-        // Agora busca pelo ID correto do XML
         recyclerCategorias = findViewById(R.id.recycler_categorias);
         List<Categoria> categorias = criarListaCategorias();
         categoriaAdapter = new CategoriaAdapter(categorias, this);
@@ -249,14 +255,14 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         // Atualiza a barra visual
         atualizarEstadoCarrinho(produtosGeral);
 
-        // Atualiza o Singleton do Carrinho imediatamente ao clicar nos botões + ou - na Home
+        // Atualiza o Singleton IMEDIATAMENTE (Cria uma lista nova baseada na Home)
         List<Produto> ativos = new ArrayList<>();
         for(Produto p : produtosGeral) {
             if(p.getQuantidade() > 0) ativos.add(p);
         }
         Carrinho.getInstance().setProdutos(ativos);
 
-        // Atualiza o Manager para persistência
+        // Atualiza o Manager (Persistência)
         CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
     }
 
@@ -291,36 +297,43 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         Categoria almocos = getCategoriaById(4);
 
         if (bebidas != null) {
-            produtos.add(new Produto(1, "Refrigerante Guaraná Tônico Massa", "Lata 350ml", 3.03, R.drawable.icon___cocacola, bebidas));
-            produtos.add(new Produto(2, "Coca-Cola Original", "Lata 350ml", 3.50, R.drawable.icon___cocacola, bebidas));
-            produtos.add(new Produto(3, "Fanta Laranja", "Lata 350ml", 3.25, R.drawable.icon___cocacola, bebidas));
+            produtos.add(new Produto("Refrigerante Guaraná Tônico Massa", "Lata 350ml", 3.03, R.drawable.icon___cocacola, bebidas));
+            produtos.add(new Produto("Coca-Cola Original", "Lata 350ml", 3.50, R.drawable.icon___cocacola, bebidas));
+            produtos.add(new Produto("Fanta Laranja", "Lata 350ml", 3.25, R.drawable.icon___cocacola, bebidas));
         }
 
         if (lanches != null) {
-            produtos.add(new Produto(4, "Coxinha", "300g", 5.00, R.drawable.icon___cocacola, lanches));
-            produtos.add(new Produto(5, "Esfirra de Carne", "Unidade", 5.00, R.drawable.icon___cocacola, lanches));
-            produtos.add(new Produto(6, "Baurú", "Unidade", 5, R.drawable.icon___cocacola, lanches));
+            produtos.add(new Produto("Coxinha", "300g", 5.00, R.drawable.icon___cocacola, lanches));
+            produtos.add(new Produto("Esfirra de Carne", "Unidade", 5.00, R.drawable.icon___cocacola, lanches));
+            produtos.add(new Produto("Baurú", "Unidade", 5.00, R.drawable.icon___cocacola, lanches));
         }
 
         if (doces != null) {
-            produtos.add(new Produto(7, "Bolo de Chocolate", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
-            produtos.add(new Produto(8, "Cocada", "Pedaço", 7.00, R.drawable.icon___cocacola, doces));
-            produtos.add(new Produto(9, "Torta de Limão", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
+            produtos.add(new Produto("Bolo de Chocolate", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
+            produtos.add(new Produto("Cocada", "Pedaço", 7.00, R.drawable.icon___cocacola, doces));
+            produtos.add(new Produto("Torta de Limão", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
         }
 
         if (almocos != null) {
-            produtos.add(new Produto(10, "Executivo de Frango", "400g", 15.00, R.drawable.icon___cocacola, almocos));
-            produtos.add(new Produto(11, "Executivo de Carne", "500g", 15.00, R.drawable.icon___cocacola, almocos));
-            produtos.add(new Produto(12, "Prato Feito", "600g", 15.00, R.drawable.icon___cocacola, almocos));
+            produtos.add(new Produto("Executivo de Frango", "400g", 15.00, R.drawable.icon___cocacola, almocos));
+            produtos.add(new Produto("Executivo de Carne", "500g", 15.00, R.drawable.icon___cocacola, almocos));
+            produtos.add(new Produto("Prato Feito", "600g", 15.00, R.drawable.icon___cocacola, almocos));
         }
 
-        // Restaura do Manager (persistência)
-        Map<Integer, Produto> salvos = CarrinhoManager.getProdutosNoCarrinhoMap();
-        for (Produto produto : produtos) {
-            if (salvos.containsKey(produto.getId())) {
-                produto.setQuantidade(salvos.get(produto.getId()).getQuantidade());
+        // RECUPERA DADOS PERSISTIDOS (Backup)
+        // Isso é útil se o Singleton foi limpo, mas o Manager ainda tem dados
+        Map<String, Produto> salvos = CarrinhoManager.getProdutosNoCarrinhoMap();
+        if (salvos != null && !salvos.isEmpty()) {
+            for (Produto produto : produtos) {
+                for (Produto salvo : salvos.values()) {
+                    if (salvo.getNome().trim().equalsIgnoreCase(produto.getNome().trim())) {
+                        produto.setQuantidade(salvo.getQuantidade());
+                        break;
+                    }
+                }
             }
         }
+
         return produtos;
     }
 }

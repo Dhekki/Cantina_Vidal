@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
             android:paddingTop="20dp"
-            android:paddingBottom="100dp">
+            android:paddingBottom="260dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Pagamento"
+                    android:text="Checkout"
                     android:textAlignment="center"
                     android:textColor="@color/black2"
                     android:textSize="20sp"
@@ -64,7 +64,7 @@
                     android:nestedScrollingEnabled="false"
                     android:overScrollMode="never"
                     tools:itemCount="2"
-                    tools:listitem="@layout/item_carrinho_produto" />
+                    tools:listitem="@layout/item_pagamentos_produto" />
             </LinearLayout>
 
         </LinearLayout>
