@@ -69,9 +69,13 @@ public class ProductService {
     }
 
     public Page<Product> findAllCustomer(Pageable pageable, String name, Long categoryId) {
-        return repository.findAllAvailableForCostumer(pageable, name, categoryId);
-    }
+        String searchName = null;
 
+        if (name != null && !name.isBlank())
+            searchName = "%" + name.toLowerCase() + "%";
+
+        return repository.findAllAvailableForCostumer(pageable, searchName, categoryId);
+    }
 
 
     public Product findById(Long id) {

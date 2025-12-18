@@ -18,12 +18,12 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
 
     @Query("""
-        SELECT DISTINCT p FROM Product p 
-        LEFT JOIN FETCH p.categories 
-        WHERE p.available = true 
-        AND p.quantityStock > 0 
-        AND (:categoryId IS NULL OR :categoryId MEMBER OF p.categories)
-        AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
-    """)
+                SELECT DISTINCT p FROM Product p 
+                LEFT JOIN FETCH p.categories 
+                WHERE p.available = true 
+                AND p.quantityStock > 0 
+                AND (:categoryId IS NULL OR :categoryId MEMBER OF p.categories)
+                AND (:name IS NULL OR LOWER(p.name) LIKE :name) 
+            """)
     Page<Product> findAllAvailableForCostumer(Pageable pageable, String name, Long categoryId);
 }
