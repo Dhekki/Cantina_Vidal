@@ -1,44 +1,47 @@
 package com.example.projeto_v1.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.model.Produto;
+import com.example.projeto_v1.network.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHolder> {
 
-    private List<Produto> listaCompleta;
     private List<Produto> listaExibida;
     private OnProdutoQuantidadeChangeListener listener;
+    private Context context; // Necessário para o Glide
 
     public interface OnProdutoQuantidadeChangeListener {
         void onQuantidadeChanged();
     }
 
     public ProdutoAdapter(List<Produto> produtos, OnProdutoQuantidadeChangeListener listener) {
-        this.listaCompleta = produtos;
         this.listaExibida = new ArrayList<>(produtos);
         this.listener = listener;
     }
 
     public void atualizarLista(List<Produto> novaLista) {
-        listaExibida.clear();
-        listaExibida.addAll(novaLista);
+        this.listaExibida = new ArrayList<>(novaLista);
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        this.context = parent.getContext(); // Pega o contexto aqui
         View item = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_home_produto, parent, false);
         return new ViewHolder(item);
@@ -53,18 +56,31 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
         holder.textDescricao.setText(produto.getDescricao());
         holder.textQuantidade.setText(String.valueOf(produto.getQuantidade()));
 
-        if (produto.getImagemResourceId() != 0) {
-            holder.imageProduto.setImageResource(produto.getImagemResourceId());
+        // --- LÓGICA DE IMAGEM (API + GLIDE) ---
+        if (produto.getImageUrl() != null && !produto.getImageUrl().isEmpty()) {
+            // Se tem URL da API, carrega com Glide
+            String urlCompleta = RetrofitClient.BASE_IMAGE_URL + produto.getImageUrl();
+
+            Glide.with(context)
+                    .load(urlCompleta)
+                    .placeholder(R.drawable.icon___cocacola) // Imagem enquanto carrega
+                    .error(R.drawable.icon___cocacola)       // Imagem se der erro
+                    .into(holder.imageProduto);
+        } else {
+            // Se não tem URL, usa o recurso local ou padrão
+            if (produto.getImagemResourceId() != 0) {
+                holder.imageProduto.setImageResource(produto.getImagemResourceId());
+            } else {
+                holder.imageProduto.setImageResource(R.drawable.icon___cocacola);
+            }
         }
 
+        // --- Botões de Quantidade ---
         holder.btnAumentar.setOnClickListener(v -> {
             int quantidade = produto.getQuantidade() + 1;
             produto.setQuantidade(quantidade);
             holder.textQuantidade.setText(String.valueOf(quantidade));
-
-            if (listener != null) {
-                listener.onQuantidadeChanged();
-            }
+            if (listener != null) listener.onQuantidadeChanged();
         });
 
         holder.btnDiminuir.setOnClickListener(v -> {
@@ -73,10 +89,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
                 quantidade--;
                 produto.setQuantidade(quantidade);
                 holder.textQuantidade.setText(String.valueOf(quantidade));
-
-                if (listener != null) {
-                    listener.onQuantidadeChanged();
-                }
+                if (listener != null) listener.onQuantidadeChanged();
             }
         });
     }
@@ -88,16 +101,11 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageProduto;
-        TextView textNome;
-        TextView textPreco;
-        TextView textDescricao;
-        TextView textQuantidade;
-        com.google.android.material.floatingactionbutton.FloatingActionButton btnAumentar;
-        com.google.android.material.floatingactionbutton.FloatingActionButton btnDiminuir;
+        TextView textNome, textPreco, textDescricao, textQuantidade;
+        View btnAumentar, btnDiminuir; // Pode ser View genérica ou FloatingActionButton
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             imageProduto = itemView.findViewById(R.id.imageProduto);
             textNome = itemView.findViewById(R.id.textProdutoNome);
             textPreco = itemView.findViewById(R.id.textProdutoPreco);

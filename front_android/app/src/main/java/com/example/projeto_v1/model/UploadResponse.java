@@ -18,7 +18,7 @@ public class UploadResponse implements Serializable {
 
 
 
-    @SerializedName("relativePath")
+    @SerializedName("fileDownloadUri")
 
     private String relativePath;
 

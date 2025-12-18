@@ -19,6 +19,7 @@
     <color name="cinza5">#5E5E5E</color>
     <color name="cinza6">#F7F8FA</color>
     <color name="cinza7">#777777</color>
+    <color name="cinza8">#EEEEEE</color>
     <color name="laranja_escuro">#D35400</color>
     <color name="laranja_neon">#DD7A33</color>
     <color name="amarelo_claro">#E2A93B</color>
@@ -27,4 +28,5 @@
     <color name="azul">#008BD2</color>
     <color name="azul_claro1">#14008BD2</color>
     <color name="azul_claro2">#D1008BD2</color>
+    <color name="verde_escuro">#3EA65A24</color>
 </resources>

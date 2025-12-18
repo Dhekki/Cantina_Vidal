@@ -9,32 +9,36 @@ import java.util.stream.Collectors;
 
 public class CarrinhoManager {
 
-    // Mapa usando String (UUID) como chave
-    private static Map<String, Produto> produtosNoCarrinhoMap = new HashMap<>();
+    // CORREÇÃO: Mudamos de <String, Produto> para <Long, Produto>
+    private static Map<Long, Produto> produtosNoCarrinhoMap = new HashMap<>();
 
     public static void setProdutosNoCarrinho(List<Produto> todosProdutos) {
         if (todosProdutos == null) return;
 
-        // Filtra apenas produtos com quantidade > 0 e mapeia pelo ID
         produtosNoCarrinhoMap = todosProdutos.stream()
-                .filter(p -> p.getQuantidade() > 0)
-                .collect(Collectors.toMap(Produto::getId, p -> p));
+                .filter(p -> p.getQuantidade() > 0) // Pega só o que tem quantidade
+                .filter(p -> p.getId() != null)     // Segurança: ignora produtos sem ID
+                // Agora o Produto::getId retorna Long, que casa com o Map<Long, ...>
+                // O terceiro parâmetro (p1, p2) -> p1 serve para evitar crash se houver IDs duplicados
+                .collect(Collectors.toMap(Produto::getId, p -> p, (p1, p2) -> p1));
     }
 
     public static void limparCarrinho() {
         produtosNoCarrinhoMap.clear();
     }
 
-    public static Produto getProdutoNoCarrinho(String id) {
+    // CORREÇÃO: Recebe Long id
+    public static Produto getProdutoNoCarrinho(Long id) {
         return produtosNoCarrinhoMap.get(id);
     }
 
-    // --- MÉTODO QUE FALTAVA ---
-    public static Map<String, Produto> getProdutosNoCarrinhoMap() {
+    // CORREÇÃO: Retorna mapa com chave Long
+    public static Map<Long, Produto> getProdutosNoCarrinhoMap() {
         return produtosNoCarrinhoMap;
     }
 
-    public static boolean contemProduto(String id) {
+    // CORREÇÃO: Recebe Long id
+    public static boolean contemProduto(Long id) {
         return produtosNoCarrinhoMap.containsKey(id);
     }
 }

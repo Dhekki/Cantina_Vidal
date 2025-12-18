@@ -40,7 +40,7 @@
                 android:id="@+id/text_sem_pedidos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sem pedidos."
+                android:text="Nenhum pedido encontrado"
                 android:textAlignment="center"
                 android:textColor="@color/cinza5"
                 android:textSize="18sp"

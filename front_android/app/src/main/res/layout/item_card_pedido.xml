@@ -13,7 +13,7 @@
         android:id="@+id/textStatusPedido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Recebido"
+        android:text="@string/status_received"
         android:textColor="@color/azul"
         android:textSize="12sp"
         android:textStyle="bold"

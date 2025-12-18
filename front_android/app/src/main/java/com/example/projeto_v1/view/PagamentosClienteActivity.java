@@ -8,32 +8,44 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projeto_v1.R;
 import com.example.projeto_v1.adapter.CarrinhoAdapter;
 import com.example.projeto_v1.model.Carrinho;
-import com.example.projeto_v1.model.Pedido;
-import com.example.projeto_v1.repository.PedidosRepository;
+import com.example.projeto_v1.model.OrderItemRequest; // Import this
+import com.example.projeto_v1.model.Produto;
 import com.example.projeto_v1.utils.CarrinhoManager;
+import com.example.projeto_v1.utils.SessionManager; // Import this
+import com.example.projeto_v1.viewmodel.OrderViewModel; // Import this
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PagamentosClienteActivity extends AppCompatActivity {
 
     private RecyclerView recyclerProdutos;
     private TextView textSubtotal, textDescontos, textTotalFinal;
-    private View btnContinuar; // Referência genérica (pode ser Button ou Layout)
+    private View btnContinuar;
     private ImageView btnVoltar;
     private CarrinhoAdapter adapter;
+
+    // Dependencies for API
+    private OrderViewModel orderViewModel;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pagamentos_cliente);
 
+        sessionManager = new SessionManager(this);
+        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
+
         inicializarViews();
 
-        // VALIDAÇÃO: Evita crash se o botão não foi encontrado
         if (recyclerProdutos == null || btnContinuar == null) {
             Toast.makeText(this, "Erro crítico: Botão ou Lista não encontrados.", Toast.LENGTH_LONG).show();
             return;
@@ -42,39 +54,61 @@ public class PagamentosClienteActivity extends AppCompatActivity {
         configurarLista();
         calcularValores();
 
-        // Configuração do Botão Voltar
         if (btnVoltar != null) {
             btnVoltar.setOnClickListener(v -> finish());
         }
 
-        // Configuração do Botão Continuar
-        btnContinuar.setOnClickListener(v -> {
-            if (Carrinho.getInstance().getProdutos() == null || Carrinho.getInstance().getProdutos().isEmpty()) {
-                Toast.makeText(this, "Erro: Carrinho vazio.", Toast.LENGTH_SHORT).show();
-                return;
+        // --- NEW LOGIC: SEND ORDER TO API ---
+        btnContinuar.setOnClickListener(v -> realizarPedidoNaApi());
+    }
+
+    private void realizarPedidoNaApi() {
+        if (Carrinho.getInstance().getProdutos() == null || Carrinho.getInstance().getProdutos().isEmpty()) {
+            Toast.makeText(this, "Erro: Carrinho vazio.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String token = sessionManager.fetchAuthToken();
+        if (token == null) {
+            Toast.makeText(this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_SHORT).show();
+            // Redirect to login if needed
+            return;
+        }
+
+        // 1. Prepare Request List
+        List<OrderItemRequest> itemRequests = new ArrayList<>();
+        for (Produto p : Carrinho.getInstance().getProdutos()) {
+            // Ensure ID is valid. Assuming Produto ID is Long now based on previous steps.
+            // If Produto ID is still String (UUID) locally but Long in API, this will crash.
+            // Ensure your Produto.java uses Long id.
+            if (p.getId() != null) {
+                itemRequests.add(new OrderItemRequest(p.getId(), p.getQuantidade()));
             }
+        }
 
-            try {
-                // 1. Cria um NOVO objeto Pedido com os itens do carrinho atual
-                Pedido novoPedido = new Pedido(Carrinho.getInstance().getProdutos());
+        // 2. Disable button to prevent double clicks
+        btnContinuar.setEnabled(false);
+        Toast.makeText(this, "Enviando pedido...", Toast.LENGTH_SHORT).show();
 
-                // 2. Salva este CARD novo no repositório
-                PedidosRepository.getInstance().adicionarPedido(novoPedido);
+        // 3. Call API
+        orderViewModel.realizarPedido(token, itemRequests).observe(this, response -> {
+            btnContinuar.setEnabled(true);
 
-                // 3. Limpa o carrinho e dados temporários
+            if (response != null) {
+                // SUCCESS
+                Toast.makeText(this, "Pedido #" + response.getDailyId() + " realizado! Código: " + response.getPickupCode(), Toast.LENGTH_LONG).show();
+
+                // 4. Clear Local Cart
                 Carrinho.getInstance().limpar();
                 CarrinhoManager.limparCarrinho();
 
-                Toast.makeText(this, "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
-
-                // 4. Navegação
+                // 5. Navigate to Orders Screen
                 Intent intent = new Intent(PagamentosClienteActivity.this, PedidosClienteActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            } else {
+                // FAILURE
+                Toast.makeText(this, "Falha ao criar pedido. Tente novamente.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -83,18 +117,14 @@ public class PagamentosClienteActivity extends AppCompatActivity {
         recyclerProdutos = findViewById(R.id.recycler_pedidos2);
         btnVoltar = findViewById(R.id.btn_voltar);
 
-        // --- CORREÇÃO DO CRASH ---
-        // Primeiro, encontramos o container do layout incluído
         View includeTotal = findViewById(R.id.layout_resumo_total);
 
         if (includeTotal != null) {
-            // Se o include foi achado, buscamos o botão DENTRO dele
             textSubtotal = includeTotal.findViewById(R.id.textSubtotalResumo);
             textDescontos = includeTotal.findViewById(R.id.textDescontosResumo);
             textTotalFinal = includeTotal.findViewById(R.id.textTotalFinal);
             btnContinuar = includeTotal.findViewById(R.id.btnContinuarPedido);
         } else {
-            // Se por algum motivo o include foi mesclado (merge), tenta buscar direto
             textSubtotal = findViewById(R.id.textSubtotalResumo);
             textDescontos = findViewById(R.id.textDescontosResumo);
             textTotalFinal = findViewById(R.id.textTotalFinal);
@@ -103,15 +133,10 @@ public class PagamentosClienteActivity extends AppCompatActivity {
     }
 
     private void configurarLista() {
-        // TELA DE CHECKOUT
-        // Usa o Singleton Carrinho.getInstance().getProdutos()
-        // Como o CarrinhoActivity atualizou esse mesmo Singleton, os dados estarão aqui.
-
-        // Passa a lista REAL do Singleton e o layout ID correto
         adapter = new CarrinhoAdapter(
                 Carrinho.getInstance().getProdutos(),
-                R.layout.item_pagamentos_produto, // Layout de visualização
-                null // Listener null (não precisa atualizar totais aqui se for estático)
+                R.layout.item_pagamentos_produto,
+                null
         );
         recyclerProdutos.setLayoutManager(new LinearLayoutManager(this));
         recyclerProdutos.setAdapter(adapter);

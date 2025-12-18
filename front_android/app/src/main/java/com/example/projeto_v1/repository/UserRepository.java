@@ -4,6 +4,7 @@ package com.example.projeto_v1.repository;
 import androidx.lifecycle.MutableLiveData;
 
 
+import com.example.projeto_v1.model.UserPatchRequest;
 import com.example.projeto_v1.model.UserResponse;
 
 import com.example.projeto_v1.network.ApiService;
@@ -76,6 +77,32 @@ public class UserRepository {
 
         return userLiveData;
 
+    }
+
+    public MutableLiveData<UserResponse> updateMyProfile(String token, String name, String imageUrl) {
+        MutableLiveData<UserResponse> updateLiveData = new MutableLiveData<>();
+        String auth = (token != null && !token.startsWith("Bearer ")) ? "Bearer " + token : token;
+
+        UserPatchRequest request = new UserPatchRequest(name, imageUrl);
+
+        apiService.updateMyProfile(auth, request).enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    updateLiveData.setValue(response.body());
+                } else {
+                    // Aqui você pode logar o erro: response.code()
+                    updateLiveData.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                updateLiveData.setValue(null);
+            }
+        });
+
+        return updateLiveData;
     }
 
 }

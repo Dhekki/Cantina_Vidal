@@ -34,4 +34,8 @@ public class UserViewModel extends ViewModel {
 
     }
 
+    public LiveData<UserResponse> atualizarPerfil(String token, String novoNome, String novaUrlImagem) {
+        return repository.updateMyProfile(token, novoNome, novaUrlImagem);
+    }
+
 }

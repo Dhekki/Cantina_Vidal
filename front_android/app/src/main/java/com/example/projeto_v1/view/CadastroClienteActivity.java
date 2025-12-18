@@ -1,30 +1,25 @@
 package com.example.projeto_v1.view;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.projeto_v1.R;
-import com.example.projeto_v1.viewmodel.ClienteViewModel;
+import com.example.projeto_v1.viewmodel.AuthViewModel; // Importante: Use AuthViewModel
 
 public class CadastroClienteActivity extends AppCompatActivity {
 
-    private ClienteViewModel viewModel;
+    private AuthViewModel viewModel; // Alterado para AuthViewModel
     private EditText edtNome, edtEmail, edtSenha, edtConfirmSenha;
     private Button btnCriarConta;
 
-    public void goTelaLogin (View view) {
+    public void goTelaLogin(View view) {
         Intent intent = new Intent(CadastroClienteActivity.this, LoginClienteActivity.class);
         startActivity(intent);
         finish();
@@ -34,7 +29,8 @@ public class CadastroClienteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_cliente);
-        EdgeToEdge.enable(this);
+        //EdgeToEdge.enable(this);
+        // EdgeToEdge removido para simplificar, se precisar pode recolocar
 
         edtNome = findViewById(R.id.edtNome);
         edtEmail = findViewById(R.id.edtEmail);
@@ -42,7 +38,8 @@ public class CadastroClienteActivity extends AppCompatActivity {
         edtConfirmSenha = findViewById(R.id.edtConfirmSenha);
         btnCriarConta = findViewById(R.id.btnCriarConta);
 
-        viewModel = new ViewModelProvider(this).get(ClienteViewModel.class);
+        // Inicializa o AuthViewModel
+        viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
         btnCriarConta.setOnClickListener(v -> {
             String nome = edtNome.getText().toString();
@@ -56,29 +53,26 @@ public class CadastroClienteActivity extends AppCompatActivity {
             }
 
             if (!senha.equals(confirmSenha)) {
-                Toast.makeText(this, "A senha e a confirmação de senha não coincidem!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senhas não coincidem!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (senha.length() < 8 || confirmSenha.length() < 8) {
-                Toast.makeText(this, "A senha deve conter no mínimo 8 caracteres!", Toast.LENGTH_SHORT).show();
+            if (senha.length() < 8) {
+                Toast.makeText(this, "Senha muito curta (min 8)!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            viewModel.cadastrarCliente(nome, email, senha).observe(this, sucesso -> {
-                if (sucesso != null && sucesso) {
-                    Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                    goTelaLogin(null);
+            // Chama o cadastro
+            viewModel.fazerCadastro(nome, email, senha).observe(this, userResponse -> {
+                if (userResponse != null) {
+                    // Sucesso! O servidor retornou o usuário criado
+                    Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
+                    goTelaLogin(null); // Vai para o login
                 } else {
-                    Toast.makeText(this, "Erro ao cadastrar!", Toast.LENGTH_SHORT).show();
+                    // Erro (email já existe ou falha na API)
+                    Toast.makeText(this, "Erro ao cadastrar. Verifique os dados.", Toast.LENGTH_SHORT).show();
                 }
             });
-        });
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
         });
     }
 }

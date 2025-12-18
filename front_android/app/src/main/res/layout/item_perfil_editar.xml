@@ -15,7 +15,7 @@
             android:id="@+id/img_perfil_cliente_edit"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:background="#EEEEEE"
+            android:background="@color/cinza8"
             android:padding="2dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/CircularImage" />
@@ -48,34 +48,34 @@
         android:background="@drawable/shape_linha2"
         android:drawableStart="@drawable/icon_nome"
         android:drawablePadding="12dp"
-        android:hint="Insira seu novo nome"
-        android:textColorHint="@color/cinza2"
+        android:text="Insira seu novo nome"
+        android:textColor="@color/black2"
         android:inputType="textPersonName"
         android:paddingHorizontal="16dp"
         android:textSize="14sp"
         android:layout_marginBottom="16dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textColor="@color/cinza2"
-        android:textSize="12sp"
-        android:layout_marginBottom="6dp"/>
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Email"-->
+<!--        android:textColor="@color/cinza2"-->
+<!--        android:textSize="12sp"-->
+<!--        android:layout_marginBottom="6dp"/>-->
 
-    <EditText
-        android:id="@+id/edt_email_editar"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@drawable/shape_linha2"
-        android:drawableStart="@drawable/icon_email"
-        android:drawablePadding="12dp"
-        android:hint="Insira seu novo email"
-        android:textColorHint="@color/cinza2"
-        android:inputType="textEmailAddress"
-        android:paddingHorizontal="16dp"
-        android:textSize="14sp"
-        android:layout_marginBottom="32dp"/>
+<!--    <EditText-->
+<!--        android:id="@+id/edt_email_editar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="52dp"-->
+<!--        android:background="@drawable/shape_linha2"-->
+<!--        android:drawableStart="@drawable/icon_email"-->
+<!--        android:drawablePadding="12dp"-->
+<!--        android:hint="Insira seu novo email"-->
+<!--        android:textColorHint="@color/cinza2"-->
+<!--        android:inputType="textEmailAddress"-->
+<!--        android:paddingHorizontal="16dp"-->
+<!--        android:textSize="14sp"-->
+<!--        android:layout_marginBottom="32dp"/>-->
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_salvar_alteracoes"

@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
             android:paddingTop="20dp"
-            android:paddingBottom="280dp">
+            android:paddingBottom="300dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"

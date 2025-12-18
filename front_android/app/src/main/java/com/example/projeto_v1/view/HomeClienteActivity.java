@@ -11,9 +11,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,9 +25,14 @@ import com.example.projeto_v1.adapter.CategoriaAdapter;
 import com.example.projeto_v1.adapter.ProdutoAdapter;
 import com.example.projeto_v1.model.Carrinho;
 import com.example.projeto_v1.model.Categoria;
+import com.example.projeto_v1.model.CategoryResponse;
+import com.example.projeto_v1.model.ProductCustomerResponse;
 import com.example.projeto_v1.model.Produto;
 import com.example.projeto_v1.utils.CarrinhoManager;
 import com.example.projeto_v1.utils.GridSpacingItemDecoration;
+import com.example.projeto_v1.utils.SessionManager;
+import com.example.projeto_v1.viewmodel.CategoriaViewModel;
+import com.example.projeto_v1.viewmodel.ProdutoViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,136 +47,133 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
     private EditText barraPesquisa;
     private RecyclerView recyclerProdutos, recyclerCategorias;
 
-    private List<Produto> produtosGeral;
+    private List<Produto> produtosGeral = new ArrayList<>();
     private ProdutoAdapter produtoAdapter;
-    private List<Categoria> categoriasGeral;
-    private Map<Integer, Categoria> categoriasMap = new HashMap<>();
+
+    private List<Categoria> categoriasGeral = new ArrayList<>();
+    private Map<Long, Categoria> categoriasMap = new HashMap<>(); // Changed Key to Long
     private Categoria categoriaSelecionada;
     private CategoriaAdapter categoriaAdapter;
+
+    private ProdutoViewModel produtoViewModel;
+    private CategoriaViewModel categoriaViewModel;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_cliente);
 
+        sessionManager = new SessionManager(this);
+        produtoViewModel = new ViewModelProvider(this).get(ProdutoViewModel.class);
+        categoriaViewModel = new ViewModelProvider(this).get(CategoriaViewModel.class);
+
         inicializarComponentes();
-        setupRecyclerViewCategorias();
-
-        produtosGeral = criarListaProdutos();
-        categoriaSelecionada = getCategoriaById(0);
-
-        setupRecyclerViewProdutos();
+        setupRecyclerViewCategorias(); // Sets up empty adapter
+        setupRecyclerViewProdutos();   // Sets up empty adapter
         configurarCarrinho();
         setupSearchListener();
 
         if (savedInstanceState != null) {
             String pesquisa = savedInstanceState.getString("pesquisa", "");
-            int categoriaId = savedInstanceState.getInt("categoria", 0);
+            long categoriaId = savedInstanceState.getLong("categoria", 0L);
             categoriaSelecionada = getCategoriaById(categoriaId);
             barraPesquisa.setText(pesquisa);
+        } else {
+            // Default category "Todos"
+            categoriaSelecionada = new Categoria(0L, "Todos", R.drawable.icon___bebidas);
+            categoriasMap.put(0L, categoriaSelecionada);
         }
+
+        // Fetch Data
+        carregarDadosDaApi();
     }
 
-    // --- CORREÇÃO PRINCIPAL: Sincroniza ao voltar para a tela ---
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // 1. Caso o Carrinho Singleton tenha se perdido (app fechou em 2o plano), tenta recuperar do Manager
-        if (Carrinho.getInstance().getProdutos().isEmpty() && !CarrinhoManager.getProdutosNoCarrinhoMap().isEmpty()) {
-            Carrinho.getInstance().setProdutos(new ArrayList<>(CarrinhoManager.getProdutosNoCarrinhoMap().values()));
+    private void carregarDadosDaApi() {
+        String token = sessionManager.fetchAuthToken();
+        if (token == null) {
+            Toast.makeText(this, "Sessão expirada", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginClienteActivity.class));
+            finish();
+            return;
         }
 
-        // 2. Sincroniza visualmente a Home com os dados do Carrinho
-        sincronizarHomeComCarrinho();
+        // 1. Fetch Categories first
+        categoriaViewModel.listarCategorias().observe(this, apiCategories -> {
+            if (apiCategories != null) {
+                categoriasGeral.clear();
+                categoriasMap.clear();
 
-        // 3. Atualiza a barra inferior e filtros
-        atualizarEstadoCarrinho(produtosGeral);
-        aplicarFiltros();
+                // Add "Todos" manually
+                Categoria todos = new Categoria(0L, "Todos", R.drawable.icon___bebidas);
+                categoriasGeral.add(todos);
+                categoriasMap.put(0L, todos);
+
+                // Convert API categories
+                for (CategoryResponse catRes : apiCategories) {
+                    Categoria c = new Categoria(catRes.getId(), catRes.getName(), catRes.getImageUrl(), catRes.getColorHex());
+                    categoriasGeral.add(c);
+                    categoriasMap.put(c.getId(), c);
+                }
+
+                // Update Adapter
+                if (categoriaAdapter != null) {
+                    categoriaAdapter.atualizarLista(categoriasGeral);
+                }
+
+                // 2. Fetch Products after categories are loaded
+                carregarProdutos(token);
+            } else {
+                Toast.makeText(this, "Erro ao carregar categorias", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void sincronizarHomeComCarrinho() {
-        if (produtosGeral == null) return;
+    private void carregarProdutos(String token) {
+        produtoViewModel.listarProdutos(token, null, null).observe(this, listaApi -> {
+            if (listaApi != null) {
+                produtosGeral.clear();
+                for (ProductCustomerResponse itemApi : listaApi) {
+                    produtosGeral.add(converterApiParaLocal(itemApi));
+                }
+                sincronizarHomeComCarrinho();
+                aplicarFiltros();
+            } else {
+                Toast.makeText(this, "Erro ao carregar produtos", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-        // Passo A: Zera todas as quantidades na Home (Limpeza)
-        for (Produto pHome : produtosGeral) {
-            pHome.setQuantidade(0);
-        }
+    private Produto converterApiParaLocal(ProductCustomerResponse itemApi) {
+        // Try to match category by name from the list of loaded categories
+        Categoria cat = categoriasMap.get(0L); // Default to 'Todos'
 
-        // Passo B: Pega os produtos que estão no Carrinho
-        List<Produto> itensNoCarrinho = Carrinho.getInstance().getProdutos();
+        if (itemApi.getCategories() != null && !itemApi.getCategories().isEmpty()) {
+            String apiCatName = itemApi.getCategories().get(0);
 
-        // Passo C: Cruza os dados pelo NOME
-        if (itensNoCarrinho != null && !itensNoCarrinho.isEmpty()) {
-            for (Produto pCarrinho : itensNoCarrinho) {
-                for (Produto pHome : produtosGeral) {
-                    // Se o nome for igual, atualiza a quantidade na Home
-                    if (pHome.getNome().trim().equalsIgnoreCase(pCarrinho.getNome().trim())) {
-                        pHome.setQuantidade(pCarrinho.getQuantidade());
-                        break;
-                    }
+            // Search in our map values
+            for (Categoria c : categoriasMap.values()) {
+                if (c.getNome().equalsIgnoreCase(apiCatName)) {
+                    cat = c;
+                    break;
                 }
             }
         }
 
-        // Passo D: Avisa o adaptador para pintar os números na tela
-        if (produtoAdapter != null) {
-            produtoAdapter.notifyDataSetChanged();
-        }
+        Produto p = new Produto(
+                itemApi.getName(),
+                itemApi.getDescription(),
+                itemApi.getPrice(),
+                R.drawable.icon___cocacola,
+                cat
+        );
+        p.setId(itemApi.getId());
+        p.setImageUrl(itemApi.getImageUrl());
+
+        return p;
     }
 
-    private void inicializarComponentes() {
-        carrinhoBarra = findViewById(R.id.carrinhoBarra);
-        textPrecoCarrinho = carrinhoBarra.findViewById(R.id.textPrecoCarrinho);
-        textTotalCarrinho = carrinhoBarra.findViewById(R.id.textTotalCarrinho);
-        btnCarrinho = carrinhoBarra.findViewById(R.id.btnCarrinho);
-        barraPesquisa = findViewById(R.id.barraPesquisa);
-        recyclerProdutos = findViewById(R.id.recycler_produtos);
-        recyclerCategorias = findViewById(R.id.recycler_categorias);
-        textSemProdutos = findViewById(R.id.text_sem_produtos);
-    }
-
-    private void configurarCarrinho() {
-        btnCarrinho.setOnClickListener(v -> {
-            // Salva o estado atual antes de ir para a tela de carrinho
-            CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
-            Intent intent = new Intent(HomeClienteActivity.this, CarrinhoClienteActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    public void goNavegacaoPedidos(View view) {
-        startActivity(new Intent(this, PedidosClienteActivity.class));
-    }
-
-    public void goNavegacaoPerfil(View view) {
-        startActivity(new Intent(this, PerfilClienteActivity.class));
-        finish();
-    }
-
-    private void setupSearchListener() {
-        barraPesquisa.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { aplicarFiltros(); }
-            @Override public void afterTextChanged(Editable s) {}
-        });
-
-        barraPesquisa.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
-                esconderTeclado();
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private void esconderTeclado() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
+    // --- REMAINING METHODS (Same as before, just slight tweaks for Long IDs) ---
 
     private void aplicarFiltros() {
         if (produtosGeral == null || produtoAdapter == null) return;
@@ -180,10 +184,11 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         for (Produto produto : produtosGeral) {
             boolean categoriaOk = false;
 
-            if (categoriaSelecionada == null || categoriaSelecionada.getId() == 0) {
+            // Check if "Todos" (ID 0) is selected or matches specific category
+            if (categoriaSelecionada == null || categoriaSelecionada.getId() == 0L) {
                 categoriaOk = true;
             } else if (produto.getCategoria() != null) {
-                if (produto.getCategoria().getId() == categoriaSelecionada.getId()) {
+                if (produto.getCategoria().getId().equals(categoriaSelecionada.getId())) {
                     categoriaOk = true;
                 }
             }
@@ -205,6 +210,128 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         } else {
             recyclerProdutos.setVisibility(View.VISIBLE);
             textSemProdutos.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupRecyclerViewCategorias() {
+        recyclerCategorias = findViewById(R.id.recycler_categorias);
+        // Initialize with empty list
+        categoriaAdapter = new CategoriaAdapter(new ArrayList<>(), this);
+        recyclerCategorias.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerCategorias.setAdapter(categoriaAdapter);
+    }
+
+    // ... (All other methods: onResume, setupRecyclerViewProdutos, configuring listeners, etc. remain the same) ...
+
+    private Categoria getCategoriaById(long id) { return categoriasMap.get(id); }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 1. FORÇA a atualização do Singleton com base no Manager (Backup Seguro)
+        // Isso garante que se você alterou qtd ou removeu itens na tela de Carrinho, a Home saiba.
+        if (!CarrinhoManager.getProdutosNoCarrinhoMap().isEmpty()) {
+            Carrinho.getInstance().setProdutos(new ArrayList<>(CarrinhoManager.getProdutosNoCarrinhoMap().values()));
+        }
+
+        // 2. Sincroniza visualmente (pinta os números nos cards)
+        sincronizarHomeComCarrinho();
+
+        // 3. Atualiza a barra inferior e reaplica filtros (caso tivesse pesquisa digitada)
+        atualizarEstadoCarrinho(produtosGeral);
+        aplicarFiltros();
+    }
+
+    private void sincronizarHomeComCarrinho() {
+        if (produtosGeral == null || produtosGeral.isEmpty()) return;
+        for (Produto p : produtosGeral) p.setQuantidade(0);
+        List<Produto> itensNoCarrinho = Carrinho.getInstance().getProdutos();
+
+        if (itensNoCarrinho != null) {
+            for (Produto pCarrinho : itensNoCarrinho) {
+                for (Produto pHome : produtosGeral) {
+                    boolean match = false;
+                    if (pHome.getId() != null && pHome.getId().equals(pCarrinho.getId())) {
+                        match = true;
+                    } else if (pHome.getNome().trim().equalsIgnoreCase(pCarrinho.getNome().trim())) {
+                        match = true;
+                    }
+
+                    if (match) {
+                        pHome.setQuantidade(pCarrinho.getQuantidade());
+                        break;
+                    }
+                }
+            }
+        }
+        if (produtoAdapter != null) produtoAdapter.notifyDataSetChanged();
+    }
+
+    // ... include inicializarComponentes, configurarCarrinho, navigation methods, setupSearchListener, etc ...
+    private void inicializarComponentes() {
+        carrinhoBarra = findViewById(R.id.carrinhoBarra);
+        textPrecoCarrinho = carrinhoBarra.findViewById(R.id.textPrecoCarrinho);
+        textTotalCarrinho = carrinhoBarra.findViewById(R.id.textTotalCarrinho);
+        btnCarrinho = carrinhoBarra.findViewById(R.id.btnCarrinho);
+        barraPesquisa = findViewById(R.id.barraPesquisa);
+        recyclerProdutos = findViewById(R.id.recycler_produtos);
+        recyclerCategorias = findViewById(R.id.recycler_categorias);
+        textSemProdutos = findViewById(R.id.text_sem_produtos);
+    }
+
+    private void configurarCarrinho() {
+        btnCarrinho.setOnClickListener(v -> {
+            CarrinhoManager.setProdutosNoCarrinho(produtosGeral);
+            Intent intent = new Intent(HomeClienteActivity.this, CarrinhoClienteActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    public void goNavegacaoPedidos(View view) {
+        startActivity(new Intent(HomeClienteActivity.this, PedidosClienteActivity.class));
+        finish();
+    }
+
+    public void goNavegacaoPerfil(View view) {
+        startActivity(new Intent(this, PerfilClienteActivity.class));
+        finish();
+    }
+
+    private void setupSearchListener() {
+        barraPesquisa.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                aplicarFiltros(); // Filtra enquanto digita
+            }
+
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        // --- ADICIONE ISTO: Força filtro ao perder foco (fechar teclado) ---
+        barraPesquisa.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                aplicarFiltros();
+            }
+        });
+
+        barraPesquisa.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                esconderTeclado();
+                barraPesquisa.clearFocus(); // Tira o foco para evitar bugs visuais
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void esconderTeclado() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -230,16 +357,8 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
         }
     }
 
-    private void setupRecyclerViewCategorias() {
-        recyclerCategorias = findViewById(R.id.recycler_categorias);
-        List<Categoria> categorias = criarListaCategorias();
-        categoriaAdapter = new CategoriaAdapter(categorias, this);
-        recyclerCategorias.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerCategorias.setAdapter(categoriaAdapter);
-    }
-
     private void setupRecyclerViewProdutos() {
-        produtoAdapter = new ProdutoAdapter(produtosGeral, this);
+        produtoAdapter = new ProdutoAdapter(new ArrayList<>(), this);
         recyclerProdutos.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerProdutos.setAdapter(produtoAdapter);
         recyclerProdutos.addItemDecoration(new GridSpacingItemDecoration(2, (int)(30 * getResources().getDisplayMetrics().density), (int)(10 * getResources().getDisplayMetrics().density), true));
@@ -254,8 +373,6 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
     @Override
     public void onQuantidadeChanged() {
         atualizarEstadoCarrinho(produtosGeral);
-
-        // Atualiza Singleton e Manager instantaneamente ao clicar +/-
         List<Produto> ativos = new ArrayList<>();
         for(Produto p : produtosGeral) {
             if(p.getQuantidade() > 0) ativos.add(p);
@@ -268,69 +385,6 @@ public class HomeClienteActivity extends AppCompatActivity implements ProdutoAda
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("pesquisa", barraPesquisa.getText().toString());
-        outState.putInt("categoria", categoriaSelecionada != null ? categoriaSelecionada.getId() : 0);
-    }
-
-    private List<Categoria> criarListaCategorias() {
-        List<Categoria> categorias = new ArrayList<>();
-        categorias.add(new Categoria(0, "Todos", R.drawable.icon___bebidas));
-        categorias.add(new Categoria(1, "Bebidas", R.drawable.icon___bebidas));
-        categorias.add(new Categoria(2, "Lanches", R.drawable.icon___bebidas));
-        categorias.add(new Categoria(3, "Doces", R.drawable.icon___bebidas));
-        categorias.add(new Categoria(4, "Almoços", R.drawable.icon___bebidas));
-
-        for(Categoria c : categorias) categoriasMap.put(c.getId(), c);
-        categoriasGeral = categorias;
-        return categorias;
-    }
-
-    private Categoria getCategoriaById(int id) { return categoriasMap.get(id); }
-
-    private List<Produto> criarListaProdutos() {
-        List<Produto> produtos = new ArrayList<>();
-
-        Categoria bebidas = getCategoriaById(1);
-        Categoria lanches = getCategoriaById(2);
-        Categoria doces   = getCategoriaById(3);
-        Categoria almocos = getCategoriaById(4);
-
-        if (bebidas != null) {
-            produtos.add(new Produto("Refrigerante Guaraná Tônico Massa", "Lata 350ml", 3.03, R.drawable.icon___cocacola, bebidas));
-            produtos.add(new Produto("Coca-Cola Original", "Lata 350ml", 3.50, R.drawable.icon___cocacola, bebidas));
-            produtos.add(new Produto("Fanta Laranja", "Lata 350ml", 3.25, R.drawable.icon___cocacola, bebidas));
-        }
-
-        if (lanches != null) {
-            produtos.add(new Produto("Coxinha", "300g", 5.00, R.drawable.icon___cocacola, lanches));
-            produtos.add(new Produto("Esfirra de Carne", "Unidade", 5.00, R.drawable.icon___cocacola, lanches));
-            produtos.add(new Produto("Baurú", "Unidade", 5.00, R.drawable.icon___cocacola, lanches));
-        }
-
-        if (doces != null) {
-            produtos.add(new Produto("Bolo de Chocolate", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
-            produtos.add(new Produto("Cocada", "Pedaço", 7.00, R.drawable.icon___cocacola, doces));
-            produtos.add(new Produto("Torta de Limão", "Fatia", 7.00, R.drawable.icon___cocacola, doces));
-        }
-
-        if (almocos != null) {
-            produtos.add(new Produto("Executivo de Frango", "400g", 15.00, R.drawable.icon___cocacola, almocos));
-            produtos.add(new Produto("Executivo de Carne", "500g", 15.00, R.drawable.icon___cocacola, almocos));
-            produtos.add(new Produto("Prato Feito", "600g", 15.00, R.drawable.icon___cocacola, almocos));
-        }
-
-        // Backup inicial: recupera dados do Manager se existirem (ex: app reiniciado)
-        Map<String, Produto> salvos = CarrinhoManager.getProdutosNoCarrinhoMap();
-        if (salvos != null && !salvos.isEmpty()) {
-            for (Produto produto : produtos) {
-                for (Produto salvo : salvos.values()) {
-                    if (salvo.getNome().trim().equalsIgnoreCase(produto.getNome().trim())) {
-                        produto.setQuantidade(salvo.getQuantidade());
-                        break;
-                    }
-                }
-            }
-        }
-
-        return produtos;
+        outState.putLong("categoria", categoriaSelecionada != null ? categoriaSelecionada.getId() : 0L);
     }
 }

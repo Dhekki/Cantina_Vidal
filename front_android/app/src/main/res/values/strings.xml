@@ -4,4 +4,11 @@
     <string name="notificacoes">Notificações</string>
     <string name="produtos">Refrigerante Guaraná Tônico Massa</string>
     <string name="botao_de_bebidas">Botão de bebidas</string>
+    <string name="status_received">Recebido</string>
+    <string name="status_in_preparation">Em preparo</string>
+    <string name="status_done">Pronto</string>
+    <string name="status_delivered">Entregue</string>
+    <string name="status_not_delivered">Não entregue</string>
+    <string name="status_cancelled">Cancelado</string>
+    <string name="status_unknown">Desconhecido</string>
 </resources>
