@@ -19,12 +19,11 @@ public record ProductResponseDTO(
         Integer minStockLevel,
         Integer replenishmentDays,
         LocalDate expirationDate,
-        Boolean available,
+        Boolean active,
         Set<String> categoriesNames
 ) {
     public ProductResponseDTO(Product entity) {
-        this(
-                entity.getId(),
+        this(entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
                 entity.getCurrentPrice(),
@@ -33,8 +32,8 @@ public record ProductResponseDTO(
                 entity.getMinStockLevel(),
                 entity.getReplenishmentDays(),
                 entity.getExpirationDate(),
-                entity.getAvailable(),
-                entity.getCategories() != null
+                entity.getActive(),
+                (entity.getCategories() != null)
                         ? entity.getCategories().stream()
                             .map(Category::getName)
                             .collect(Collectors.toSet())

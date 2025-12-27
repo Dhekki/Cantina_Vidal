@@ -6,12 +6,14 @@ public record CategoryResponseDTO(
         Long id,
         String name,
         String imageUrl,
-        String colorHex
+        String colorHex,
+        Boolean active
 ) {
     public CategoryResponseDTO(Category entity) {
-        this(   entity.getId(),
+        this(entity.getId(),
                 entity.getName(),
                 entity.getImageUrl(),
-                entity.getColorHex());
+                entity.getColorHex(),
+                entity.getActive());
     }
 }

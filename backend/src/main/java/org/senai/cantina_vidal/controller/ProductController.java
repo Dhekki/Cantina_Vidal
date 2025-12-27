@@ -2,7 +2,6 @@ package org.senai.cantina_vidal.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.product.ProductCustomerResponseDTO;
 import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
 import org.senai.cantina_vidal.dto.product.ProductResponseDTO;
 import org.senai.cantina_vidal.entity.Product;
@@ -23,20 +22,32 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<Page<ProductCustomerResponseDTO>> findAll(
+    public ResponseEntity<Page<ProductResponseDTO>> findAll(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable
     ) {
-        Page<Product> productPage = service.findAllCustomer(pageable, name, categoryId);
+        Page<Product> productPage = service.findAll(pageable, name, categoryId);
 
-        Page<ProductCustomerResponseDTO> dtoPage = productPage.map(ProductCustomerResponseDTO::new);
+        Page<ProductResponseDTO> dtoPage = productPage.map(ProductResponseDTO::new);
 
         return ResponseEntity.ok(dtoPage);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductCustomerResponseDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ProductCustomerResponseDTO(service.findByIdCustomer(id)));
+    public ResponseEntity<ProductResponseDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(new ProductResponseDTO(service.findById(id)));
+    }
+
+    @PostMapping
+    public ResponseEntity<ProductResponseDTO> create(@RequestBody @Valid ProductRequestDTO dto) {
+        Product savedProduct = service.create(dto);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedProduct.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(new ProductResponseDTO(savedProduct));
     }
 }

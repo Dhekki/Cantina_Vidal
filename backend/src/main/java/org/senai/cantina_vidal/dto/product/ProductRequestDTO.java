@@ -1,6 +1,5 @@
 package org.senai.cantina_vidal.dto.product;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -31,7 +30,6 @@ public record ProductRequestDTO(
         @PositiveOrZero(message = "Intervalo de reposição não pode ser negativo")
         Integer replenishmentDays,
 
-        @FutureOrPresent(message = "O produto deve estar na validade")
         LocalDate expirationDate,
 
         Set<Long> categoryIds

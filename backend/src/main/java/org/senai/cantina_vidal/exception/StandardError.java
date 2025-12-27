@@ -19,7 +19,7 @@ public class StandardError implements Serializable {
 
     private Map<String, String> validationErrors;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "GMT")
     private LocalDateTime timestamp;
     private String message;
     private Integer status;

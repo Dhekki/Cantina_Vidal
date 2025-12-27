@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles for standarlization */
+@layer base {
+  :root {
+    --background: 210 100% 100%;
+    --foreground: 222 46% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 46% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 46% 11%;
+
+    --primary: 11 69% 51%;
+    --primary-foreground: 0 0% 100%;
+    --primary-card: 40 74% 52%;
+
+    --secondary: 40 74% 52%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 216 74 42;
+    --accent-foreground: 216 74 42;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 11 69% 51%;
+
+    --radius: 0.5rem;
+
+    --success: 142 76% 36%;
+    --info: 199 89% 48%;
+
+    /* Orders status colors */
+    --status-received:   0 139 210;
+    --status-preparing:  226 169 59;
+    --status-ready:      62 166 90;
+    --status-delivered:  82 174 50;
+    --status-canceled:   216 74 42;
+    
+    /* Product status colors */
+    --status-active:   82 174 50;
+    --status-inactive: 0 0 53;
+
+    /* Categories badge colors */
+    --categorie-badge: 226 170 60;
+
+    /* Additional design tokens */
+    --menu-item: 83 83 83;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+    /* Pop-ups colors */
+    --pop-up-edit:   222 124 54;
+    --pop-up-logout: 222 124 54;
+    --pop-up-delete: 217 79 48;
+  }
+
+  .dark {
+    --background: 210 100% 100%;
+    --foreground: 222 46% 11%;
+
+    --card: 222.2 47% 14%;
+    --card-foreground: 222 46% 11%;
+
+    --popover: 222.2 47% 14%;
+    --popover-foreground: 222 46% 11%;
+
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 74% 52%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 222 46% 11%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142 76% 36%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

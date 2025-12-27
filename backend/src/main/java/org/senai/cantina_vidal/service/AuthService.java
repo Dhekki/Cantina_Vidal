@@ -9,7 +9,6 @@ import org.senai.cantina_vidal.entity.RefreshToken;
 import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.enums.Role;
 import org.senai.cantina_vidal.exception.ConflictException;
-import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.repository.RefreshTokenRepository;
 import org.senai.cantina_vidal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +29,6 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final EmailService emailService;
     private static final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${jwt.refresh-expiration}")
@@ -50,8 +48,6 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         String verificationCode = String.valueOf(secureRandom.nextInt(900000) + 100000); // Between 100.000 and 999.999
-
-//        emailService.composeEmail(verificationCode, dto.email());
 
         user.setVerificationCode(verificationCode);
         user.setVerificationExpiresAt(LocalDateTime.now().plusSeconds(900)); // 15 minutes
@@ -86,11 +82,11 @@ public class AuthService {
 
     public LoginResponseDTO refreshToken(String requestRefreshToken) {
         RefreshToken entity = refreshTokenRepository.findByToken(requestRefreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("Refresh Token não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Refresh Token não encontrado"));
 
         if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(entity);
-            throw new BadCredentialsException("Refresh Token expirado. Faça login novamente");
+            throw new RuntimeException("Refresh Token expirado. Faça login novamente");
         }
 
         String newAccessToken = tokenService.generateAccessToken(entity.getUser());
