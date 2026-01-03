@@ -7,6 +7,7 @@ public record LoginRequestDTO(
         @NotBlank @Email
         String email,
 
-        @NotBlank String password
+        @NotBlank
+        String password
 ) {
 }

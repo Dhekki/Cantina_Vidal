@@ -303,11 +303,10 @@ const ProductsManagement = () => {
       toast.success('Produto atualizado com sucesso');
     } else {
       const newProduct: Product = {
-        id:                  `product-${Date.now()}`,
         name:                formData.name,
         description:         formData.description,
         price:               parseFloat(formData.price),
-        category:            formData.category,
+        category:            formData.category[0],
         image:               formData.image,
         available:           true,
         availableToPickUp:   parseInt(formData.stock),
@@ -319,15 +318,14 @@ const ProductsManagement = () => {
       };
 
       try {
-        const response = await productsService.create({ newProduct })
+        const response = await productsService.create(newProduct);
+        setProducts([...products]);
         toast.success('Produto cadastrado com sucesso');
         
       } catch(error : any) {
         console.error('Erro ao cadastrar novo produto: ', error);
-        toast.success('Produto n cadastrado com sucesso');
+        toast.error('Erro ao cadastrar produto');
       }
-
-      
     }
     
     setIsAddEditDialogOpen(false);

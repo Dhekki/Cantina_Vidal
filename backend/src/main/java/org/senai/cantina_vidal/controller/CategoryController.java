@@ -23,7 +23,9 @@ public class CategoryController {
     private final CategoryService service;
 
     @GetMapping
-    public ResponseEntity<Page<CategoryResponseDTO>> findAll(@PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+    public ResponseEntity<Page<CategoryResponseDTO>> findAll(
+            @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+
         Page<Category> entitiesPage = service.findAll(pageable);
 
         Page<CategoryResponseDTO> dtoPage = entitiesPage.map(CategoryResponseDTO::new);
@@ -46,5 +48,18 @@ public class CategoryController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(new CategoryResponseDTO(savedCategory));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> update(
+            @PathVariable Long id,
+            @RequestBody @Valid CategoryRequestDTO dto) {
+        return ResponseEntity.ok(new CategoryResponseDTO(service.update(id, dto)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package org.senai.cantina_vidal.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.senai.cantina_vidal.dto.UploadResponseDTO;
 import org.senai.cantina_vidal.service.FileStorageService;
@@ -15,9 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/uploads")
+@SecurityRequirement(name = "bearer-key")
 public class UploadController {
     private final FileStorageService service;
-
 
     @Operation(
             description = "Aceita arquivos de imagem (**JPG, PNG, JPEG, WEBP**)."

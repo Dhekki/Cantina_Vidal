@@ -1,18 +1,16 @@
 package org.senai.cantina_vidal.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.senai.cantina_vidal.dto.UserResponseDTO;
+import org.senai.cantina_vidal.dto.user.UserPatchRequestDTO;
 import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,5 +28,20 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(new UserResponseDTO(user));
+    }
+
+    @PatchMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<UserResponseDTO> meUpdate(
+            @AuthenticationPrincipal User user,
+            @RequestBody @Valid UserPatchRequestDTO dto) {
+        return ResponseEntity.ok(new UserResponseDTO(service.update(user.getId(), dto)));
+    }
+
+    @DeleteMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<Void> meDelete(@AuthenticationPrincipal User user) {
+        service.delete(user.getId());
+        return ResponseEntity.noContent().build();
     }
 }

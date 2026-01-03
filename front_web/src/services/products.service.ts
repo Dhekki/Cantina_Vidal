@@ -2,13 +2,18 @@ import api from './api';
 
 export interface Product {
     id?: number;
-    nome: string;
-    descricao?: string;
-    preco: number;
-    estoque: number;
-    categoria: string;
-    imagem_url?: string;
-    ativo?: boolean;
+    name: string;
+    description?: string;
+    price: number;
+    category: string;
+    image?: string;
+    available?: boolean;
+    availableToPickUp: number;
+    inStock: number;
+    minimumStock: number;
+    replacementInterval: number;
+    expirationData?: string;
+    specifications?: string;
 }
 
 export interface UpdateStockRequest {
