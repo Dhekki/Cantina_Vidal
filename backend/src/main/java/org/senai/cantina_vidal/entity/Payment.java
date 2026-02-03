@@ -4,31 +4,35 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.experimental.SuperBuilder;
+import org.senai.cantina_vidal.enums.PaymentMethod;
+import org.senai.cantina_vidal.enums.PaymentStatus;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "payments")
-public class Payment extends UserDateAudit {
+public class Payment extends Auditable {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 50)
     @NotNull
+    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @Column(name = "method", nullable = false, length = 50)
-    private String method;
+    private PaymentMethod method;
 
-    @Size(max = 50)
     @NotNull
+    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
-    private String status;
+    private PaymentStatus status;
 
     @Size(max = 255)
     @Column(name = "external_id")

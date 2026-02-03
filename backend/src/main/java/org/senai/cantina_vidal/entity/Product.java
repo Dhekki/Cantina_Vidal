@@ -1,26 +1,29 @@
 package org.senai.cantina_vidal.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.HashSet;
+import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
 @Table(name = "products")
-public class Product extends UserDateAudit {
+public class Product extends Auditable {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +78,9 @@ public class Product extends UserDateAudit {
     @Column(name = "quantity_committed", nullable = false)
     private Integer quantityCommitted = 0;
 
+    @Formula("(quantity_stock - quantity_held - quantity_committed)")
+    private Integer realStock;
+
     @Column(name = "min_stock_level")
     private Integer minStockLevel;
 
@@ -86,8 +92,20 @@ public class Product extends UserDateAudit {
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
+    @SQLRestriction("deleted = false")
     @JoinTable(name = "product_categories",
             joinColumns = @JoinColumn(name = "product_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
+
+    public Integer getRealStock() {
+        if (realStock != null)
+            return realStock;
+
+        int stock = quantityStock != null ? quantityStock : 0;
+        int held = quantityHeld != null ? quantityHeld : 0;
+        int committed = quantityCommitted != null ? quantityCommitted : 0;
+
+        return stock - held - committed;
+    }
 }

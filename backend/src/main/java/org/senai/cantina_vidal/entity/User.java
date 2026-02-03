@@ -1,30 +1,32 @@
 package org.senai.cantina_vidal.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.Nullable;
 import org.senai.cantina_vidal.enums.Role;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.ColumnDefault;
+
 import java.util.List;
+import java.util.Collection;
+import java.time.LocalDateTime;
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
 @Table(name = "users")
-public class User extends UserDateAudit implements UserDetails {
+public class User extends Auditable implements UserDetails {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
