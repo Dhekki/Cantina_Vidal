@@ -1,22 +1,23 @@
 package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.UserResponseDTO;
+
+import org.senai.cantina_vidal.enums.Role;
+import org.senai.cantina_vidal.entity.User;
+import org.senai.cantina_vidal.entity.RefreshToken;
 import org.senai.cantina_vidal.dto.auth.LoginRequestDTO;
 import org.senai.cantina_vidal.dto.auth.LoginResponseDTO;
+import org.senai.cantina_vidal.repository.UserRepository;
 import org.senai.cantina_vidal.dto.auth.RegisterRequestDTO;
-import org.senai.cantina_vidal.entity.RefreshToken;
-import org.senai.cantina_vidal.entity.User;
-import org.senai.cantina_vidal.enums.Role;
 import org.senai.cantina_vidal.exception.ConflictException;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.repository.RefreshTokenRepository;
-import org.senai.cantina_vidal.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -61,7 +62,7 @@ public class AuthService {
 
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO dto) {
-        User user = userRepository.findByEmail(dto.email())
+        User user = userRepository.findByEmailAndDeletedFalse(dto.email())
                 .orElseThrow(() -> new BadCredentialsException("Email ou senha inválidos"));
 
         if (!passwordEncoder.matches(dto.password(), user.getPasswordHash()))

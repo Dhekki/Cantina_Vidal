@@ -1,16 +1,21 @@
 package org.senai.cantina_vidal.service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.senai.cantina_vidal.entity.User;
-import org.springframework.beans.factory.annotation.Value;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
+import org.senai.cantina_vidal.exception.InvalidTokenException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 public class TokenService {
 
@@ -31,6 +36,7 @@ public class TokenService {
                     .withExpiresAt(Instant.now().plusMillis(expirationTime))
                     .sign(algorithm);
         } catch (JWTCreationException e) {
+            log.error("Erro crítico ao gerar token para o usuário: {}", user.getEmail(), e);
             throw new RuntimeException("Erro ao gerar token JWT", e);
         }
     }
@@ -44,10 +50,9 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (TokenExpiredException e) {
-            System.out.println("Token expirado");
-            return "";
+            throw new InvalidTokenException("Token expirado");
         } catch (JWTVerificationException e) {
-            return "";
+            throw new InvalidTokenException("Token inválido ou malformado");
         }
     }
 }

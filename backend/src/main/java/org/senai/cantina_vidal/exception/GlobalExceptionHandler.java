@@ -67,6 +67,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Arquivo Inválido", e.getMessage(), request);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<StandardError> handleInvalidTokenException(InvalidTokenException e, HttpServletRequest request) {
+        log.warn("Erro de autenticação: {}", e.getMessage());
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Token Inválido", e.getMessage(), request);
+    }
+
     private ResponseEntity<StandardError> buildErrorResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
         return buildErrorResponse(status, error, message, request, null);
     }
