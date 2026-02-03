@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.senai.cantina_vidal.dto.order.OrderItemRequestDTO;
 import org.senai.cantina_vidal.dto.order.OrderRequestDTO;
+import org.senai.cantina_vidal.dto.order.OrderResponseDTO;
 import org.senai.cantina_vidal.entity.Order;
 import org.senai.cantina_vidal.entity.OrderItem;
 import org.senai.cantina_vidal.entity.Product;
@@ -22,9 +23,9 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,6 +34,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
+    private final SseService sseService;
     private final Random random = new Random();
 
     public List<Order> findUserOrders(User user) {
@@ -66,7 +69,7 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com o id: " + id));
 
-        OrderStatus currentStatus = OrderStatus.valueOf(order.getStatus());
+        OrderStatus currentStatus = order.getStatus();
 
         if (currentStatus.isTerminal())
             throw new ConflictException("Pedidos finalizados não podem ser alterados");
@@ -75,64 +78,24 @@ public class OrderService {
            if (currentStatus != OrderStatus.DONE)
                throw new ConflictException("Apenas pedidos prontos podem ser marcados como não retirados");
 
-            order.setStatus(requestStatus.name());
+            order.setStatus(requestStatus);
         } else if (requestStatus == OrderStatus.CANCELLED)
-            order.setStatus(requestStatus.name());
+            order.setStatus(requestStatus);
         else
-            order.setStatus(currentStatus.next().name());
+            order.setStatus(currentStatus.next());
 
         return orderRepository.save(order);
     }
 
     @Transactional
     public Order createOrder(OrderRequestDTO dto, User user) {
-        Order order = Order.builder()
-                .user(user)
-                .dailyId(getDailyId())
-                .pickupCode(getPickupCode())
-                .status(OrderStatus.RECEIVED.name())
-                .total(BigDecimal.ZERO)
-                .build();
+        Order order = initializeOrder(user);
 
-        order = orderRepository.save(order);
+        List<Product> products = fetchAndValidateProducts(dto.items());
 
-        BigDecimal totalOrder = BigDecimal.ZERO;
-        List<OrderItem> items = new ArrayList<>();
+        processOrderItems(order, dto.items(), products);
 
-        for (OrderItemRequestDTO itemDto : dto.items()) {
-            Product product = productRepository.findById(itemDto.productId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o ID: " + itemDto.productId()));
-
-            if (!product.getAvailable())
-                throw new ConflictException("Produto indisponível/inativo: " + product.getName());
-
-            int availableStock = product.getQuantityStock() - product.getQuantityHeld() - product.getQuantityCommitted();
-
-            if (availableStock < itemDto.quantity())
-                throw new ConflictException("Estoque insuficiente para o produto: " + product.getName()
-                        + ". Disponível: " + availableStock);
-
-            product.setQuantityCommitted(product.getQuantityCommitted() + itemDto.quantity());
-            productRepository.save(product);
-
-            OrderItem orderItem = OrderItem.builder()
-                    .order(order)
-                    .product(product)
-                    .quantity(itemDto.quantity())
-                    .frozenUnitPrice(product.getCurrentPrice())
-                    .build();
-
-            orderItemRepository.save(orderItem);
-            items.add(orderItem);
-
-            BigDecimal itemTotal = product.getCurrentPrice().multiply(BigDecimal.valueOf(itemDto.quantity()));
-            totalOrder = totalOrder.add(itemTotal);
-        }
-
-        order.setTotal(totalOrder);
-        order.setItems(items);
-
-        return orderRepository.save(order);
+        return saveAndNotify(order);
     }
 
     private int getDailyId() {
@@ -152,5 +115,92 @@ public class OrderService {
             sb.append(characters.charAt(random.nextInt(characters.length())));
 
         return sb.toString();
+    }
+
+    private Order initializeOrder(User user) {
+        return orderRepository.save(Order.builder()
+                .user(user)
+                .dailyId(getDailyId())
+                .pickupCode(getPickupCode())
+                .status(OrderStatus.RECEIVED)
+                .total(BigDecimal.ZERO)
+                .build());
+    }
+
+    private List<Product> fetchAndValidateProducts(List<OrderItemRequestDTO> itemsDto) {
+        Set<Long> itemsId = itemsDto.stream()
+                .map(OrderItemRequestDTO::productId)
+                .collect(Collectors.toSet());
+
+        List<Product> products = productService.findAllById(itemsId);
+
+        if (products.size() != itemsId.size())
+            throw new ResourceNotFoundException("Um ou mais produtos não foram encontrados no banco de dados.");
+
+        return products;
+    }
+
+    private void validateStockAndAvailability(Product product, Integer quantity) {
+        if (!product.getAvailable())
+            throw new ConflictException("Produto indisponível no momento: " + product.getName());
+
+        int availableStock = product.getQuantityStock() - product.getQuantityHeld() - product.getQuantityCommitted();
+
+        if (availableStock < quantity)
+            throw new ConflictException("Estoque insuficiente para o produto: " + product.getName()
+                    + ". Disponível: " + availableStock);
+    }
+
+    private void updateProductStock(Product product, Integer quantity) {
+        product.setQuantityCommitted(product.getQuantityCommitted() + quantity);
+    }
+
+    private OrderItem buildOrderItem(Order order, Product product, Integer quantity) {
+        return OrderItem.builder()
+                .order(order)
+                .product(product)
+                .quantity(quantity)
+                .frozenUnitPrice(product.getCurrentPrice())
+                .build();
+    }
+
+    private void processOrderItems(Order order, List<OrderItemRequestDTO> itemsDto, List<Product> products) {
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        BigDecimal totalOrder = BigDecimal.ZERO;
+        List<OrderItem> items = new ArrayList<>();
+
+        for (OrderItemRequestDTO itemDto : itemsDto) {
+            Product product = productMap.get(itemDto.productId());
+
+            validateStockAndAvailability(product, itemDto.quantity());
+            updateProductStock(product, itemDto.quantity());
+
+            OrderItem orderItem = buildOrderItem(order, product, itemDto.quantity());
+            items.add(orderItem);
+
+            totalOrder = totalOrder.add(orderItem.getFrozenUnitPrice().multiply(BigDecimal.valueOf(itemDto.quantity())));
+        }
+
+        order.setItems(items);
+        order.setTotal(totalOrder);
+
+        orderItemRepository.saveAll(items);
+        productRepository.saveAll(products);
+    }
+
+    private Order saveAndNotify(Order order) {
+        Order savedOrder = orderRepository.save(order);
+
+        OrderResponseDTO responseDTO = new OrderResponseDTO(savedOrder);
+        sseService.notifyKitchenNewOrder(responseDTO);
+
+        for (OrderItem item : savedOrder.getItems()) {
+            Product p = item.getProduct();
+            sseService.notifyProductUpdate(p.getId(), p.getRealStock(), p.getAvailable());
+        }
+
+        return savedOrder;
     }
 }
