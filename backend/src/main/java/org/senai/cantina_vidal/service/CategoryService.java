@@ -1,29 +1,33 @@
 package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
+
 import org.senai.cantina_vidal.entity.Category;
-import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.mapper.CategoryMapper;
 import org.senai.cantina_vidal.repository.CategoryRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
+import org.senai.cantina_vidal.exception.ResourceNotFoundException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryService {
-    private final CategoryRepository repository;
     private final CategoryMapper mapper;
+    private final SseService sseService;
+    private final CategoryRepository repository;
 
-    public Page<Category> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
+
+    public List<Category> findAll() {
+        return repository.findByDeletedFalse();
     }
 
     public Category findById(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com o id: " + id));
     }
 
@@ -35,14 +39,16 @@ public class CategoryService {
                 .colorHex(dto.colorHex())
                 .build();
 
+        sseService.notifyCatalogRefresh();
         return repository.save(entity);
     }
 
     @Transactional
     public Category update(Long id, CategoryRequestDTO dto) {
-        Category entity = this.findById(id);
+        Category entity = findById(id);
 
         mapper.updateCategoryFromDTO(dto, entity);
+        sseService.notifyCatalogRefresh();
 
         return repository.save(entity);
     }
@@ -53,5 +59,6 @@ public class CategoryService {
             throw new ResourceNotFoundException("Categoria não encontrada com o id: " + id);
 
         repository.deleteById(id);
+        sseService.notifyCatalogRefresh();
     }
 }

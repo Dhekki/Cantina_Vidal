@@ -1,12 +1,12 @@
 package org.senai.cantina_vidal.dto.product;
 
-import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.entity.Product;
+import org.senai.cantina_vidal.entity.Category;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Set;
+import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public record ProductResponseDTO(

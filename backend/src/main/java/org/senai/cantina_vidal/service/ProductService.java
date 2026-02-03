@@ -1,25 +1,26 @@
 package org.senai.cantina_vidal.service;
 
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
-import org.senai.cantina_vidal.dto.product.ProductPatchRequestDTO;
-import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
-import org.senai.cantina_vidal.entity.Category;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import org.senai.cantina_vidal.entity.Product;
-import org.senai.cantina_vidal.exception.ResourceNotFoundException;
+import org.senai.cantina_vidal.entity.Category;
+import org.senai.cantina_vidal.entity.QProduct;
+import org.senai.cantina_vidal.entity.QCategory;
 import org.senai.cantina_vidal.mapper.ProductMapper;
-import org.senai.cantina_vidal.repository.CategoryRepository;
 import org.senai.cantina_vidal.repository.ProductRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.senai.cantina_vidal.repository.CategoryRepository;
+import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
+import org.senai.cantina_vidal.dto.product.ProductPatchRequestDTO;
+import org.senai.cantina_vidal.exception.ResourceNotFoundException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,74 +28,64 @@ import java.util.List;
 public class ProductService {
     private final ProductMapper mapper;
     private final ProductRepository repository;
+    private final JPAQueryFactory queryFactory;
     private final CategoryRepository categoryRepository;
 
-//    public Page<Product> findAll(Pageable pageable, String name, Long categoryId) {
-//        if (name != null && !name.isBlank())
-//            return repository.findByNameContainingIgnoreCaseAndActiveTrue(name, pageable);
-//
-//        if (categoryId != null)
-//            return repository.findByCategoriesIdAndActiveTrue(categoryId, pageable);
-//
-//        return repository.findAll(pageable);
-//    }
+    private static final QProduct qProduct = QProduct.product;
+    private static final QCategory qCategory = QCategory.category;
+    private final SseService sseService;
 
-    public Page<Product> findAllAdmin(Pageable pageable, String name, Long categoryId) {
-        // Specification é uma forma de criar WHERE dinâmico
-        Specification<Product> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            // 1. Filtro de Nome (se vier)
-            if (name != null && !name.isBlank()) {
-                predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("name")),
-                        "%" + name.toLowerCase() + "%")
-                );
-            }
-
-            // 2. Filtro de Categoria (se vier)
-            if (categoryId != null) {
-                // Join com categorias para filtrar
-                predicates.add(criteriaBuilder.equal(
-                        root.join("categories").get("id"),
-                        categoryId)
-                );
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-
-        // Precisa que o Repository estenda JpaSpecificationExecutor<Product>
-        return repository.findAll(spec, pageable);
+    public List<Product> findAllForAdmin() {
+        return queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.categories, qCategory)
+                .fetchJoin()
+                .where(qProduct.deleted.isFalse())
+                .distinct()
+                .fetch();
     }
 
-    public Page<Product> findAllCustomer(Pageable pageable, String name, Long categoryId) {
-        String searchName = null;
-
-        if (name != null && !name.isBlank())
-            searchName = "%" + name.toLowerCase() + "%";
-
-        return repository.findAllAvailableForCostumer(pageable, searchName, categoryId);
+    public List<Product> findAllForCustomer() {
+        return queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.categories, qCategory)
+                .fetchJoin()
+                .where(
+                        qProduct.deleted.isFalse(),
+                        qProduct.available.isTrue(),
+                        qProduct.realStock.gt(0)
+                )
+                .distinct()
+                .fetch();
     }
 
 
-    public Product findById(Long id) {
-        Product product = repository.findById(id)
+    public Product findByIdForAdmin(Long id) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.categories, qCategory)
+                .fetchJoin()
+                .where(
+                        qProduct.id.eq(id),
+                        qProduct.deleted.isFalse()
+                )
+                .fetchOne())
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
-
-        Hibernate.initialize(product.getCategories());
-
-        return product;
     }
 
-    public Product findByIdCustomer(Long id) {
-        Product entity = repository.findById(id)
+    public Product findByIdForCustomer(Long id) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.categories, qCategory)
+                .fetchJoin()
+                .where(
+                        qProduct.id.eq(id),
+                        qProduct.deleted.isFalse(),
+                        qProduct.available.isTrue(),
+                        qProduct.realStock.gt(0)
+                )
+                .fetchOne())
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
-
-        if (!entity.getAvailable() || entity.getQuantityStock() == 0)
-            throw new ResourceNotFoundException("Produto não encontrado com o id: " + id);
-
-        return entity;
     }
 
     @Transactional
@@ -111,7 +102,7 @@ public class ProductService {
                 .build();
 
         if (dto.categoryIds() != null && !dto.categoryIds().isEmpty()) {
-            List<Category> categories = categoryRepository.findAllById(dto.categoryIds());
+            List<Category> categories = categoryRepository.findAllByIdInAndDeletedFalse(dto.categoryIds());
 
             if (categories.size() != dto.categoryIds().size())
                 throw new ResourceNotFoundException("Uma ou mais categorias não existem");
@@ -119,21 +110,21 @@ public class ProductService {
             entity.setCategories(new HashSet<>(categories));
         }
 
-        return repository.save(entity);
+        Product savedEntity = repository.save(entity);
+        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
+        return savedEntity;
     }
 
     @Transactional
     public Product update(Long id, ProductPatchRequestDTO dto) {
-        Product entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
+        Product entity = findByIdForAdmin(id);
 
         mapper.updateProductFromDTO(dto, entity);
+        Product savedEntity = repository.save(entity);
 
-        Product saved = repository.save(entity);
+        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
 
-        Hibernate.initialize(saved.getCategories());
-
-        return saved;
+        return savedEntity;
     }
 
     @Transactional
@@ -141,16 +132,30 @@ public class ProductService {
         if (!repository.existsById(id))
             throw new ResourceNotFoundException("Produto não encontrado com o id: " + id);
 
+        sseService.notifyProductUpdate(id, 0, false);
         repository.deleteById(id);
     }
 
     @Transactional
     public void toggleAvailability(Long id) {
-        Product entity = repository.findById(id)
+        Product entity = repository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
 
         entity.setAvailable(!entity.getAvailable());
+        Product savedEntity = repository.save(entity);
 
-        repository.save(entity);
+        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
+    }
+
+    public List<Product> findAllById(Set<Long> ids) {
+        return queryFactory
+                .selectFrom(qProduct)
+                .leftJoin(qProduct.categories, qCategory)
+                .fetchJoin()
+                .where(
+                        qProduct.id.in(ids),
+                        qProduct.deleted.isFalse())
+                .distinct()
+                .fetch();
     }
 }

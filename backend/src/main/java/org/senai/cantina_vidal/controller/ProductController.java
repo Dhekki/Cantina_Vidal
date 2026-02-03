@@ -1,42 +1,47 @@
 package org.senai.cantina_vidal.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.product.ProductCustomerResponseDTO;
-import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
-import org.senai.cantina_vidal.dto.product.ProductResponseDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.senai.cantina_vidal.entity.Product;
 import org.senai.cantina_vidal.service.ProductService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.senai.cantina_vidal.dto.product.ProductCustomerResponseDTO;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
+@Tag(name = "2. Produtos (Catálogo)", description = "Visualização pública de produtos disponíveis")
 public class ProductController {
     private final ProductService service;
 
+    @Operation(summary = "Cardápio do Dia", description = "Lista produtos disponíveis, com estoque > 0 e não deletados.")
     @GetMapping
-    public ResponseEntity<Page<ProductCustomerResponseDTO>> findAll(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) Long categoryId,
-            @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable
-    ) {
-        Page<Product> productPage = service.findAllCustomer(pageable, name, categoryId);
+    public ResponseEntity<List<ProductCustomerResponseDTO>> findAll() {
+        List<Product> products = service.findAllForCustomer();
 
-        Page<ProductCustomerResponseDTO> dtoPage = productPage.map(ProductCustomerResponseDTO::new);
+        List<ProductCustomerResponseDTO> dtos = products.stream()
+                .map(ProductCustomerResponseDTO::new)
+                .toList();
 
-        return ResponseEntity.ok(dtoPage);
+        return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Detalhes do Produto", description = "Exibe detalhes de um item específico do cardápio.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Produto encontrado"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado ou indisponível")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ProductCustomerResponseDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(new ProductCustomerResponseDTO(service.findByIdCustomer(id)));
+        return ResponseEntity.ok(new ProductCustomerResponseDTO(service.findByIdForCustomer(id)));
     }
 }

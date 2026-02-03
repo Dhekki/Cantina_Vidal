@@ -1,43 +1,63 @@
 package org.senai.cantina_vidal.controller;
 
+import java.net.URI;
+import java.util.List;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
-import org.senai.cantina_vidal.dto.category.CategoryResponseDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.service.CategoryService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
+import org.senai.cantina_vidal.dto.category.CategoryResponseDTO;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/categories")
+@Tag(name = "7. Categorias", description = "Catálogo de categorias de produtos")
 public class CategoryController {
     private final CategoryService service;
 
+    @Operation(summary = "Listar Categorias", description = "Endpoint público. Lista apenas categorias ativas.")
     @GetMapping
-    public ResponseEntity<Page<CategoryResponseDTO>> findAll(
-            @PageableDefault(size = 10, page = 0, sort = "name") Pageable pageable) {
+    public ResponseEntity<List<CategoryResponseDTO>> findAll() {
 
-        Page<Category> entitiesPage = service.findAll(pageable);
+        List<Category> categories = service.findAll();
 
-        Page<CategoryResponseDTO> dtoPage = entitiesPage.map(CategoryResponseDTO::new);
+        List<CategoryResponseDTO> dtos = categories.stream()
+                .map(CategoryResponseDTO::new)
+                .toList();
 
-        return ResponseEntity.ok(dtoPage);
+        return ResponseEntity.ok(dtos);
     }
 
+    @Operation(summary = "Buscar por ID", description = "Endpoint público.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categoria encontrada"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(new CategoryResponseDTO(service.findById(id)));
     }
 
+    @Operation(summary = "Criar Categoria", description = "Requer permissão de ADMIN ou EMPLOYEE.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Categoria criada"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> create(@RequestBody @Valid CategoryRequestDTO dto) {
         Category savedCategory = service.create(dto);
@@ -50,6 +70,13 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(new CategoryResponseDTO(savedCategory));
     }
 
+    @Operation(summary = "Atualizar Categoria", description = "Requer permissão de ADMIN ou EMPLOYEE.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Categoria atualizada"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @PatchMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> update(
             @PathVariable Long id,
@@ -57,6 +84,12 @@ public class CategoryController {
         return ResponseEntity.ok(new CategoryResponseDTO(service.update(id, dto)));
     }
 
+    @Operation(summary = "Deletar Categoria", description = "Soft Delete. Requer permissão de ADMIN ou EMPLOYEE.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Categoria deletada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

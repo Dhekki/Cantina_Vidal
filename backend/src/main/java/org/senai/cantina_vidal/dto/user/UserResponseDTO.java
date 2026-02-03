@@ -1,4 +1,4 @@
-package org.senai.cantina_vidal.dto;
+package org.senai.cantina_vidal.dto.user;
 
 import org.senai.cantina_vidal.entity.User;
 

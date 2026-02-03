@@ -28,7 +28,6 @@ public class FileStorageService {
         try {
             Files.createDirectories(fileStorageLocation);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new FileStorageException("Não foi possível criar o diretório de upload em: " + uploadDir, e);
         }
     }
@@ -41,22 +40,22 @@ public class FileStorageService {
             String detectedType = tika.detect(file.getInputStream());
 
             if (!allowedMimeTypes.contains(detectedType))
-                throw new InvalidFileException("Arquivo inválido/malicioso. O tipo real detectado foi: " + detectedType);
+                throw new InvalidFileException("Tipo de arquivo não permitido. Detectado: " + detectedType);
         } catch (IOException e) {
-            throw new FileStorageException("Erro ao verificar integridade do arquivo", e);
+            throw new FileStorageException("Erro ao ler stream do arquivo para verificação de segurança.", e);
         }
 
         String originalFilename = file.getOriginalFilename();
 
         if (originalFilename == null || originalFilename.isBlank())
-            throw new InvalidFileException("O arquivo enviado não possui nome ou o nome está vazio");
+            throw new InvalidFileException("O arquivo enviado não possui nome.");
 
-        originalFilename = StringUtils.cleanPath(originalFilename);
+        String cleanFilename = StringUtils.cleanPath(originalFilename);
 
-        if (originalFilename.contains(".."))
-            throw new InvalidFileException("Nome de arquivo inválido (contém caminho relativo): " + originalFilename);
+        if (cleanFilename.contains(".."))
+            throw new InvalidFileException("Nome de arquivo inválido (contém caminho relativo): " + cleanFilename);
 
-        String extension = getFileExtension(originalFilename);
+        String extension = getFileExtension(cleanFilename);
         String newFilename = UUID.randomUUID() + "." + extension;
 
         try {

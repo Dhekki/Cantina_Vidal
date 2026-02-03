@@ -1,16 +1,14 @@
 package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
-import org.senai.cantina_vidal.dto.user.UserPatchRequestDTO;
+
 import org.senai.cantina_vidal.entity.User;
-import org.senai.cantina_vidal.enums.Role;
-import org.senai.cantina_vidal.exception.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
 import org.senai.cantina_vidal.mapper.UserMapper;
 import org.senai.cantina_vidal.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import org.senai.cantina_vidal.dto.user.UserPatchRequestDTO;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +18,7 @@ public class UserService {
     private final UserMapper mapper;
 
     public User findById(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o id: " + id));
     }
 
@@ -36,7 +34,7 @@ public class UserService {
     @Transactional
     public void delete(Long id) {
         if (!repository.existsById(id))
-            throw new ResourceNotFoundException("Usuário não encontrado com o id: + id");
+            throw new ResourceNotFoundException("Usuário não encontrado com o id:" + id);
 
         repository.deleteById(id);
     }
