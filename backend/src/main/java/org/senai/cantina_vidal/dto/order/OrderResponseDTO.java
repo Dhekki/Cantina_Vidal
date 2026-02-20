@@ -24,7 +24,7 @@ public record OrderResponseDTO(
         this(
                 entity.getId(),
                 entity.getDailyId(),
-                entity.getStatus(),
+                entity.getStatus().name(),
                 entity.getTotal(),
                 entity.getCreatedAt(),
                 entity.getItems() != null

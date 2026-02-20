@@ -25,7 +25,7 @@ public record OrderCustomerResponseDTO(
                 entity.getId(),
                 entity.getDailyId(),
                 entity.getPickupCode(),
-                entity.getStatus(),
+                entity.getStatus().name(),
                 entity.getTotal(),
                 entity.getCreatedAt(),
                 entity.getItems() != null
