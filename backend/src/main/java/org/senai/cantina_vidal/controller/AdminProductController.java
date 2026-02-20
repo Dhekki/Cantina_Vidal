@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/admin/products")
 @Tag(name = "2. Produtos (Admin)", description = "Gestão completa de produtos (CRUD)")
-@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "cookieAuth")
 public class AdminProductController {
     private final ProductService service;
 

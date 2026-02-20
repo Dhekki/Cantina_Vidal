@@ -22,7 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Tag(name = "8. Usuários", description = "Gestão de perfil e consulta de usuários")
-@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "cookieAuth")
 public class UserController {
     private final UserService service;
 

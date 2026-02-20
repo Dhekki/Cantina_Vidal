@@ -28,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/orders")
 @Tag(name = "3. Pedidos (Cliente)", description = "Área do cliente para realizar e acompanhar pedidos")
-@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "cookieAuth")
 public class OrderController {
     private final OrderService service;
 

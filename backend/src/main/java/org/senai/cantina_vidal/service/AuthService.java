@@ -2,11 +2,11 @@ package org.senai.cantina_vidal.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.senai.cantina_vidal.dto.auth.LoginProcessDTO;
 import org.senai.cantina_vidal.enums.Role;
 import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.entity.RefreshToken;
 import org.senai.cantina_vidal.dto.auth.LoginRequestDTO;
-import org.senai.cantina_vidal.dto.auth.LoginResponseDTO;
 import org.senai.cantina_vidal.repository.UserRepository;
 import org.senai.cantina_vidal.dto.auth.RegisterRequestDTO;
 import org.senai.cantina_vidal.exception.ConflictException;
@@ -61,7 +61,7 @@ public class AuthService {
     }
 
     @Transactional
-    public LoginResponseDTO login(LoginRequestDTO dto) {
+    public LoginProcessDTO login(LoginRequestDTO dto) {
         User user = userRepository.findByEmailAndDeletedFalse(dto.email())
                 .orElseThrow(() -> new BadCredentialsException("Email ou senha inválidos"));
 
@@ -75,18 +75,16 @@ public class AuthService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(refreshTokenString)
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenDuration / 1000)) // 30 days
+                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenDuration / 1000))
                 .build();
-
-        refreshTokenRepository.deleteByUserId(user.getId()); // Validate need afterwards
 
         refreshTokenRepository.save(refreshToken);
 
-        return new LoginResponseDTO(accessToken, refreshTokenString, user.getName(), user.getRole().name());
+        return new LoginProcessDTO(accessToken, refreshTokenString, user.getName(), user.getRole().name());
     }
 
-    public LoginResponseDTO refreshToken(String requestRefreshToken) {
-        RefreshToken entity = refreshTokenRepository.findByToken(requestRefreshToken)
+    public LoginProcessDTO refreshToken(String refreshToken) {
+        RefreshToken entity = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new ResourceNotFoundException("Refresh Token não encontrado"));
 
         if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
@@ -96,6 +94,10 @@ public class AuthService {
 
         String newAccessToken = tokenService.generateAccessToken(entity.getUser());
 
-        return new LoginResponseDTO(newAccessToken, requestRefreshToken, entity.getUser().getName(), entity.getUser().getRole().name());
+        return new LoginProcessDTO(newAccessToken, refreshToken, entity.getUser().getName(), entity.getUser().getRole().name());
+    }
+
+    public void revokeRefreshToken(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
 }

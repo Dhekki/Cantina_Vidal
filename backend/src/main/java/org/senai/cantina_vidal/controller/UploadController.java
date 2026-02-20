@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/uploads")
 @Tag(name = "5. Uploads", description = "Upload de imagens para produtos e categorias")
-@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "cookieAuth")
 public class UploadController {
     private final FileStorageService service;
 

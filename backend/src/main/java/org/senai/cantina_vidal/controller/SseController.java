@@ -30,7 +30,7 @@ public class SseController {
     }
 
     @Operation(summary = "Inscrever-se na Cozinha (Restrito)", description = "Recebe novos pedidos. Requer role ADMIN ou EMPLOYEE.")
-    @SecurityRequirement(name = "bearer-key")
+    @SecurityRequirement(name = "cookieAuth")
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @GetMapping(path = "/subscribe/kitchen", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribeKitchen() {

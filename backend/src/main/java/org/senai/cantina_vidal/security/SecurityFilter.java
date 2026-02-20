@@ -1,5 +1,6 @@
 package org.senai.cantina_vidal.security;
 
+import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
@@ -17,8 +18,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -52,9 +55,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String recoverToken(HttpServletRequest request) {
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
-
-        return authHeader.replace("Bearer ", "").trim();
+        Cookie cookie = WebUtils.getCookie(request, "accessToken");
+        return cookie != null ? cookie.getValue() : null;
     }
 }
