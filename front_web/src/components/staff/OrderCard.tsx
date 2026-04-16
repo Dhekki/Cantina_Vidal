@@ -18,6 +18,7 @@ const statusMessages: Record<Order["status"], string> = {
   ready:     "Feito",
   delivered: "Entregue",
   canceled:  "Cancelado",
+  notPaid:   "Não pago",
 };
 
 export const OrderCard: React.FC<OrderCardProps> = ({

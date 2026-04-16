@@ -24,7 +24,7 @@ const StaffLogin = () => {
       const response = await authService.login({ email, password });
       
       // Salva o token e marca como autenticado
-      localStorage.setItem('token', response.accessToken);      
+      // localStorage.setItem('token', response.accessToken);      
       localStorage.setItem('staffAuth', 'true');
       
       toast.success('Login realizado com sucesso!', {
@@ -94,7 +94,7 @@ const StaffLogin = () => {
                 id="admin-email"
                 type="text"
                 value={email}
-                placeholder="Nome de usuário"
+                label="Nome de usuário"
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -112,7 +112,7 @@ const StaffLogin = () => {
                 id="admin-password"
                 type="text"
                 value={password}
-                placeholder="Senha"
+                label="Senha"
                 onChange={(e) => setPassword(e.target.value)}
                 maxLength={8}
                 required

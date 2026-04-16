@@ -4,7 +4,7 @@
 const API_BASE_URL = import.meta.env.DEV ? '/v1' : import.meta.env.VITE_API_URL;
 
 export interface LoginCredentials {
-    email: string;
+    email:    string;
     password: string;
 }
 
@@ -38,7 +38,7 @@ class ApiError extends Error {
 // Função auxiliar para fazer requisições com fetch
 async function fetchWithAuth<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options:  RequestInit = {}
 ): Promise<T> {
     // Recupera o token do localStorage
     const token = localStorage.getItem('token');
@@ -50,9 +50,8 @@ async function fetchWithAuth<T>(
     };
     
     // Adiciona o token de autenticação se existir
-    if (token) {
+    if(token) 
         headers['Authorization'] = `Bearer ${token}`;
-    }
     
     // Faz a requisição
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -61,7 +60,7 @@ async function fetchWithAuth<T>(
     });
     
     // Verifica se a resposta foi bem-sucedida
-    if (!response.ok) {
+    if(!response.ok) {
         let errorData;
         try {
             errorData = await response.json();
@@ -85,7 +84,7 @@ export const authService = {
         const response = await fetchWithAuth<AuthResponse>('/auth/login', {
             method: 'POST',
             body: JSON.stringify({
-                email: credentials.email,
+                email:    credentials.email,
                 password: credentials.password,
             }),
         });

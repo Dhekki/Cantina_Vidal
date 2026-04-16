@@ -14,21 +14,24 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    config: RequestConfig = {}
+    config:   RequestConfig = {}
   ): Promise<T> {
     const { params, ...fetchConfig } = config;
     
     // Constrói URL com query params se existirem
     let url = `${this.baseURL}${endpoint}`;
-    if (params) {
+    
+    if(params) {
       const searchParams = new URLSearchParams();
+
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if(value !== undefined && value !== null)
           searchParams.append(key, String(value));
-        }
       });
+
       const queryString = searchParams.toString();
-      if (queryString) url += `?${queryString}`;
+      
+      if(queryString) url += `?${queryString}`;
     }
 
     // Adiciona token de autenticação automaticamente
@@ -38,9 +41,8 @@ class ApiClient {
       ...fetchConfig.headers,
     };
     
-    if (token) {
+    if(token)
       headers['Authorization'] = `Bearer ${token}`;
-    }
 
     try {
       const response = await fetch(url, {
@@ -49,20 +51,22 @@ class ApiClient {
       });
 
       // Trata erro 401 (Unauthorized) - redireciona para login
-      if (response.status === 401) {
+      if(response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('staffAuth');
+
         window.location.href = '/staff/login';
         throw new Error('Unauthorized');
       }
 
       // Trata outros erros HTTP
-      if (!response.ok) {
+      if(!response.ok) {
         let errorMessage = response.statusText;
         
         // Tenta pegar mensagem de erro do corpo da resposta
         const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
+
+        if(contentType && contentType.includes('application/json')) {
           try {
             const errorData = await response.json();
             errorMessage = errorData.message || errorData.detail || errorData.error || errorMessage;
@@ -73,7 +77,7 @@ class ApiClient {
           // Se não for JSON, tenta pegar texto
           try {
             const errorText = await response.text();
-            if (errorText) errorMessage = errorText;
+            if(errorText) errorMessage = errorText;
           } catch {
             // Usa statusText se falhar
           }
@@ -84,16 +88,15 @@ class ApiClient {
 
       // Verifica se há conteúdo para retornar
       const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+
+      if(contentType && contentType.includes('application/json')) 
         return await response.json();
-      }
       
       // Se não for JSON, retorna objeto vazio para DELETE sem corpo
       return {} as T;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
+    } catch(error) {
+      if(error instanceof Error) throw error;
+      
       throw new Error('Network error');
     }
   }

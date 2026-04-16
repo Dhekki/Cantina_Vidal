@@ -1,31 +1,31 @@
 import api from './api';
 
 export interface SalesReport {
-  total_vendas: number;
-  total_pedidos: number;
-  ticket_medio: number;
+  total_vendas:    number;
+  total_pedidos:   number;
+  ticket_medio:    number;
   vendas_por_dia?: Array<{
-    data: string;
-    total: number;
+    data:       string;
+    total:      number;
     quantidade: number;
   }>;
 }
 
 export interface ProductReport {
-  produto_id: number;
-  nome: string;
+  produto_id:         number;
+  nome:               string;
   quantidade_vendida: number;
-  receita_total: number;
+  receita_total:      number;
 }
 
 export interface DashboardData {
-  vendas_hoje: number;
-  pedidos_pendentes: number;
-  pedidos_em_preparo: number;
+  vendas_hoje:            number;
+  pedidos_pendentes:      number;
+  pedidos_em_preparo:     number;
   produtos_baixo_estoque: number;
-  vendas_semana: number;
+  vendas_semana:          number;
   top_produtos: Array<{
-    nome: string;
+    nome:       string;
     quantidade: number;
   }>;
 }

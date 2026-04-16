@@ -43,34 +43,34 @@ const ProductsManagementExample = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<Partial<Product>>({
-    nome: '',
-    descricao: '',
-    preco: 0,
-    estoque: 0,
-    categoria: '',
-    ativo: true,
+    name: '',
+    price: 0,
+    inStock: 0,
+    category: [],
+    description: '',
+    available: true,
   });
 
   const handleOpenDialog = (product?: Product) => {
     if (product) {
       setEditingProduct(product);
       setFormData({
-        nome: product.nome,
-        descricao: product.descricao,
-        preco: product.preco,
-        estoque: product.estoque,
-        categoria: product.categoria,
-        ativo: product.ativo,
+        name:        product.name,
+        price:       product.price,
+        inStock:     product.inStock,
+        category:    product.category,
+        available:   product.available,
+        description: product.description,
       });
     } else {
       setEditingProduct(null);
       setFormData({
-        nome: '',
-        descricao: '',
-        preco: 0,
-        estoque: 0,
-        categoria: '',
-        ativo: true,
+        name: '',
+        price: 0,
+        inStock: 0,
+        category: [],
+        available: true,
+        description: '',
       });
     }
     setIsDialogOpen(true);
@@ -80,12 +80,12 @@ const ProductsManagementExample = () => {
     setIsDialogOpen(false);
     setEditingProduct(null);
     setFormData({
-      nome: '',
-      descricao: '',
-      preco: 0,
-      estoque: 0,
-      categoria: '',
-      ativo: true,
+      name: '',
+      price: 0,
+      inStock: 0,
+      category: [],
+      available: true,
+      description: '',
     });
   };
 
@@ -113,7 +113,7 @@ const ProductsManagementExample = () => {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
+    if(confirm('Tem certeza que deseja excluir este produto?')) {
       deleteProduct(id);
     }
   };
@@ -146,24 +146,24 @@ const ProductsManagementExample = () => {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="font-medium">{product.nome}</TableCell>
-              <TableCell>{product.categoria}</TableCell>
-              <TableCell>R$ {product.preco.toFixed(2)}</TableCell>
-              <TableCell>{product.estoque}</TableCell>
+              <TableCell className="font-medium">{product.name}</TableCell>
+              <TableCell>{product.category}</TableCell>
+              <TableCell>R$ {product.price.toFixed(2)}</TableCell>
+              <TableCell>{product.inStock}</TableCell>
               <TableCell>
                 <span
                   className={`px-2 py-1 rounded text-xs ${
-                    product.ativo
+                    product.available
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {product.ativo ? 'Ativo' : 'Inativo'}
+                  {product.available ? 'Ativo' : 'Inativo'}
                 </span>
               </TableCell>
               <TableCell className="text-right">
                 <Button
-                  variant="ghost"
+                  variant="default"
                   size="sm"
                   onClick={() => handleOpenDialog(product)}
                   disabled={isUpdating}
@@ -171,7 +171,7 @@ const ProductsManagementExample = () => {
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="default"
                   size="sm"
                   onClick={() => handleDelete(product.id!)}
                   disabled={isDeleting}
@@ -194,52 +194,54 @@ const ProductsManagementExample = () => {
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="nome">Nome</Label>
+                <Label htmlFor="name">Nome</Label>
                 <Input
-                  id="nome"
-                  value={formData.nome}
-                  onChange={(e) =>
-                    setFormData({ ...formData, nome: e.target.value })
-                  }
+                  id="name"
+                  label=""
+                  value={formData.name}
+                  onChange={ (e) => setFormData({ ...formData, name: e.target.value }) }
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="descricao">Descrição</Label>
+                <Label htmlFor="description">Descrição</Label>
                 <Input
-                  id="descricao"
-                  value={formData.descricao || ''}
+                  label=""
+                  id="description"
+                  value={formData.description || ''}
                   onChange={(e) =>
-                    setFormData({ ...formData, descricao: e.target.value })
+                    setFormData({ ...formData, description: e.target.value })
                   }
                 />
               </div>
 
               <div>
-                <Label htmlFor="categoria">Categoria</Label>
+                <Label htmlFor="category">Categoria</Label>
                 <Input
-                  id="categoria"
-                  value={formData.categoria}
+                  label=""
+                  id="category"
+                  value={formData.category}
                   onChange={(e) =>
-                    setFormData({ ...formData, categoria: e.target.value })
+                    setFormData({ ...formData, category: [e.target.value] })
                   }
                   required
-                />
+                  />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="preco">Preço</Label>
+                  <Label htmlFor="price">Preço</Label>
                   <Input
-                    id="preco"
+                    label=""
+                    id="price"
                     type="number"
                     step="0.01"
-                    value={formData.preco}
+                    value={formData.price}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        preco: parseFloat(e.target.value),
+                        price: parseFloat(e.target.value),
                       })
                     }
                     required
@@ -247,15 +249,16 @@ const ProductsManagementExample = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="estoque">Estoque</Label>
+                  <Label htmlFor="inStock">Estoque</Label>
                   <Input
-                    id="estoque"
+                    label=""
+                    id="inStock"
                     type="number"
-                    value={formData.estoque}
+                    value={formData.inStock}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        estoque: parseInt(e.target.value),
+                        inStock: parseInt(e.target.value),
                       })
                     }
                     required

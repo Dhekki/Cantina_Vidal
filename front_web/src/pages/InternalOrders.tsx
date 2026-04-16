@@ -5,8 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Minus, ShoppingCart, Trash2, Receipt, Search } from 'lucide-react';
 import {
   Dialog,
   DialogTitle,
@@ -18,6 +18,7 @@ import {
 import { toast } from 'sonner';
 import { MenuItem } from '@/types/order';
 import { mockMenuItems, categories } from '@/lib/mockData';
+
 import SearchInput from '@/components/ui/search-input';
 
 interface CartItem extends MenuItem {
@@ -25,13 +26,13 @@ interface CartItem extends MenuItem {
 }
 
 const InternalOrders = () => {
-  const [products] = useState<MenuItem[]>(mockMenuItems.filter(p => p.available));
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isCategoriesActive, setIsCategoriesActive]   = useState(false)
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [products] = useState<MenuItem[]>(mockMenuItems.filter(p => p.available));
 
 const filteredProducts = useMemo(() => {
   const query = searchQuery.trim().toLowerCase();

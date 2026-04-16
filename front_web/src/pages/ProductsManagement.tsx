@@ -306,7 +306,7 @@ const ProductsManagement = () => {
         name:                formData.name,
         description:         formData.description,
         price:               parseFloat(formData.price),
-        category:            formData.category[0],
+        category:            formData.category,
         image:               formData.image,
         available:           true,
         availableToPickUp:   parseInt(formData.stock),

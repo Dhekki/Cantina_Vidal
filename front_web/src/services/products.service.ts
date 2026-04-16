@@ -1,19 +1,19 @@
 import api from './api';
 
 export interface Product {
-    id?: number;
-    name: string;
-    description?: string;
-    price: number;
-    category: string;
-    image?: string;
-    available?: boolean;
-    availableToPickUp: number;
-    inStock: number;
-    minimumStock: number;
+    id?:                 number;
+    name:                string;
+    description?:        string;
+    price:               number;
+    category:            string[];
+    image?:              string;
+    available?:          boolean;
+    availableToPickUp:   number;
+    inStock:             number;
+    minimumStock:        number;
     replacementInterval: number;
-    expirationData?: string;
-    specifications?: string;
+    expirationData?:     string;
+    specifications?:     string;
 }
 
 export interface UpdateStockRequest {
@@ -24,7 +24,7 @@ export const productsService = {
     // Busca todos os produtos
     async getAll(): Promise<Product[]> {
         return await api.get<Product[]>('/produtos/');
-    },
+    },   
 
     // Busca um produto por ID
     async getById(id: number): Promise<Product> {

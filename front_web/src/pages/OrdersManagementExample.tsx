@@ -139,7 +139,7 @@ const OrdersManagementExample = () => {
                 {order.status !== 'entregue' && order.status !== 'cancelado' && (
                   <Button
                     size="sm"
-                    variant="destructive"
+                    variant="dangerOutline"
                     onClick={() => handleCancelOrder(order.id)}
                     disabled={isUpdating}
                   >
