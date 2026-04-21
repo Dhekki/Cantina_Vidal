@@ -2,6 +2,7 @@ package org.senai.cantina_vidal.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class  GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardError> handleValidationErrors(MethodArgumentNotValidException e, HttpServletRequest request) {
         Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
@@ -71,6 +72,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<StandardError> handleInvalidTokenException(InvalidTokenException e, HttpServletRequest request) {
         log.warn("Erro de autenticação: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Token Inválido", e.getMessage(), request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
+        log.warn("Erro de violação de dados: {}", e.getMostSpecificCause().getMessage());
+
+        String safeMessage = "Não foi possível concluir a operação devido a um conflito de dados (ex: registro duplicado ou em uso).";
+
+        return buildErrorResponse(HttpStatus.CONFLICT, "Conflito de Dados", safeMessage, request);
     }
 
     private ResponseEntity<StandardError> buildErrorResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
