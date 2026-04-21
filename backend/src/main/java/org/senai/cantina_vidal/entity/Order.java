@@ -1,8 +1,7 @@
 package org.senai.cantina_vidal.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "orders")
 public class Order extends Auditable {
@@ -26,17 +25,15 @@ public class Order extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Size(max = 50)
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     private OrderStatus status;
 
-    @NotNull
+    @Setter
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    @Size(max = 3)
     @Column(name = "pickup_code", length = 3)
     private String pickupCode;
 
@@ -46,13 +43,36 @@ public class Order extends Auditable {
     @Column(name = "scheduled_pickup_time")
     private LocalDateTime scheduledPickupTime;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
+
+    public void addItem(Product product, Integer quantity) {
+        OrderItem item = OrderItem.builder()
+                .order(this)
+                .product(product)
+                .quantity(quantity)
+                .frozenUnitPrice(product.getCurrentPrice())
+                .build();
+
+        this.items.add(item);
+    }
+
+    public void calculateTotal() {
+        this.total = this.items.stream()
+                .map(item -> item.getFrozenUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void cancel() {
+        if (this.status.isTerminal())
+            throw new IllegalStateException("Pedidos finalizados não podem ser cancelados");
+
+        this.status = OrderStatus.CANCELLED;
+    }
 }

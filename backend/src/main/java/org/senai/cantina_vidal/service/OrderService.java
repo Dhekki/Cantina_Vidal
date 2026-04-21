@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
     private final SseService sseService;
@@ -169,7 +168,6 @@ public class OrderService {
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 
         BigDecimal totalOrder = BigDecimal.ZERO;
-        List<OrderItem> items = new ArrayList<>();
 
         for (OrderItemRequestDTO itemDto : itemsDto) {
             Product product = productMap.get(itemDto.productId());
@@ -177,16 +175,11 @@ public class OrderService {
             validateStockAndAvailability(product, itemDto.quantity());
             updateProductStock(product, itemDto.quantity());
 
-            OrderItem orderItem = buildOrderItem(order, product, itemDto.quantity());
-            items.add(orderItem);
-
-            totalOrder = totalOrder.add(orderItem.getFrozenUnitPrice().multiply(BigDecimal.valueOf(itemDto.quantity())));
+            order.addItem(product, itemDto.quantity());
         }
 
-        order.setItems(items);
-        order.setTotal(totalOrder);
+        order.calculateTotal();
 
-        orderItemRepository.saveAll(items);
         productRepository.saveAll(products);
     }
 
