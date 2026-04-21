@@ -60,19 +60,19 @@ public class Order extends Auditable {
                 .frozenUnitPrice(product.getCurrentPrice())
                 .build();
 
-        this.items.add(item);
+        items.add(item);
     }
 
     public void calculateTotal() {
-        this.total = this.items.stream()
+        total = items.stream()
                 .map(item -> item.getFrozenUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public void cancel() {
-        if (this.status.isTerminal())
+        if (status.isTerminal())
             throw new IllegalStateException("Pedidos finalizados não podem ser cancelados");
 
-        this.status = OrderStatus.CANCELLED;
+        status = OrderStatus.CANCELLED;
     }
 }

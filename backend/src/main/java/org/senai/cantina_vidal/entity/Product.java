@@ -99,16 +99,20 @@ public class Product extends Auditable {
     }
 
     public void commitStock(Integer quantity) {
-        if (!this.available)
-            throw new ConflictException("Produto indiponível no momento: " + this.name);
+        if (!available)
+            throw new ConflictException("Produto indiponível no momento: " + name);
 
         if (quantity == null || quantity <= 0)
             throw new IllegalArgumentException("A quantidade deve ser maior que zero.");
 
-        if (this.getRealStock() < quantity)
-            throw new IllegalStateException("Estoque insuficiente para o produto: " + this.name
-                    + ". Estoque disponível: " + this.getRealStock());
+        if (getRealStock() < quantity)
+            throw new IllegalStateException("Estoque insuficiente para o produto: " + name
+                    + ". Estoque disponível: " + getRealStock());
 
-        this.quantityCommitted += quantity;
+        quantityCommitted += quantity;
+    }
+
+    public void toggleAvailability() {
+        available = !available;
     }
 }

@@ -15,13 +15,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @Table(name = "refresh_tokens")
 @NoArgsConstructor @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class RefreshToken {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

@@ -90,16 +90,7 @@ public class ProductService {
 
     @Transactional
     public Product create(ProductRequestDTO dto) {
-        Product entity = Product.builder()
-                .name(dto.name())
-                .imageUrl(dto.imageUrl())
-                .currentPrice(dto.price())
-                .description(dto.description())
-                .quantityStock(dto.quantityStock())
-                .minStockLevel(dto.minStockLevel())
-                .replenishmentDays(dto.replenishmentDays())
-                .expirationDate(dto.expirationDate())
-                .build();
+        Set<Category> productCategories = new HashSet<>();
 
         if (dto.categoryIds() != null && !dto.categoryIds().isEmpty()) {
             List<Category> categories = categoryRepository.findAllByIdInAndDeletedFalse(dto.categoryIds());
@@ -107,8 +98,20 @@ public class ProductService {
             if (categories.size() != dto.categoryIds().size())
                 throw new ResourceNotFoundException("Uma ou mais categorias não existem");
 
-            entity.setCategories(new HashSet<>(categories));
+            productCategories = new HashSet<>(categories);
         }
+
+        Product entity = Product.builder()
+                .name(dto.name())
+                .imageUrl(dto.imageUrl())
+                .currentPrice(dto.price())
+                .description(dto.description())
+                .categories(productCategories)
+                .quantityStock(dto.quantityStock())
+                .minStockLevel(dto.minStockLevel())
+                .expirationDate(dto.expirationDate())
+                .replenishmentDays(dto.replenishmentDays())
+                .build();
 
         Product savedEntity = repository.save(entity);
         sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
@@ -141,7 +144,7 @@ public class ProductService {
         Product entity = repository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com o id: " + id));
 
-        entity.setAvailable(!entity.getAvailable());
+        entity.toggleAvailability();
         Product savedEntity = repository.save(entity);
 
         sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
