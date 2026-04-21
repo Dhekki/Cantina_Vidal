@@ -39,23 +39,20 @@ public class AuthService {
 
     @Transactional
     public User register(RegisterRequestDTO dto) {
-        if (userRepository.existsByEmail(dto.email()))
-                throw new ConflictException("Email já cadastrado");
-
-        User user = User.builder()
-                .name(dto.name())
-                .email(dto.email())
-                .role(Role.CLIENT)
-                .build();
-
-        user.setPasswordHash(passwordEncoder.encode(dto.password()));
-
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        LocalDateTime expirationTime = LocalDateTime.now().plusSeconds(900); // 15 minutes
         String verificationCode = String.valueOf(secureRandom.nextInt(900000) + 100000); // Between 100.000 and 999.999
 
 //        emailService.composeEmail(verificationCode, dto.email());
 
-        user.setVerificationCode(verificationCode);
-        user.setVerificationExpiresAt(LocalDateTime.now().plusSeconds(900)); // 15 minutes
+        User user = User.builder()
+                .name(dto.name())
+                .role(Role.CLIENT)
+                .email(dto.email())
+                .passwordHash(encodedPassword)
+                .verificationCode(verificationCode)
+                .verificationExpiresAt(expirationTime)
+                .build();
 
         return userRepository.save(user);
     }
