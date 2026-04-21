@@ -68,20 +68,7 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com o id: " + id));
 
-        OrderStatus currentStatus = order.getStatus();
-
-        if (currentStatus.isTerminal())
-            throw new ConflictException("Pedidos finalizados não podem ser alterados");
-
-        if (requestStatus == OrderStatus.NOT_DELIVERED) {
-           if (currentStatus != OrderStatus.DONE)
-               throw new ConflictException("Apenas pedidos prontos podem ser marcados como não retirados");
-
-            order.setStatus(requestStatus);
-        } else if (requestStatus == OrderStatus.CANCELLED)
-            order.setStatus(requestStatus);
-        else
-            order.setStatus(currentStatus.next());
+        order.updateStatus(requestStatus);
 
         return orderRepository.save(order);
     }

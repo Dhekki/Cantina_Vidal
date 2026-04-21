@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.senai.cantina_vidal.enums.OrderStatus;
+import org.senai.cantina_vidal.exception.ConflictException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,17 +21,14 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends Auditable {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     private OrderStatus status;
 
-    @Setter
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
@@ -74,5 +72,20 @@ public class Order extends Auditable {
             throw new IllegalStateException("Pedidos finalizados não podem ser cancelados");
 
         status = OrderStatus.CANCELLED;
+    }
+
+    public void updateStatus(OrderStatus requestStatus) {
+        if (status.isTerminal())
+            throw new ConflictException("Pedidos finalizados não podem ser alterados");
+
+        if (requestStatus == OrderStatus.NOT_DELIVERED) {
+            if (status != OrderStatus.DONE)
+                throw new ConflictException("Apenas pedidos prontos podem ser marcados como não retirados");
+
+            status = requestStatus;
+        } else if (requestStatus == OrderStatus.CANCELLED)
+            this.cancel();
+        else
+            status = status.next();
     }
 }
