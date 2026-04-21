@@ -11,12 +11,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "payments")
 public class Payment extends Auditable {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

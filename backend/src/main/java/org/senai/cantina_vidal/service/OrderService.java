@@ -139,21 +139,6 @@ public class OrderService {
         return products;
     }
 
-    private void validateStockAndAvailability(Product product, Integer quantity) {
-        if (!product.getAvailable())
-            throw new ConflictException("Produto indisponível no momento: " + product.getName());
-
-        int availableStock = product.getQuantityStock() - product.getQuantityHeld() - product.getQuantityCommitted();
-
-        if (availableStock < quantity)
-            throw new ConflictException("Estoque insuficiente para o produto: " + product.getName()
-                    + ". Disponível: " + availableStock);
-    }
-
-    private void updateProductStock(Product product, Integer quantity) {
-        product.setQuantityCommitted(product.getQuantityCommitted() + quantity);
-    }
-
     private OrderItem buildOrderItem(Order order, Product product, Integer quantity) {
         return OrderItem.builder()
                 .order(order)
@@ -167,13 +152,10 @@ public class OrderService {
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        BigDecimal totalOrder = BigDecimal.ZERO;
-
         for (OrderItemRequestDTO itemDto : itemsDto) {
             Product product = productMap.get(itemDto.productId());
 
-            validateStockAndAvailability(product, itemDto.quantity());
-            updateProductStock(product, itemDto.quantity());
+            product.commitStock(itemDto.quantity());
 
             order.addItem(product, itemDto.quantity());
         }

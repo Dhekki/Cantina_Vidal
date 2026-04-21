@@ -9,6 +9,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
+import org.senai.cantina_vidal.exception.ConflictException;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -17,13 +18,12 @@ import java.math.BigDecimal;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
 @Table(name = "products")
 public class Product extends Auditable {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
@@ -96,5 +96,19 @@ public class Product extends Auditable {
         int committed = quantityCommitted != null ? quantityCommitted : 0;
 
         return stock - held - committed;
+    }
+
+    public void commitStock(Integer quantity) {
+        if (!this.available)
+            throw new ConflictException("Produto indiponível no momento: " + this.name);
+
+        if (quantity == null || quantity <= 0)
+            throw new IllegalArgumentException("A quantidade deve ser maior que zero.");
+
+        if (this.getRealStock() < quantity)
+            throw new IllegalStateException("Estoque insuficiente para o produto: " + this.name
+                    + ". Estoque disponível: " + this.getRealStock());
+
+        this.quantityCommitted += quantity;
     }
 }
