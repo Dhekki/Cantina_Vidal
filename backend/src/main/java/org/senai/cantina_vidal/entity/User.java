@@ -2,22 +2,14 @@ package org.senai.cantina_vidal.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.jspecify.annotations.Nullable;
+
 import org.senai.cantina_vidal.enums.Role;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.List;
-import java.util.Collection;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,95 +18,48 @@ import java.time.LocalDateTime;
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @Table(name = "users")
-public class User extends Auditable implements UserDetails {
+public class User extends Auditable {
     @Id
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
     private Role role;
 
-    @Size(max = 500)
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @NotNull
     @Builder.Default
     @ColumnDefault("false")
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
 
-    @NotNull
     @Builder.Default
     @ColumnDefault("false")
     @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
-    @Size(max = 20)
     @Column(name = "verification_code", length = 20)
     private String verificationCode;
 
     @Column(name = "verification_expires_at")
     private LocalDateTime verificationExpiresAt;
 
-    @Size(max = 255)
     @Column(name = "password_reset_token")
     private String passwordResetToken;
 
     @Column(name = "password_reset_expires_at")
     private LocalDateTime passwordResetExpiresAt;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
-
-    @Override
-    public @Nullable String getPassword() {
-        return passwordHash;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return !deleted;
-    }
 }
