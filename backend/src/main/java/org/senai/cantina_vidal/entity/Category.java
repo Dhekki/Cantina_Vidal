@@ -10,13 +10,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE categories SET deleted = true WHERE id = ?")
 @Table(name = "categories")
 public class Category extends Auditable {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

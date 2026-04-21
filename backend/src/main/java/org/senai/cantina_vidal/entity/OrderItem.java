@@ -13,12 +13,11 @@ import java.math.BigDecimal;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "order_items")
 public class OrderItem {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

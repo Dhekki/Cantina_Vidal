@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @SuperBuilder
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @Table(name = "users")
 public class User extends Auditable {
     @Id
-    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
