@@ -3,8 +3,6 @@ package org.senai.cantina_vidal.entity;
 import lombok.*;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotNull;
 
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
@@ -23,20 +21,15 @@ public class Category extends Auditable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(max = 100)
-    @NotNull
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Size(max = 500)
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Size(max = 7)
     @Column(name = "color_hex", length = 7)
     private String colorHex;
 
-    @NotNull
     @Builder.Default
     @ColumnDefault("false")
     @Column(name = "deleted", nullable = false)
