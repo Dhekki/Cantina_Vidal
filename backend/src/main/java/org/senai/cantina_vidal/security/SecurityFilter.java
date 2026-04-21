@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.service.TokenService;
 import org.senai.cantina_vidal.repository.UserRepository;
 import org.senai.cantina_vidal.exception.InvalidTokenException;
@@ -38,10 +39,11 @@ public class SecurityFilter extends OncePerRequestFilter {
             try {
                 String email = tokenService.validateToken(token);
 
-                UserDetails user = userRepository.findByEmailAndDeletedFalse(email).orElse(null);
+                User user = userRepository.findByEmailAndDeletedFalse(email).orElse(null);
 
                 if (user != null) {
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    UserDetails userPrincipal = new UserPrincipal(user);
+                    var authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (InvalidTokenException e) {
