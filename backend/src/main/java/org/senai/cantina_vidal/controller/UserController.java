@@ -22,28 +22,28 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.user.id")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(new UserResponseDTO(service.findById(id)));
     }
 
     @Override
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal(expression = "user") User user) {
         return ResponseEntity.ok(new UserResponseDTO(user));
     }
 
     @Override
     @PatchMapping("/me")
     public ResponseEntity<UserResponseDTO> meUpdate(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal(expression = "user") User user,
             @RequestBody @Valid UserPatchRequestDTO dto) {
         return ResponseEntity.ok(new UserResponseDTO(service.update(user.getId(), dto)));
     }
 
     @Override
     @DeleteMapping("/me")
-    public ResponseEntity<Void> meDelete(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> meDelete(@AuthenticationPrincipal(expression = "user") User user) {
         service.delete(user.getId());
         return ResponseEntity.noContent().build();
     }

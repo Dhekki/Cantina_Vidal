@@ -29,14 +29,14 @@ public class OrderController implements OrderApi {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDTO> findById(
             @PathVariable Long id, 
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal(expression = "user") User user) {
         return ResponseEntity.ok(new OrderResponseDTO(service.findById(id, user)));
     }
 
     @Override
     @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> findAllMyOrders(
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal(expression = "user") User user) {
         List<Order> orders = service.findUserOrders(user);
         return ResponseEntity.ok(orders.stream().map(OrderResponseDTO::new).toList());
     }
@@ -45,7 +45,7 @@ public class OrderController implements OrderApi {
     @PostMapping
     public ResponseEntity<OrderCustomerResponseDTO> create(
             @RequestBody @Valid OrderRequestDTO dto,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal(expression = "user") User user) {
         
         Order savedOrder = service.createOrder(dto, user);
 
