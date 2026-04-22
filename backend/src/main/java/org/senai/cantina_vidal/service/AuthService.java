@@ -34,9 +34,6 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private static final SecureRandom secureRandom = new SecureRandom();
 
-//    @Value("${jwt.refresh-expiration}")
-//    private Long refreshTokenDuration;
-
     @Transactional
     public User register(RegisterRequestDTO dto) {
         String encodedPassword = passwordEncoder.encode(dto.password());

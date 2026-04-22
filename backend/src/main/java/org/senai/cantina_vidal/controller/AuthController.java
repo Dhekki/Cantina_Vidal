@@ -52,7 +52,7 @@ public class AuthController implements AuthApi {
     public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid RegisterRequestDTO data) {
         UserResponseDTO user = new UserResponseDTO(service.register(data));
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("{/users/id}")
+                .path("/users/{id}")
                 .buildAndExpand(user.id())
                 .toUri();
         return ResponseEntity.created(uri).body(user);
