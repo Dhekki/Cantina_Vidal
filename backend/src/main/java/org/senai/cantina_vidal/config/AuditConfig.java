@@ -1,6 +1,6 @@
 package org.senai.cantina_vidal.config;
 
-import org.senai.cantina_vidal.entity.User;
+import org.senai.cantina_vidal.security.UserPrincipal;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.AuditorAware;
@@ -28,8 +28,8 @@ public class AuditConfig {
             }
 
             Object principal = authentication.getPrincipal();
-            if (principal instanceof User user) {
-                return Optional.of(user.getId());
+            if (principal instanceof UserPrincipal userPrincipal) {
+                return Optional.of(userPrincipal.getUser().getId());
             }
 
             return Optional.empty();
