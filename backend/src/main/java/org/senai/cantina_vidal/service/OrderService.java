@@ -75,7 +75,13 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderRequestDTO dto, User user) {
-        Order order = initializeOrder(user);
+        Order order = Order.builder()
+                .user(user)
+                .dailyId(generateAtomicDailyId()) // Novo método blindado que faremos abaixo
+                .pickupCode(getPickupCode())
+                .status(OrderStatus.RECEIVED)
+                .total(BigDecimal.ZERO)
+                .build();
 
         List<Product> products = fetchAndValidateProducts(dto.items());
 
@@ -84,12 +90,8 @@ public class OrderService {
         return saveAndNotify(order);
     }
 
-    private int getDailyId() {
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
-
-        return orderRepository.findMaxDailyIdOfDay(startOfDay, endOfDay)
-                .orElse(0) + 1;
+    private int generateAtomicDailyId() {
+        return orderRepository.generateAtomicDailyId();
     }
 
     private String getPickupCode() {
@@ -103,16 +105,6 @@ public class OrderService {
         return sb.toString();
     }
 
-    private Order initializeOrder(User user) {
-        return orderRepository.save(Order.builder()
-                .user(user)
-                .dailyId(getDailyId())
-                .pickupCode(getPickupCode())
-                .status(OrderStatus.RECEIVED)
-                .total(BigDecimal.ZERO)
-                .build());
-    }
-
     private List<Product> fetchAndValidateProducts(List<OrderItemRequestDTO> itemsDto) {
         Set<Long> itemsId = itemsDto.stream()
                 .map(OrderItemRequestDTO::productId)
@@ -124,15 +116,6 @@ public class OrderService {
             throw new ResourceNotFoundException("Um ou mais produtos não foram encontrados no banco de dados.");
 
         return products;
-    }
-
-    private OrderItem buildOrderItem(Order order, Product product, Integer quantity) {
-        return OrderItem.builder()
-                .order(order)
-                .product(product)
-                .quantity(quantity)
-                .frozenUnitPrice(product.getCurrentPrice())
-                .build();
     }
 
     private void processOrderItems(Order order, List<OrderItemRequestDTO> itemsDto, List<Product> products) {

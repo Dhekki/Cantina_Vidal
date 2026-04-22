@@ -27,4 +27,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT MAX(o.dailyId) FROM Order o WHERE o.createdAt BETWEEN :start AND :end")
     Optional<Integer> findMaxDailyIdOfDay(LocalDateTime start, LocalDateTime end);
+
+    @Query(value = """
+            INSERT INTO daily_order_sequence (order_date, current_value) 
+            VALUES (CURRENT_DATE, 1) 
+            ON CONFLICT (order_date) 
+            DO UPDATE SET current_value = daily_order_sequence.current_value + 1 
+            RETURNING current_value
+            """, nativeQuery = true)
+    Integer generateAtomicDailyId();
 }
