@@ -3,7 +3,6 @@ package org.senai.cantina_vidal.service;
 import lombok.RequiredArgsConstructor;
 
 import org.senai.cantina_vidal.entity.Category;
-import org.senai.cantina_vidal.mapper.CategoryMapper;
 import org.senai.cantina_vidal.repository.CategoryRepository;
 import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryService {
-    private final CategoryMapper mapper;
     private final SseService sseService;
     private final CategoryRepository repository;
 
@@ -47,7 +45,7 @@ public class CategoryService {
     public Category update(Long id, CategoryRequestDTO dto) {
         Category entity = findById(id);
 
-        mapper.updateCategoryFromDTO(dto, entity);
+        entity.update(dto.name(), dto.imageUrl(), dto.colorHex());
         sseService.notifyCatalogRefresh();
 
         return repository.save(entity);

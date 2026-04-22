@@ -33,4 +33,10 @@ public class Category extends Auditable {
     @ColumnDefault("false")
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+
+    public void update(String name, String imageUrl, String colorHex) {
+        if (name != null && !name.isBlank()) this.name = name;
+        if (imageUrl != null && !imageUrl.isBlank()) this.imageUrl = imageUrl;
+        if (colorHex != null && !colorHex.isBlank()) this.colorHex = colorHex;
+    }
 }
