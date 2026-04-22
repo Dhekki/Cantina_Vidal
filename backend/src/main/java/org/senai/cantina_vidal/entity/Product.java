@@ -87,6 +87,27 @@ public class Product extends Auditable {
     inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories = new HashSet<>();
 
+    public void update(String name, String description, BigDecimal price, String imageUrl,
+                              Integer quantityStock, Integer minStockLevel,
+                              Integer replenishmentDays, LocalDate expirationDate) {
+
+        if (name != null && !name.isBlank()) this.name = name;
+        if (description != null) this.description = description;
+        if (price != null) this.currentPrice = price;
+        if (imageUrl != null) this.imageUrl = imageUrl;
+        if (quantityStock != null) this.quantityStock = quantityStock; // Admin sobrescrevendo pelo modal
+        if (minStockLevel != null) this.minStockLevel = minStockLevel;
+        if (replenishmentDays != null) this.replenishmentDays = replenishmentDays;
+        if (expirationDate != null) this.expirationDate = expirationDate;
+    }
+
+    public void updateCategories(Set<Category> newCategories) {
+        this.categories.clear();
+        if (newCategories != null) {
+            this.categories.addAll(newCategories);
+        }
+    }
+
     public Integer getRealStock() {
         if (realStock != null)
             return realStock;

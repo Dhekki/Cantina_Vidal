@@ -7,7 +7,6 @@ import org.senai.cantina_vidal.entity.Product;
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.entity.QProduct;
 import org.senai.cantina_vidal.entity.QCategory;
-import org.senai.cantina_vidal.mapper.ProductMapper;
 import org.senai.cantina_vidal.repository.ProductRepository;
 import org.senai.cantina_vidal.repository.CategoryRepository;
 import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
@@ -26,7 +25,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductService {
-    private final ProductMapper mapper;
     private final ProductRepository repository;
     private final JPAQueryFactory queryFactory;
     private final CategoryRepository categoryRepository;
@@ -122,7 +120,25 @@ public class ProductService {
     public Product update(Long id, ProductPatchRequestDTO dto) {
         Product entity = findByIdForAdmin(id);
 
-        mapper.updateProductFromDTO(dto, entity);
+        entity.update(
+                dto.name(), dto.description(), dto.price(), dto.imageUrl(),
+                dto.quantityStock(), dto.minStockLevel(), dto.replenishmentDays(), dto.expirationDate()
+        );
+
+        if (dto.categoryIds() != null) {
+            Set<Category> newCategories = new HashSet<>();
+
+            if (!dto.categoryIds().isEmpty()) {
+                List<Category> fetchedCategories = categoryRepository.findAllByIdInAndDeletedFalse(dto.categoryIds());
+                if (fetchedCategories.size() != dto.categoryIds().size()) {
+                    throw new ResourceNotFoundException("Uma ou mais categorias não existem");
+                }
+                newCategories.addAll(fetchedCategories);
+            }
+
+            entity.updateCategories(newCategories);
+        }
+
         Product savedEntity = repository.save(entity);
 
         sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
