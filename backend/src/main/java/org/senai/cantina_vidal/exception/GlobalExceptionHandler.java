@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class  GlobalExceptionHandler {
+public class GlobalExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StandardError> handleValidationErrors(MethodArgumentNotValidException e, HttpServletRequest request) {
         Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
@@ -28,58 +29,56 @@ public class  GlobalExceptionHandler {
                         (msg1, msg2) -> msg1 + "; " + msg2
                 ));
 
-        log.error("Erro completo capturado: ", e);
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Erro de Validação", e.getMessage(), request, errors);
+        log.warn("Erros de validação do cliente: {}", errors);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Erro de Validação", "Um ou mais campos estão inválidos", request, errors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> handleEntityNotFound(ResourceNotFoundException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
+        log.warn("Recurso não encontrado: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.NOT_FOUND, "Recurso não encontrado", e.getMessage(), request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<StandardError> handleBadCredentials(BadCredentialsException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
+        log.warn("Falha de autenticação: Usuário forneceu credenciais inválidas.");
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Não Autorizado", "Email ou senha inválidos", request);
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<StandardError> handleConflict(ConflictException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
+        log.warn("Conflito de regra de negócio: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.CONFLICT, "Conflito de Dados", e.getMessage(), request);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<StandardError> handleMaxSizeException(MaxUploadSizeExceededException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
-        return buildErrorResponse(HttpStatus.CONTENT_TOO_LARGE, "Arquivo muito grande", e.getMessage(), request);
+        log.warn("Upload negado: Tamanho máximo excedido.");
+        return buildErrorResponse(HttpStatus.CONTENT_TOO_LARGE, "Arquivo muito grande", "O arquivo excede o limite máximo permitido.", request);
     }
 
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<StandardError> handleFileStorageException(FileStorageException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro no Servidor", e.getMessage(), request);
+        log.error("Erro crítico no sistema de arquivos: ", e);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro no Servidor", "Falha interna ao processar o arquivo.", request);
     }
 
     @ExceptionHandler(InvalidFileException.class)
     public ResponseEntity<StandardError> handleInvalidFileException(InvalidFileException e, HttpServletRequest request) {
-        log.error("Erro completo capturado: ", e);
+        log.warn("Arquivo inválido rejeitado: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Arquivo Inválido", e.getMessage(), request);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<StandardError> handleInvalidTokenException(InvalidTokenException e, HttpServletRequest request) {
-        log.warn("Erro de autenticação: {}", e.getMessage());
+        log.warn("Acesso negado: Token inválido ou expirado.");
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Token Inválido", e.getMessage(), request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardError> handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
-        log.warn("Erro de violação de dados: {}", e.getMostSpecificCause().getMessage());
-
+        log.warn("Erro de violação de dados (SQL): {}", e.getMostSpecificCause().getMessage());
         String safeMessage = "Não foi possível concluir a operação devido a um conflito de dados (ex: registro duplicado ou em uso).";
-
         return buildErrorResponse(HttpStatus.CONFLICT, "Conflito de Dados", safeMessage, request);
     }
 
