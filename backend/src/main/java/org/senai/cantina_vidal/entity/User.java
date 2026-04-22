@@ -61,4 +61,9 @@ public class User extends Auditable {
 
     @Column(name = "password_reset_expires_at")
     private LocalDateTime passwordResetExpiresAt;
+
+    public void update(String name, String imageUrl) {
+        if (name != null && !name.isBlank()) this.name = name;
+        if (imageUrl != null && !imageUrl.isBlank()) this.imageUrl = imageUrl;
+    }
 }

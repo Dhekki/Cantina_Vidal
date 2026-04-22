@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.senai.cantina_vidal.entity.User;
 import org.springframework.stereotype.Service;
-import org.senai.cantina_vidal.mapper.UserMapper;
 import org.senai.cantina_vidal.repository.UserRepository;
 import org.senai.cantina_vidal.dto.user.UserPatchRequestDTO;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,6 @@ import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository repository;
-    private final UserMapper mapper;
 
     public User findById(Long id) {
         return repository.findByIdAndDeletedFalse(id)
@@ -26,7 +24,7 @@ public class UserService {
     public User update(Long id, UserPatchRequestDTO dto) {
         User entity = this.findById(id);
 
-        mapper.updateUserFromDTO(dto, entity);
+        entity.update(dto.name(), dto.imageUrl());
 
         return repository.save(entity);
     }
