@@ -27,15 +27,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
-    private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final EmailService emailService;
     private final TokenService tokenService;
-    private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     private static final SecureRandom secureRandom = new SecureRandom();
 
-    @Value("${jwt.refresh-expiration}")
-    private Long refreshTokenDuration;
+//    @Value("${jwt.refresh-expiration}")
+//    private Long refreshTokenDuration;
 
     @Transactional
     public User register(RegisterRequestDTO dto) {
@@ -65,29 +65,17 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.password(), user.getPasswordHash()))
             throw new BadCredentialsException("Email ou senha inválidos");
 
-
         String accessToken = tokenService.generateAccessToken(user);
 
-        String refreshTokenString = UUID.randomUUID().toString();
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(refreshTokenString)
-                .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenDuration / 1000))
-                .build();
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-        refreshTokenRepository.save(refreshToken);
-
-        return new LoginProcessDTO(accessToken, refreshTokenString, user.getName(), user.getRole().name());
+        return new LoginProcessDTO(accessToken, refreshToken.getToken(), user.getName(), user.getRole().name());
     }
 
     public LoginProcessDTO refreshToken(String refreshToken) {
-        RefreshToken entity = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("Refresh Token não encontrado"));
+        RefreshToken entity = refreshTokenService.findByToken(refreshToken);
 
-        if (entity.getExpiresAt().isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.delete(entity);
-            throw new BadCredentialsException("Refresh Token expirado. Faça login novamente");
-        }
+        refreshTokenService.verifyExpiration(entity);
 
         String newAccessToken = tokenService.generateAccessToken(entity.getUser());
 
@@ -95,6 +83,6 @@ public class AuthService {
     }
 
     public void revokeRefreshToken(String refreshToken) {
-        refreshTokenRepository.deleteByToken(refreshToken);
+        refreshTokenService.revokeToken(refreshToken);
     }
 }
