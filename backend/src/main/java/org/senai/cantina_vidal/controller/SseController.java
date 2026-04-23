@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sse")
-@CrossOrigin(origins = "*")
 public class SseController implements SseApi {
     private final SseService service;
 
