@@ -77,7 +77,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardError> handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
-        log.warn("Erro de violação de dados (SQL): {}", e.getMostSpecificCause().getMessage());
+        log.debug("Detalhes do erro SQL: ", e.getMostSpecificCause());
+        log.warn("Erro de violação de dados (SQL). Uma constraint de banco foi acionada.");
         String safeMessage = "Não foi possível concluir a operação devido a um conflito de dados (ex: registro duplicado ou em uso).";
         return buildErrorResponse(HttpStatus.CONFLICT, "Conflito de Dados", safeMessage, request);
     }
