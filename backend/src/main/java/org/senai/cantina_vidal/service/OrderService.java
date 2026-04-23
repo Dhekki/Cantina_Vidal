@@ -10,11 +10,14 @@ import org.senai.cantina_vidal.entity.OrderItem;
 import org.senai.cantina_vidal.entity.Product;
 import org.senai.cantina_vidal.entity.User;
 import org.senai.cantina_vidal.enums.OrderStatus;
+import org.senai.cantina_vidal.event.OrderCreatedEvent;
+import org.senai.cantina_vidal.event.ProductUpdateEvent;
 import org.senai.cantina_vidal.exception.ConflictException;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 import org.senai.cantina_vidal.repository.OrderItemRepository;
 import org.senai.cantina_vidal.repository.OrderRepository;
 import org.senai.cantina_vidal.repository.ProductRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +34,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
+    private final ProductService productService;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-    private final ProductService productService;
-    private final SseService sseService;
+    private final ApplicationEventPublisher eventPublisher;
     private final Random random = new Random();
 
     public List<Order> findUserOrders(User user) {
@@ -139,11 +142,11 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         OrderResponseDTO responseDTO = new OrderResponseDTO(savedOrder);
-        sseService.notifyKitchenNewOrder(responseDTO);
+        eventPublisher.publishEvent(new OrderCreatedEvent(responseDTO));
 
         for (OrderItem item : savedOrder.getItems()) {
             Product p = item.getProduct();
-            sseService.notifyProductUpdate(p.getId(), p.getRealStock(), p.getAvailable());
+            eventPublisher.publishEvent(new ProductUpdateEvent(p.getId(), p.getRealStock(), p.getAvailable()));
         }
 
         return savedOrder;

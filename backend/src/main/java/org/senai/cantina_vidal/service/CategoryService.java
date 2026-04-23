@@ -3,10 +3,12 @@ package org.senai.cantina_vidal.service;
 import lombok.RequiredArgsConstructor;
 
 import org.senai.cantina_vidal.entity.Category;
+import org.senai.cantina_vidal.event.CatalogRefreshEvent;
 import org.senai.cantina_vidal.repository.CategoryRepository;
 import org.senai.cantina_vidal.dto.category.CategoryRequestDTO;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryService {
-    private final SseService sseService;
     private final CategoryRepository repository;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<Category> findAll() {
         return repository.findByDeletedFalse();
@@ -37,7 +38,7 @@ public class CategoryService {
                 .colorHex(dto.colorHex())
                 .build();
 
-        sseService.notifyCatalogRefresh();
+        eventPublisher.publishEvent(new CatalogRefreshEvent());
         return repository.save(entity);
     }
 
@@ -46,7 +47,7 @@ public class CategoryService {
         Category entity = findById(id);
 
         entity.update(dto.name(), dto.imageUrl(), dto.colorHex());
-        sseService.notifyCatalogRefresh();
+        eventPublisher.publishEvent(new CatalogRefreshEvent());
 
         return repository.save(entity);
     }
@@ -57,6 +58,6 @@ public class CategoryService {
             throw new ResourceNotFoundException("Categoria não encontrada com o id: " + id);
 
         repository.deleteById(id);
-        sseService.notifyCatalogRefresh();
+        eventPublisher.publishEvent(new CatalogRefreshEvent());
     }
 }

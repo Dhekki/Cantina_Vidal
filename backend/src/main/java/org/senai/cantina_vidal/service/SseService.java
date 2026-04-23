@@ -3,7 +3,11 @@ package org.senai.cantina_vidal.service;
 import lombok.extern.slf4j.Slf4j;
 import org.senai.cantina_vidal.dto.order.OrderResponseDTO;
 import org.senai.cantina_vidal.dto.product.ProductStockUpdateDTO;
+import org.senai.cantina_vidal.event.OrderCreatedEvent;
+import org.senai.cantina_vidal.event.ProductUpdateEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -42,16 +46,19 @@ public class SseService {
         return emitter;
     }
 
-    public void notifyKitchenNewOrder(OrderResponseDTO orderDTO) {
-        sendEventToGroup(kitchenEmitters, "new-order", orderDTO);
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onOrderCreated(OrderCreatedEvent event) {
+        sendEventToGroup(kitchenEmitters, "new-order", event.orderDTO());
     }
 
-    public void notifyProductUpdate(Long productId, Integer newStock, Boolean available) {
-        ProductStockUpdateDTO payload = new ProductStockUpdateDTO(productId, newStock, available);
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onProductUpdate(ProductUpdateEvent event) {
+        ProductStockUpdateDTO payload = new ProductStockUpdateDTO(event.productId(), event.newStock(), event.available());
         sendEventToGroup(catalogEmitters, "product-update", payload);
     }
 
-    public void notifyCatalogRefresh() {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onCatalogRefresh() {
         sendEventToGroup(catalogEmitters, "catalog-refresh", "reload");
     }
 

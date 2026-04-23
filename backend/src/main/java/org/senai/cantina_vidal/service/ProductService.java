@@ -7,12 +7,14 @@ import org.senai.cantina_vidal.entity.Product;
 import org.senai.cantina_vidal.entity.Category;
 import org.senai.cantina_vidal.entity.QProduct;
 import org.senai.cantina_vidal.entity.QCategory;
+import org.senai.cantina_vidal.event.ProductUpdateEvent;
 import org.senai.cantina_vidal.repository.ProductRepository;
 import org.senai.cantina_vidal.repository.CategoryRepository;
 import org.senai.cantina_vidal.dto.product.ProductRequestDTO;
 import org.senai.cantina_vidal.dto.product.ProductPatchRequestDTO;
 import org.senai.cantina_vidal.exception.ResourceNotFoundException;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +30,10 @@ public class ProductService {
     private final ProductRepository repository;
     private final JPAQueryFactory queryFactory;
     private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final QProduct qProduct = QProduct.product;
     private static final QCategory qCategory = QCategory.category;
-    private final SseService sseService;
 
     public List<Product> findAllForAdmin() {
         return queryFactory
@@ -112,7 +114,9 @@ public class ProductService {
                 .build();
 
         Product savedEntity = repository.save(entity);
-        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
+
+        eventPublisher.publishEvent(new ProductUpdateEvent(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable()));
+
         return savedEntity;
     }
 
@@ -141,7 +145,7 @@ public class ProductService {
 
         Product savedEntity = repository.save(entity);
 
-        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
+        eventPublisher.publishEvent(new ProductUpdateEvent(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable()));
 
         return savedEntity;
     }
@@ -151,7 +155,7 @@ public class ProductService {
         if (!repository.existsById(id))
             throw new ResourceNotFoundException("Produto não encontrado com o id: " + id);
 
-        sseService.notifyProductUpdate(id, 0, false);
+        eventPublisher.publishEvent(new ProductUpdateEvent(id, 0, false));
         repository.deleteById(id);
     }
 
@@ -163,7 +167,7 @@ public class ProductService {
         entity.toggleAvailability();
         Product savedEntity = repository.save(entity);
 
-        sseService.notifyProductUpdate(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable());
+        eventPublisher.publishEvent(new ProductUpdateEvent(savedEntity.getId(), savedEntity.getRealStock(), savedEntity.getAvailable()));
     }
 
     public List<Product> findAllById(Set<Long> ids) {
