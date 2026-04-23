@@ -38,7 +38,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final Random random = new Random();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public List<Order> findUserOrders(User user) {
         return orderRepository.findByUserOrderByCreatedAtDesc(user);
@@ -80,7 +80,7 @@ public class OrderService {
     public Order createOrder(OrderRequestDTO dto, User user) {
         Order order = Order.builder()
                 .user(user)
-                .dailyId(generateAtomicDailyId()) // Novo método blindado que faremos abaixo
+                .dailyId(generateAtomicDailyId())
                 .pickupCode(getPickupCode())
                 .status(OrderStatus.RECEIVED)
                 .total(BigDecimal.ZERO)
@@ -100,10 +100,10 @@ public class OrderService {
     private String getPickupCode() {
         StringBuilder sb = new StringBuilder();
         String characters = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
-        int codeLength = 3;
+        int codeLength = 4;
 
         for (int i = 0; i < codeLength; i++)
-            sb.append(characters.charAt(random.nextInt(characters.length())));
+            sb.append(characters.charAt(secureRandom.nextInt(characters.length())));
 
         return sb.toString();
     }
