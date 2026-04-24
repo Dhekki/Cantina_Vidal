@@ -23,6 +23,10 @@ import java.math.BigDecimal;
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE id = ?")
 @Table(name = "products")
 public class Product extends Auditable {
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

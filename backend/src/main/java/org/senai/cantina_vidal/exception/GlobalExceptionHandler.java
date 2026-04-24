@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -81,6 +82,12 @@ public class GlobalExceptionHandler {
         log.warn("Erro de violação de dados (SQL). Uma constraint de banco foi acionada.");
         String safeMessage = "Não foi possível concluir a operação devido a um conflito de dados (ex: registro duplicado ou em uso).";
         return buildErrorResponse(HttpStatus.CONFLICT, "Conflito de Dados", safeMessage, request);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<StandardError> handleOptimisticLocking(ObjectOptimisticLockingFailureException e, HttpServletRequest request) {
+        log.warn("Race condition evitada pelo Optimistic Lock.");
+        return buildErrorResponse(HttpStatus.CONFLICT, "Estoque desatualizado", "O produto foi modificado ou esgotou enquanto você finalizava. Tente novamente.", request);
     }
 
     private ResponseEntity<StandardError> buildErrorResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
